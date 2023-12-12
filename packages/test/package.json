@@ -1,0 +1,37 @@
+{
+  "name": "@fsx/test",
+  "version": "0.0.0",
+  "description": "Testing utilities for fsx",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "import": {
+      "default": "./src/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "node --test ./tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humanwhocodes/fsx.git"
+  },
+  "keywords": [
+    "filesystem",
+    "fs",
+    "fsx",
+    "files"
+  ],
+  "author": "Nicholas C. Zakas",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/humanwhocodes/fsx/issues"
+  },
+  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "@fsx/node",
+  "version": "0.0.0",
+  "description": "The Node.js bindings of the fsx library.",
+  "type": "module",
+  "types": "dist/node-fsx.d.ts",
+  "exports": {
+    "import": {
+      "default": "./src/node-fsx.js",
+      "types": "./dist/node-fsx.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "mocha ./tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humanwhocodes/fsx.git"
+  },
+  "keywords": [
+    "filesystem",
+    "fs",
+    "fsx",
+    "files"
+  ],
+  "author": "Nicholas C. Zakas",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/humanwhocodes/fsx/issues"
+  },
+  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "devDependencies": {
+    "@types/node": "^20.9.4",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2",
+    "@fsx/test": "^0.0.0",
+    "@fsx/types": "^0.0.0"
+  },
+  "dependencies": {
+    "@fsx/core": "^0.0.0"
+  }
+}

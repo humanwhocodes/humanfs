@@ -1,0 +1,42 @@
+{
+  "name": "@fsx/deno",
+  "version": "0.0.0",
+  "description": "The Deno bindings of the fsx library.",
+  "type": "module",
+  "types": "dist/deno-fsx.d.ts",
+  "exports": {
+    "import": {
+      "default": "./src/deno-fsx.js",
+      "types": "./dist/deno-fsx.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "deno test --allow-read --allow-write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humanwhocodes/fsx.git"
+  },
+  "keywords": [
+    "filesystem",
+    "fs",
+    "fsx",
+    "files"
+  ],
+  "author": "Nicholas C. Zakas",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/humanwhocodes/fsx/issues"
+  },
+  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "@types/node": "^20.9.4"
+  }
+}

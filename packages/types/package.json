@@ -1,0 +1,36 @@
+{
+  "name": "@fsx/types",
+  "version": "0.0.0",
+  "description": "The TypeScript types for the fsx project.",
+  "type": "module",
+  "types": "src/fsx-types.ts",
+  "exports": {
+    ".": {
+      "types": "./src/fsx-types.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humanwhocodes/fsx.git"
+  },
+  "keywords": [
+    "filesystem",
+    "fs",
+    "fsx",
+    "files"
+  ],
+  "author": "Nicholas C. Zakas",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/humanwhocodes/fsx/issues"
+  },
+  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  }
+}
