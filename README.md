@@ -17,6 +17,28 @@ You must have the following installed:
 1. [Node.js](https://nodejs.org)
 1. [Deno](https://deno.land)
 
+Then follow these steps:
+
+1. Fork the repository
+2. Clone your fork
+3. Run `npm install` to set up dependencies
+
+> **Note**
+> It's recommended to use the Deno Visual Studio Code extension for the best developer experience. When you first open the project in Visual Studio Code, you'll be prompted to install this extension.
+
+### Testing
+
+To test everything:
+
+```shell
+npm test
+```
+
+To test just one workspace
+
+```shell
+npm test -w packages/node
+```
 
 ## License
 
