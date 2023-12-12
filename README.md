@@ -40,6 +40,20 @@ To test just one workspace
 npm test -w packages/node
 ```
 
+### Linting
+
+To lint everything:
+
+```shell
+npm run lint
+```
+
+To lint and fix everything:
+
+```shell
+npm run lint:fix
+```
+
 ## License
 
 Apache 2.0

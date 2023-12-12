@@ -2,6 +2,7 @@
  * @fileoverview The main file for the deno-fsx package.
  * @author Nicholas C. Zakas
  */
+/* global Deno:readonly */
 
 //-----------------------------------------------------------------------------
 // Types

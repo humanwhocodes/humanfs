@@ -2,19 +2,20 @@
  * @fileoverview The main file for the fsx package.
  * @author Nicholas C. Zakas
  */
+/* global Buffer:readonly */
 
 //-----------------------------------------------------------------------------
 // Types
 //-----------------------------------------------------------------------------
 
 /** @typedef{import("@fsx/types").FsxImpl} FsxImpl */
+/** @typedef{import("node:fs/promises")} Fsp */
 
 //-----------------------------------------------------------------------------
 // Imports
 //-----------------------------------------------------------------------------
 
 import { Fsx } from "@fsx/core";
-import fsp from "node:fs/promises";
 import path from "node:path";
 
 //-----------------------------------------------------------------------------
@@ -29,14 +30,14 @@ export class NodeFsxImpl {
 
     /**
      * The file system module to use.
-     * @type {fsp}
+     * @type {Fsp}
      */
     #fs;
 
     /**
      * Creates a new instance.
      * @param {object} options The options for the instance.
-     * @param {fsp} options.fs The file system module to use.
+     * @param {Fsp} options.fs The file system module to use.
      */
     constructor({ fs }) {
         this.#fs = fs;
@@ -192,7 +193,7 @@ export class NodeFsx extends Fsx {
     /**
      * Creates a new instance.
      * @param {object} [options] The options for the instance.
-     * @param {fsp} [options.fs] The file system module to use.
+     * @param {Fsp} [options.fs] The file system module to use.
      */
     constructor({ fs } = {}) {
         super({ impl: new NodeFsxImpl({ fs })});

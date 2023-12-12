@@ -2,6 +2,7 @@
  * @fileoverview The main file for the fsx package.
  * @author Nicholas C. Zakas
  */
+/* global TextEncoder, TextDecoder */
 
 //-----------------------------------------------------------------------------
 // Types

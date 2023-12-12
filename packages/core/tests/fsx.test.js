@@ -7,7 +7,7 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { describe, it, beforeEach } from "node:test";
+import { describe, it } from "node:test";
 import { Fsx, NoSuchMethodError, ImplAreadySetError } from "../src/fsx.js";
 import assert from "node:assert";
 
