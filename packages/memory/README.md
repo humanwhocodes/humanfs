@@ -32,9 +32,9 @@ Or if you're using Deno, set up a `deno.json` file like this:
 
 ```json
 {
-    "imports": {
-        "@fsx/memory": "npm:@fsx/memory@latest"
-    }
+	"imports": {
+		"@fsx/memory": "npm:@fsx/memory@latest"
+	}
 }
 ```
 
@@ -96,7 +96,7 @@ const fsx = new MemoryFsx();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new MemoryFsx({ volume })
+const fsx = new MemoryFsx({ volume });
 ```
 
 If you'd like to use just the impl, import the `MemoryFsxImpl` constructor:
@@ -108,7 +108,7 @@ const fsx = new MemoryFsxImpl();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new MemoryFsxImpl({ volume })
+const fsx = new MemoryFsxImpl({ volume });
 ```
 
 ## License

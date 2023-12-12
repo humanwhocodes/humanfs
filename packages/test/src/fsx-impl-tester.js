@@ -33,279 +33,313 @@
 //------------------------------------------------------------------------------
 
 export class FsxImplTester {
+	/**
+	 * The assert object to use.
+	 * @type {Assert}
+	 */
+	#assert;
 
-    /**
-     * The assert object to use.
-     * @type {Assert}
-     */
-    #assert;
+	/**
+	 * The test library to use.
+	 * @type {BddTest}
+	 */
+	#test;
 
-    /**
-     * The test library to use.
-     * @type {BddTest}
-     */
-    #test;
+	/**
+	 * The directory where output files should be written.
+	 * @type {string}
+	 */
+	#outputDir;
 
-    /**
-     * The directory where output files should be written.
-     * @type {string}
-     */
-    #outputDir;
+	/**
+	 * Creates a new instance.
+	 * @param {object} options Options for the tester.
+	 * @param {Assert} options.assert The assert function to use.
+	 * @param {BddTest} options.test The test library to use.
+	 * @param {string} [options.outputDir] The directory where output files should be written.
+	 */
+	constructor({ assert, test, outputDir = ".fsx-tests" }) {
+		this.#assert = assert;
+		this.#test = test;
+		this.#outputDir = outputDir;
+	}
 
-    /**
-     * Creates a new instance.
-     * @param {object} options Options for the tester.
-     * @param {Assert} options.assert The assert function to use.
-     * @param {BddTest} options.test The test library to use.
-     * @param {string} [options.outputDir] The directory where output files should be written.
-     */
-    constructor({ assert, test, outputDir = ".fsx-tests" }) {
-        this.#assert = assert;
-        this.#test = test;
-        this.#outputDir = outputDir;
-    }
+	/**
+	 * Runs the tests.
+	 * @param {object} options Options for the test.
+	 * @param {string} options.name The name of the test.
+	 * @param {FsxImpl} options.impl The FsxImpl instance to test.
+	 * @returns {Promise<void>}
+	 */
+	async test({ name, impl }) {
+		const { it, describe, beforeEach, afterEach } = this.#test;
+		const assert = this.#assert;
 
-    /**
-     * Runs the tests.
-     * @param {object} options Options for the test.
-     * @param {string} options.name The name of the test.
-     * @param {FsxImpl} options.impl The FsxImpl instance to test.
-     * @returns {Promise<void>}
-     */
-    async test({ name, impl }) {
+		describe(name, () => {
+			// set up the fixtures directory
+			beforeEach(async () => {
+				await impl.createDirectory(this.#outputDir);
+				await impl.write(
+					this.#outputDir + "/hello.txt",
+					"Hello world!\n",
+				);
+				await impl.write(
+					this.#outputDir + "/message.json",
+					JSON.stringify({ message: "Hello world!" }),
+				);
+			});
 
-        const { it, describe, beforeEach, afterEach } = this.#test;
-        const assert = this.#assert;
+			// clean up the fixtures directory
+			afterEach(async () => {
+				await impl.delete(this.#outputDir);
+			});
 
-        describe(name, () => {
+			describe("text()", () => {
+				it("should read a file and return the contents as a string", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello world!\n");
+				});
 
-            // set up the fixtures directory
-            beforeEach(async () => {
-                await impl.createDirectory(this.#outputDir);
-                await impl.write(this.#outputDir + "/hello.txt", "Hello world!\n");
-                await impl.write(this.#outputDir + "/message.json", JSON.stringify({ message: "Hello world!" }));
-            });
+				it("should return undefined when a file doesn't exist", async () => {
+					const result = await impl.text(
+						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+			});
 
-            // clean up the fixtures directory
-            afterEach(async () => {
-                await impl.delete(this.#outputDir);
-            });
+			describe("json()", () => {
+				it("should read a file and return the contents as a JSON object", async () => {
+					const filePath = this.#outputDir + "/message.json";
+					const result = await impl.json(filePath);
+					assert.deepStrictEqual(result, { message: "Hello world!" });
+				});
 
-            describe("text()", () => {
-                it("should read a file and return the contents as a string", async () => {
-                    const filePath = this.#outputDir + "/hello.txt";
-                    const result = await impl.text(filePath);
-                    assert.strictEqual(result, "Hello world!\n");
-                });
+				it("should return undefined when a file doesn't exist", async () => {
+					const result = await impl.json(
+						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+			});
 
-                it("should return undefined when a file doesn't exist", async () => {
-                    const result = await impl.text(this.#outputDir + "/nonexistent.txt");
-                    assert.strictEqual(result, undefined, "Expected undefined when reading a nonexistent file");
-                });
-            });
+			describe("arrayBuffer()", () => {
+				it("should read a file and return the contents as an ArrayBuffer", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const result = await impl.arrayBuffer(filePath);
+					assert.ok(result instanceof ArrayBuffer);
+					const decoder = new TextDecoder();
+					assert.strictEqual(
+						decoder.decode(result),
+						"Hello world!\n",
+					);
+				});
 
-            describe("json()", () => {
-                it("should read a file and return the contents as a JSON object", async () => {
-                    const filePath = this.#outputDir + "/message.json";
-                    const result = await impl.json(filePath);
-                    assert.deepStrictEqual(result, { message: "Hello world!" });
-                });
+				it("should return undefined when a file doesn't exist", async () => {
+					const result = await impl.arrayBuffer(
+						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+			});
 
-                it("should return undefined when a file doesn't exist", async () => {
-                    const result = await impl.json(this.#outputDir + "/nonexistent.txt");
-                    assert.strictEqual(result, undefined, "Expected undefined when reading a nonexistent file");
-                });
+			describe("write()", () => {
+				beforeEach(async () => {
+					await impl.createDirectory(this.#outputDir + "/tmp-write");
+				});
 
-            });
+				afterEach(async () => {
+					await impl.delete(this.#outputDir + "/tmp-write");
+				});
 
-            describe("arrayBuffer()", () => {
-                it("should read a file and return the contents as an ArrayBuffer", async () => {
-                    const filePath = this.#outputDir + "/hello.txt";
-                    const result = await impl.arrayBuffer(filePath);
-                    assert.ok(result instanceof ArrayBuffer);
-                    const decoder = new TextDecoder();
-                    assert.strictEqual(decoder.decode(result), "Hello world!\n");
-                });
+				it("should write a string to a file", async () => {
+					const filePath =
+						this.#outputDir + "/tmp-write/test-generated-text.txt";
+					await impl.write(filePath, "Hello, world!");
 
-                it("should return undefined when a file doesn't exist", async () => {
-                    const result = await impl.arrayBuffer(this.#outputDir + "/nonexistent.txt");
-                    assert.strictEqual(result, undefined, "Expected undefined when reading a nonexistent file");
-                });
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
 
-            });
+				it("should write an ArrayBuffer to a file", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/test-generated-arraybuffer.txt";
+					await impl.write(
+						filePath,
+						new TextEncoder().encode("Hello, world!").buffer,
+					);
 
-            describe("write()", () => {
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
 
-                beforeEach(async () => {
-                    await impl.createDirectory(this.#outputDir + "/tmp-write");
-                });
+				it("should write to an already existing file", async () => {
+					const filePath =
+						this.#outputDir + "/tmp-write/test-generated-text.txt";
+					await impl.write(filePath, "Hello, world!");
 
-                afterEach(async () => {
-                    await impl.delete(this.#outputDir + "/tmp-write");
-                });
+					await impl.write(filePath, "Goodbye, world!");
 
-                it("should write a string to a file", async () => {
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Goodbye, world!");
+				});
 
-                    const filePath = this.#outputDir + "/tmp-write/test-generated-text.txt";
-                    await impl.write(filePath, "Hello, world!");
+				it("should write a file when the directory doesn't exist", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/nonexistent/test-generated-text.txt";
 
-                    // make sure the file was written
-                    const result = await impl.text(filePath);
-                    assert.strictEqual(result, "Hello, world!");
-                });
+					await impl.write(filePath, "Hello, world!");
 
-                it("should write an ArrayBuffer to a file", async () => {
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
 
-                    const filePath = this.#outputDir + "/tmp-write/test-generated-arraybuffer.txt";
-                    await impl.write(filePath, new TextEncoder().encode("Hello, world!").buffer);
+				it("should reject a promise when the argument is not a string or ArrayBuffer", async () => {
+					const filePath =
+						this.#outputDir + "/tmp-write/test-generated-text.txt";
+					// @ts-ignore
+					return assert.rejects(
+						() => impl.write(filePath, 42),
+						/Invalid contents type/,
+					);
+				});
+			});
 
-                    // make sure the file was written
-                    const result = await impl.text(filePath);
-                    assert.strictEqual(result, "Hello, world!");
-                });
+			describe("isFile()", () => {
+				it("should return true if a file exists", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const result = await impl.isFile(filePath);
+					assert.strictEqual(result, true);
+				});
 
-                it("should write to an already existing file", async () => {
+				it("should return false if a file doesn't exist", async () => {
+					const filePath = this.#outputDir + "/nonexistent.txt";
+					const result = await impl.isFile(filePath);
+					assert.strictEqual(result, false);
+				});
 
-                    const filePath = this.#outputDir + "/tmp-write/test-generated-text.txt";
-                    await impl.write(filePath, "Hello, world!");
+				it("should return false if a directory exists", async () => {
+					const result = await impl.isFile(this.#outputDir);
+					assert.strictEqual(result, false);
+				});
+			});
 
-                    await impl.write(filePath, "Goodbye, world!");
+			describe("isDirectory()", () => {
+				it("should return true if a directory exists", async () => {
+					const result = await impl.isDirectory(this.#outputDir);
+					assert.strictEqual(result, true);
+				});
 
-                    // make sure the file was written
-                    const result = await impl.text(filePath);
-                    assert.strictEqual(result, "Goodbye, world!");
-                });
+				it("should return false if a directory doesn't exist", async () => {
+					const dirPath = this.#outputDir + "/nonexistent";
+					const result = await impl.isDirectory(dirPath);
+					assert.strictEqual(result, false);
+				});
 
-                it("should write a file when the directory doesn't exist", async () => {
-                    const filePath = this.#outputDir + "/tmp-write/nonexistent/test-generated-text.txt";
-                    
-                    await impl.write(filePath, "Hello, world!");
+				it("should return false if a file exists", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const result = await impl.isDirectory(filePath);
+					assert.strictEqual(result, false);
+				});
+			});
 
-                    // make sure the file was written
-                    const result = await impl.text(filePath);
-                    assert.strictEqual(result, "Hello, world!");
-                });
+			describe("createDirectory()", () => {
+				afterEach(async () => {
+					await impl.delete(this.#outputDir + "/tmp-create");
+				});
 
-                it("should reject a promise when the argument is not a string or ArrayBuffer", async () => {
-                    const filePath = this.#outputDir + "/tmp-write/test-generated-text.txt";
-                    // @ts-ignore
-                    return assert.rejects(() => impl.write(filePath, 42), /Invalid contents type/);
-                });
-            });
+				it("should create a directory", async () => {
+					const dirPath = this.#outputDir + "/tmp-create";
+					await impl.createDirectory(dirPath);
 
-            describe("isFile()", () => {
-                it("should return true if a file exists", async () => {
-                    const filePath = this.#outputDir + "/hello.txt";
-                    const result = await impl.isFile(filePath);
-                    assert.strictEqual(result, true);
-                });
+					const result = await impl.isDirectory(dirPath);
+					assert.ok(result, "Expected directory to exist");
+				});
 
-                it("should return false if a file doesn't exist", async () => {
-                    const filePath = this.#outputDir + "/nonexistent.txt";
-                    const result = await impl.isFile(filePath);
-                    assert.strictEqual(result, false);
-                });
+				it("should create a directory recursively", async () => {
+					const dirPath = this.#outputDir + "/tmp-create/subdir";
+					await impl.createDirectory(dirPath);
 
-                it("should return false if a directory exists", async () => {
-                    const result = await impl.isFile(this.#outputDir);
-                    assert.strictEqual(result, false);
-                });
+					const result = await impl.isDirectory(dirPath);
+					assert.ok(result, "Expected directory to exist");
+				});
 
-            });
+				it("should not reject a promise when the directory already exists", async () => {
+					const dirPath = this.#outputDir + "/tmp-create";
+					await impl.createDirectory(dirPath);
 
-            describe("isDirectory()", () => {
-                it("should return true if a directory exists", async () => {
-                    const result = await impl.isDirectory(this.#outputDir);
-                    assert.strictEqual(result, true);
-                });
+					return impl.createDirectory(dirPath);
+				});
+			});
 
-                it("should return false if a directory doesn't exist", async () => {
-                    const dirPath = this.#outputDir + "/nonexistent";
-                    const result = await impl.isDirectory(dirPath);
-                    assert.strictEqual(result, false);
-                });
+			describe("delete()", () => {
+				let dirPath = this.#outputDir + "/tmp-delete";
 
-                it("should return false if a file exists", async () => {
-                    const filePath = this.#outputDir + "/hello.txt";
-                    const result = await impl.isDirectory(filePath);
-                    assert.strictEqual(result, false);
-                });
-            });
+				beforeEach(async () => {
+					await impl.createDirectory(dirPath);
+					await impl.createDirectory(dirPath + "/subdir");
+					await impl.createDirectory(dirPath + "/subdir/subsubdir");
+					await impl.write(
+						dirPath + "/subdir/subsubdir/test.txt",
+						"Hello, world!",
+					);
+				});
 
-            describe("createDirectory()", () => {
+				afterEach(async () => {
+					await impl.delete(dirPath);
+				});
 
-                afterEach(async () => {
-                    await impl.delete(this.#outputDir + "/tmp-create");
-                });
+				it("should delete a file", async () => {
+					const filePath = dirPath + "/subdir/subsubdir/test.txt";
+					await impl.delete(filePath);
 
-                it("should create a directory", async () => {
-                    const dirPath = this.#outputDir + "/tmp-create";
-                    await impl.createDirectory(dirPath);
+					assert.strictEqual(await impl.isFile(filePath), false);
+				});
 
-                    const result = await impl.isDirectory(dirPath);
-                    assert.ok(result, "Expected directory to exist");
-                });
+				it("should delete a directory", async () => {
+					const subsubdirPath = dirPath + "/subdir/subsubdir";
+					await impl.delete(subsubdirPath);
 
-                it("should create a directory recursively", async () => {
-                    const dirPath = this.#outputDir + "/tmp-create/subdir";
-                    await impl.createDirectory(dirPath);
+					assert.strictEqual(
+						await impl.isDirectory(subsubdirPath),
+						false,
+					);
+				});
 
-                    const result = await impl.isDirectory(dirPath);
-                    assert.ok(result, "Expected directory to exist");
-                });
+				it("should delete a directory recursively", async () => {
+					const subdirPath = dirPath + "/subdir";
+					await impl.delete(subdirPath);
 
-                it("should not reject a promise when the directory already exists", async () => {
-                    const dirPath = this.#outputDir + "/tmp-create";
-                    await impl.createDirectory(dirPath);
+					assert.strictEqual(
+						await impl.isDirectory(subdirPath),
+						false,
+					);
+				});
 
-                    return impl.createDirectory(dirPath);
-                });
-
-            });
-
-            describe("delete()", () => {
-
-                let dirPath = this.#outputDir + "/tmp-delete";
-
-                beforeEach(async () => {
-                    await impl.createDirectory(dirPath);
-                    await impl.createDirectory(dirPath + "/subdir");
-                    await impl.createDirectory(dirPath + "/subdir/subsubdir");
-                    await impl.write(dirPath + "/subdir/subsubdir/test.txt", "Hello, world!");
-                });
-
-                afterEach(async () => {
-                    await impl.delete(dirPath);
-                });
-
-                it("should delete a file", async () => {
-                    const filePath = dirPath + "/subdir/subsubdir/test.txt";
-                    await impl.delete(filePath);
-
-                    assert.strictEqual(await impl.isFile(filePath), false);
-                });
-
-                it("should delete a directory", async () => {
-                    const subsubdirPath = dirPath + "/subdir/subsubdir";
-                    await impl.delete(subsubdirPath);
-
-                    assert.strictEqual(await impl.isDirectory(subsubdirPath), false);
-                });
-
-                it("should delete a directory recursively", async () => {
-                    const subdirPath = dirPath + "/subdir";
-                    await impl.delete(subdirPath);
-
-                    assert.strictEqual(await impl.isDirectory(subdirPath), false);
-                });
-
-                it("should reject a promise when the file or directory doesn't exist", async () => {
-                    const filePath = dirPath + "/nonexistent.txt";
-                    assert.strictEqual(await impl.isFile(filePath), false);
-                });
-
-            });
-        });
-
-    }
+				it("should reject a promise when the file or directory doesn't exist", async () => {
+					const filePath = dirPath + "/nonexistent.txt";
+					assert.strictEqual(await impl.isFile(filePath), false);
+				});
+			});
+		});
+	}
 }

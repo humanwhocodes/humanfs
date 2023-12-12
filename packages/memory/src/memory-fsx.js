@@ -20,14 +20,13 @@ import { Fsx } from "@fsx/core";
 // Helpers
 //-----------------------------------------------------------------------------
 
-
 /**
  * Checks if a value is a file.
  * @param {string|ArrayBuffer|object|undefined} value The value to check.
  * @returns {boolean} True if the value is a file, false if not.
  */
 function isFile(value) {
-    return typeof value === 'string' || value instanceof ArrayBuffer;
+	return typeof value === "string" || value instanceof ArrayBuffer;
 }
 
 /**
@@ -36,7 +35,7 @@ function isFile(value) {
  * @returns {boolean} True if the value is a directory, false if not.
  */
 function isDirectory(value) {
-    return typeof value === 'object' && !isFile(value);
+	return typeof value === "object" && !isFile(value);
 }
 
 /**
@@ -45,24 +44,23 @@ function isDirectory(value) {
  * @returns {string} The normalized path.
  */
 function normalizePath(filePath) {
+	let startIndex = 0;
+	let endIndex = filePath.length;
 
-    let startIndex = 0;
-    let endIndex = filePath.length;
+	// strip off any leading ./ or / characters
+	if (filePath.startsWith("./")) {
+		startIndex = 2;
+	}
 
-    // strip off any leading ./ or / characters
-    if (filePath.startsWith("./")) {
-        startIndex = 2;
-    }
+	if (filePath.startsWith("/")) {
+		startIndex = 1;
+	}
 
-    if (filePath.startsWith("/")) {
-        startIndex = 1;
-    }
+	if (filePath.endsWith("/")) {
+		endIndex = filePath.length - 1;
+	}
 
-    if (filePath.endsWith("/")) {
-        endIndex = filePath.length - 1;
-    }
-
-    return filePath.slice(startIndex, endIndex).replace(/\\/g, "/");
+	return filePath.slice(startIndex, endIndex).replace(/\\/g, "/");
 }
 
 /**
@@ -72,22 +70,21 @@ function normalizePath(filePath) {
  * @returns {{object:object,key:string}|undefined} The file or directory found.
  */
 function findPath(volume, fileOrDirPath) {
-    const parts = normalizePath(fileOrDirPath).split("/");
-    
-    let object = volume;
-    let key = parts.shift();
+	const parts = normalizePath(fileOrDirPath).split("/");
 
-    while (object[key]) {
+	let object = volume;
+	let key = parts.shift();
 
-        if (parts.length === 0) {
-            return { object, key };
-        }
+	while (object[key]) {
+		if (parts.length === 0) {
+			return { object, key };
+		}
 
-        object = object[key];
-        key = parts.shift();
-    }
+		object = object[key];
+		key = parts.shift();
+	}
 
-    return undefined;
+	return undefined;
 }
 
 /**
@@ -95,16 +92,16 @@ function findPath(volume, fileOrDirPath) {
  * @param {object} volume The volume to search.
  * @param {string} fileOrDirPath The path to the file or directory to find.
  * @returns {string|ArrayBuffer|object|undefined} The file or directory found.
- */ 
+ */
 function readPath(volume, fileOrDirPath) {
-    const location = findPath(volume, fileOrDirPath);
+	const location = findPath(volume, fileOrDirPath);
 
-    if (!location) {
-        return undefined;
-    }
+	if (!location) {
+		return undefined;
+	}
 
-    const { object, key } = location;
-    return object[key];
+	const { object, key } = location;
+	return object[key];
 }
 
 /**
@@ -115,29 +112,27 @@ function readPath(volume, fileOrDirPath) {
  * @returns {void}
  */
 function writePath(volume, fileOrDirPath, value) {
-    const parts = normalizePath(fileOrDirPath).split("/");
-    let part = parts.shift();
-    let object = volume;
+	const parts = normalizePath(fileOrDirPath).split("/");
+	let part = parts.shift();
+	let object = volume;
 
-    do {
-        let entry = object[part];
+	do {
+		let entry = object[part];
 
-        if (!entry) {
-            entry = object[part] = {};
-        }
+		if (!entry) {
+			entry = object[part] = {};
+		}
 
-        object = entry;
-        part = parts.shift();
+		object = entry;
+		part = parts.shift();
+	} while (parts.length > 0);
 
-    } while (parts.length > 0);
+	// we don't want to overwrite an existing directory
+	if (object && isDirectory(object[part]) && isDirectory(value)) {
+		return;
+	}
 
-    // we don't want to overwrite an existing directory
-    if (object && isDirectory(object[part]) && isDirectory(value)) {
-        return;
-
-    }
-
-    object[part] = value;
+	object[part] = value;
 }
 
 //-----------------------------------------------------------------------------
@@ -149,187 +144,188 @@ function writePath(volume, fileOrDirPath, value) {
  * @implements {FsxImpl}
  */
 export class MemoryFsxImpl {
+	/**
+	 * The in-memory file system volume to use.
+	 * @type {object}
+	 */
+	#volume;
 
-    /**
-     * The in-memory file system volume to use.
-     * @type {object}
-     */
-    #volume;
+	/**
+	 * Creates a new instance.
+	 * @param {object} options The options for the instance.
+	 * @param {object} options.volume The in-memory file system volume to use.
+	 */
+	constructor({ volume }) {
+		this.#volume = volume;
+	}
 
-    /**
-     * Creates a new instance.
-     * @param {object} options The options for the instance.
-     * @param {object} options.volume The in-memory file system volume to use.
-     */
-    constructor({ volume }) {
-        this.#volume = volume;
-    }
+	/**
+	 * Reads a file and returns the contents as a string.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
+	 *     the file or undefined if the file does not exist.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {RangeError} If the file path is not absolute.
+	 * @throws {RangeError} If the file path is not a file.
+	 * @throws {RangeError} If the file path is not readable.
+	 */
+	async text(filePath) {
+		if (typeof filePath !== "string") {
+			throw new TypeError("filePath must be a string.");
+		}
 
-    /**
-     * Reads a file and returns the contents as a string.
-     * @param {string} filePath The path to the file to read.
-     * @returns {Promise<string|undefined>} A promise that resolves with the contents of
-     *     the file or undefined if the file does not exist.
-     * @throws {TypeError} If the file path is not a string.
-     * @throws {RangeError} If the file path is not absolute.
-     * @throws {RangeError} If the file path is not a file.
-     * @throws {RangeError} If the file path is not readable.
-     */ 
-    async text(filePath) {
+		const value = readPath(this.#volume, filePath);
 
-        if (typeof filePath !== "string") {
-            throw new TypeError("filePath must be a string.");
-        }
+		if (!isFile(value)) {
+			return undefined;
+		}
 
-        const value = readPath(this.#volume, filePath);
-        
-        if (!isFile(value)) {
-            return undefined;
-        }
+		if (value instanceof ArrayBuffer) {
+			return new TextDecoder().decode(value);
+		}
 
-        if (value instanceof ArrayBuffer) {
-            return new TextDecoder().decode(value);
-        }
-        
-        return value;
-    }
+		return value;
+	}
 
-    /**
-     * Reads a file and returns the contents as a JSON object.
-     * @param {string} filePath The path to the file to read.
-     * @returns {Promise<object|null>} A promise that resolves with the contents of
-     *    the file or undefined if the file does not exist.
-     * @throws {SyntaxError} If the file contents are not valid JSON.
-     * @throws {Error} If the file cannot be read.
-     * @throws {TypeError} If the file path is not a string.
-     */
-    async json(filePath) {
-        return this.text(filePath).then(text => text === undefined ? text : JSON.parse(text));
-    }
+	/**
+	 * Reads a file and returns the contents as a JSON object.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<object|null>} A promise that resolves with the contents of
+	 *    the file or undefined if the file does not exist.
+	 * @throws {SyntaxError} If the file contents are not valid JSON.
+	 * @throws {Error} If the file cannot be read.
+	 * @throws {TypeError} If the file path is not a string.
+	 */
+	async json(filePath) {
+		return this.text(filePath).then(text =>
+			text === undefined ? text : JSON.parse(text),
+		);
+	}
 
-    /**
-     * Reads a file and returns the contents as an ArrayBuffer.
-     * @param {string} filePath The path to the file to read.
-     * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
-     *    of the file or undefined if the file does not exist.
-     * @throws {Error} If the file cannot be read.
-     * @throws {TypeError} If the file path is not a string.
-     */
-    async arrayBuffer(filePath) {
+	/**
+	 * Reads a file and returns the contents as an ArrayBuffer.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
+	 *    of the file or undefined if the file does not exist.
+	 * @throws {Error} If the file cannot be read.
+	 * @throws {TypeError} If the file path is not a string.
+	 */
+	async arrayBuffer(filePath) {
+		if (typeof filePath !== "string") {
+			throw new TypeError("filePath must be a string.");
+		}
 
-        if (typeof filePath !== "string") {
-            throw new TypeError("filePath must be a string.");
-        }
+		const value = readPath(this.#volume, filePath);
 
-        const value = readPath(this.#volume, filePath);
+		if (!isFile(value)) {
+			return undefined;
+		}
 
-        if (!isFile(value)) {
-            return undefined;
-        }
+		if (typeof value === "string") {
+			return new TextEncoder().encode(value).buffer;
+		}
 
-        if (typeof value === "string") {
-            return new TextEncoder().encode(value).buffer;
-        }
+		return value;
+	}
 
-        return value;
-    }
+	/**
+	 * Writes a value to a file.
+	 * @param {string} filePath The path to the file to write.
+	 * @param {string|ArrayBuffer} contents The contents to write to the
+	 *   file.
+	 * @returns {Promise<void>} A promise that resolves when the file is
+	 *  written.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {Error} If the file cannot be written.
+	 */
+	async write(filePath, contents) {
+		if (typeof filePath !== "string") {
+			throw new TypeError("filePath must be a string.");
+		}
 
-    /**
-     * Writes a value to a file.
-     * @param {string} filePath The path to the file to write.
-     * @param {string|ArrayBuffer} contents The contents to write to the
-     *   file.
-     * @returns {Promise<void>} A promise that resolves when the file is
-     *  written.
-     * @throws {TypeError} If the file path is not a string.
-     * @throws {Error} If the file cannot be written.
-     */
-    async write(filePath, contents) {
+		if (typeof contents === "string" || contents instanceof ArrayBuffer) {
+			return writePath(this.#volume, filePath, contents);
+		} else {
+			throw new TypeError(
+				"Invalid contents type. Expected string or ArrayBuffer.",
+			);
+		}
+	}
 
-        if (typeof filePath !== "string") {
-            throw new TypeError("filePath must be a string.");
-        }
+	/**
+	 * Checks if a file exists.
+	 * @param {string} filePath The path to the file to check.
+	 * @returns {Promise<boolean>} A promise that resolves with true if the
+	 *    file exists or false if it does not.
+	 * @throws {TypeError} If the file path is not a string.
+	 */
+	async isFile(filePath) {
+		const location = findPath(this.#volume, filePath);
 
-        if (typeof contents === 'string' || contents instanceof ArrayBuffer) {
-            return writePath(this.#volume, filePath, contents);
-        } else {
-            throw new TypeError('Invalid contents type. Expected string or ArrayBuffer.');
-        }
-    }
+		if (!location) {
+			return false;
+		}
 
-    /**
-     * Checks if a file exists.
-     * @param {string} filePath The path to the file to check.
-     * @returns {Promise<boolean>} A promise that resolves with true if the
-     *    file exists or false if it does not.
-     * @throws {TypeError} If the file path is not a string.
-     */
-    async isFile(filePath) {
-        const location = findPath(this.#volume, filePath);
+		const { object, key } = location;
 
-        if (!location) {
-            return false;
-        }
+		return isFile(object[key]);
+	}
 
-        const { object, key } = location;
+	/**
+	 * Checks if a directory exists.
+	 * @param {string} dirPath The path to the directory to check.
+	 * @returns {Promise<boolean>} A promise that resolves with true if the
+	 *    directory exists or false if it does not.
+	 * @throws {TypeError} If the directory path is not a string.
+	 */
+	async isDirectory(dirPath) {
+		const location = findPath(this.#volume, dirPath);
 
-        return isFile(object[key])
-    }
+		if (!location) {
+			return false;
+		}
 
-    /**
-     * Checks if a directory exists.
-     * @param {string} dirPath The path to the directory to check.
-     * @returns {Promise<boolean>} A promise that resolves with true if the
-     *    directory exists or false if it does not.
-     * @throws {TypeError} If the directory path is not a string.
-     */
-    async isDirectory(dirPath) {
-        const location = findPath(this.#volume, dirPath);
-        
-        if (!location) {
-            return false;
-        }
+		const { object, key } = location;
+		return isDirectory(object[key]);
+	}
 
-        const { object, key } = location;
-        return isDirectory(object[key])
-    }
+	/**
+	 * Creates a directory recursively.
+	 * @param {string} dirPath The path to the directory to create.
+	 * @returns {Promise<void>} A promise that resolves when the directory is
+	 *   created.
+	 */
+	async createDirectory(dirPath) {
+		writePath(this.#volume, dirPath, {});
+	}
 
-    /**
-     * Creates a directory recursively.
-     * @param {string} dirPath The path to the directory to create.
-     * @returns {Promise<void>} A promise that resolves when the directory is
-     *   created.
-     */
-    async createDirectory(dirPath) {
-        writePath(this.#volume, dirPath, {});
-    }
+	/**
+	 * Deletes a file or directory recursively.
+	 * @param {string} fileOrDirPath The path to the file or directory to
+	 *   delete.
+	 * @returns {Promise<void>} A promise that resolves when the file or
+	 *   directory is deleted.
+	 * @throws {TypeError} If the file or directory path is not a string.
+	 * @throws {Error} If the file or directory cannot be deleted.
+	 * @throws {Error} If the file or directory is not found.
+	 */
+	async delete(fileOrDirPath) {
+		if (typeof fileOrDirPath !== "string") {
+			throw new TypeError("fileOrDirPath must be a string.");
+		}
 
-    /**
-     * Deletes a file or directory recursively.
-     * @param {string} fileOrDirPath The path to the file or directory to
-     *   delete.
-     * @returns {Promise<void>} A promise that resolves when the file or
-     *   directory is deleted.
-     * @throws {TypeError} If the file or directory path is not a string.
-     * @throws {Error} If the file or directory cannot be deleted.
-     * @throws {Error} If the file or directory is not found.
-     */
-    async delete(fileOrDirPath) {
+		const location = findPath(this.#volume, fileOrDirPath);
 
-        if (typeof fileOrDirPath !== "string") {
-            throw new TypeError("fileOrDirPath must be a string.");
-        }
+		if (!location) {
+			throw new Error(
+				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
+			);
+		}
 
-        const location = findPath(this.#volume, fileOrDirPath);
+		const { object, key } = location;
 
-        if (!location) {
-            throw new Error(`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`);
-        }
-
-        const { object, key } = location;
-
-        delete object[key];
-    }
+		delete object[key];
+	}
 }
 
 /**
@@ -337,15 +333,14 @@ export class MemoryFsxImpl {
  * @implements {FsxImpl}
  */
 export class MemoryFsx extends Fsx {
-
-    /**
-     * Creates a new instance.
-     * @param {object} options The options for the instance.
-     * @param {object} [options.volume] The in-memory file system volume to use.
-     */
-    constructor({ volume } = {}) {
-        super({ impl: new MemoryFsxImpl({ volume })});
-    }
+	/**
+	 * Creates a new instance.
+	 * @param {object} options The options for the instance.
+	 * @param {object} [options.volume] The in-memory file system volume to use.
+	 */
+	constructor({ volume } = {}) {
+		super({ impl: new MemoryFsxImpl({ volume }) });
+	}
 }
 
 export const fsx = new MemoryFsx();

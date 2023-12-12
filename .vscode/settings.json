@@ -1,6 +1,4 @@
 {
-    "deno.lint": false,
-    "deno.enablePaths": [
-        "packages/deno"
-    ]
+  "deno.lint": false,
+  "deno.enablePaths": ["packages/deno"]
 }

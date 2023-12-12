@@ -23,12 +23,12 @@ const fixturesDir = "fixtures";
 //------------------------------------------------------------------------------
 
 const tester = new FsxImplTester({
-    outputDir: fixturesDir,
-    assert,
-    test: globalThis
+	outputDir: fixturesDir,
+	assert,
+	test: globalThis,
 });
 
 await tester.test({
-    name: "MemoryFsxImpl",
-    impl: new MemoryFsxImpl({ volume })
+	name: "MemoryFsxImpl",
+	impl: new MemoryFsxImpl({ volume }),
 });

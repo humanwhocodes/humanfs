@@ -54,6 +54,14 @@ To lint and fix everything:
 npm run lint:fix
 ```
 
+### Formatting
+
+To format all files:
+
+```shell
+npm run fmt
+```
+
 ## License
 
 Apache 2.0

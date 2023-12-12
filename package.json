@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm test --workspaces --if-present",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "fmt": "prettier --write ."
   },
   "workspaces": [
     "packages/*"
@@ -16,13 +17,15 @@
   },
   "lint-staged": {
     "*.js": [
-      "eslint --fix"
+      "eslint --fix",
+      "prettier --write"
     ]
   },
   "devDependencies": {
     "@eslint/js": "^8.55.0",
     "eslint": "^8.55.0",
     "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
     "yorkie": "^2.0.0"
   }
 }

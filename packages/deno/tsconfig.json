@@ -1,22 +1,15 @@
 {
-    "files": [
-        "src/deno.d.ts",
-        "src/deno-fsx.js"
-    ],
-    "compilerOptions": {
-        "declaration": true,
-        "emitDeclarationOnly": true,
-        "allowJs": true,
-        "checkJs": true,
-        "outDir": "dist",
-        "target":"ES2022",
-        "moduleResolution": "NodeNext",
-        "module": "NodeNext",
-        "types": [
-            "node"
-        ],
-        "typeRoots": [
-            "../../node_modules/@types"
-        ]
-    }
+  "files": ["src/deno.d.ts", "src/deno-fsx.js"],
+  "compilerOptions": {
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "allowJs": true,
+    "checkJs": true,
+    "outDir": "dist",
+    "target": "ES2022",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "types": ["node"],
+    "typeRoots": ["../../node_modules/@types"]
+  }
 }

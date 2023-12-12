@@ -39,7 +39,6 @@ import { fsx } from "@fsx/node";
 Then, you can use the API methods:
 
 ```js
-
 // 1. Files
 
 // read from a text file
@@ -87,7 +86,7 @@ const fsx = new NodeFsx();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new NodeFsx({ volume })
+const fsx = new NodeFsx({ volume });
 ```
 
 If you'd like to use just the impl, import the `NodeFsxImpl` constructor:
@@ -99,9 +98,8 @@ const fsx = new NodeFsxImpl();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new NodeFsxImpl({ volume })
+const fsx = new NodeFsxImpl({ volume });
 ```
-
 
 ## License
 

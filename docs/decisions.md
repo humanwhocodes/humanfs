@@ -64,7 +64,7 @@ While there is an argument for end-user convenience, having the same method beha
 
 # 2023-11-17 Impl can only be set once
 
-## Background 
+## Background
 
 While the `impl` concept is powerful, allowing users to override the `impl` without editing the code it affects, it does come with a price: it's not always clear whether an `Fsx` instance is using the base `impl` or an overridden one. The `isBaseImpl()` method provides a way to determine this programmatically, but that requires users to call it before proceeding.
 

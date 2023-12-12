@@ -14,9 +14,9 @@ Set up a `deno.json` file like this:
 
 ```json
 {
-    "imports": {
-        "@fsx/deno": "npm:@fsx/deno@latest"
-    }
+	"imports": {
+		"@fsx/deno": "npm:@fsx/deno@latest"
+	}
 }
 ```
 
@@ -31,7 +31,6 @@ import { fsx } from "@fsx/deno";
 Then, you can use the API methods:
 
 ```js
-
 // 1. Files
 
 // read from a text file
@@ -79,7 +78,7 @@ const fsx = new DenoFsx();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new DenoFsx({ volume })
+const fsx = new DenoFsx({ volume });
 ```
 
 If you'd like to use just the impl, import the `DenoFsxImpl` constructor:
@@ -91,9 +90,8 @@ const fsx = new DenoFsxImpl();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new DenoFsxImpl({ volume })
+const fsx = new DenoFsxImpl({ volume });
 ```
-
 
 ## License
 

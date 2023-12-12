@@ -27,12 +27,12 @@ const fixturesDir = path.resolve(__dirname, "fixtures/tmp");
 //------------------------------------------------------------------------------
 
 const tester = new FsxImplTester({
-    outputDir: fixturesDir,
-    assert,
-    test: globalThis
+	outputDir: fixturesDir,
+	assert,
+	test: globalThis,
 });
 
 await tester.test({
-    name: "NodeFsxImpl",
-    impl: new NodeFsxImpl({ fs })
+	name: "NodeFsxImpl",
+	impl: new NodeFsxImpl({ fs }),
 });
