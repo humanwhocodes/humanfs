@@ -110,10 +110,6 @@ export class NodeFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		if (typeof filePath !== "string") {
-			throw new TypeError("filePath must be a string.");
-		}
-
 		if (typeof contents === "string" || contents instanceof ArrayBuffer) {
 			const value =
 				contents instanceof ArrayBuffer

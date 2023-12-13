@@ -38,6 +38,18 @@ export class ImplAreadySetError extends Error {
 	}
 }
 
+/**
+ * Asserts that the given path is a valid file path.
+ * @param {string} fileOrDirPath The path to check.
+ * @returns {void}
+ * @throws {TypeError} When the path is not a non-empty string.
+ */
+function assertValidFileOrDirPath(fileOrDirPath) {
+	if (!fileOrDirPath || typeof fileOrDirPath !== "string") {
+		throw new TypeError("Path must be a non-empty string.");
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Exports
 //-----------------------------------------------------------------------------
@@ -217,8 +229,10 @@ export class Fsx {
 	 * @param {string} filePath The file to read.
 	 * @returns {Promise<string>} The contents of the file.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
 	async text(filePath) {
+		assertValidFileOrDirPath(filePath);
 		return this.#callImplMethod("text", filePath);
 	}
 
@@ -227,8 +241,11 @@ export class Fsx {
 	 * @param {string} filePath The file to read.
 	 * @returns {Promise<any>} The contents of the file as JSON.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {SyntaxError} When the file contents are not valid JSON.
+	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
 	async json(filePath) {
+		assertValidFileOrDirPath(filePath);
 		return this.#callImplMethod("json", filePath);
 	}
 
@@ -237,8 +254,10 @@ export class Fsx {
 	 * @param {string} filePath The file to read.
 	 * @returns {Promise<ArrayBuffer>} The contents of the file as an ArrayBuffer.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
 	async arrayBuffer(filePath) {
+		assertValidFileOrDirPath(filePath);
 		return this.#callImplMethod("arrayBuffer", filePath);
 	}
 
@@ -248,8 +267,10 @@ export class Fsx {
 	 * @param {any} data The data to write.
 	 * @returns {Promise<void>} A promise that resolves when the file is written.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
 	async write(filePath, data) {
+		assertValidFileOrDirPath(filePath);
 		return this.#callImplMethod("write", filePath, data);
 	}
 }

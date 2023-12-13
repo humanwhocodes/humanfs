@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
-    "test": "node --test ./tests/"
+    "test": "mocha tests"
   },
   "repository": {
     "type": "git",
@@ -32,7 +32,8 @@
   },
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "@fsx/types": "^0.0.0"
+    "@fsx/types": "^0.0.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
   }
 }

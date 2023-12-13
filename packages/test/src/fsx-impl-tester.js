@@ -213,15 +213,6 @@ export class FsxImplTester {
 					assert.strictEqual(result, "Hello, world!");
 				});
 
-				it("should reject a promise when the argument is not a string or ArrayBuffer", async () => {
-					const filePath =
-						this.#outputDir + "/tmp-write/test-generated-text.txt";
-					// @ts-ignore
-					return assert.rejects(
-						() => impl.write(filePath, 42),
-						/Invalid contents type/,
-					);
-				});
 			});
 
 			describe("isFile()", () => {

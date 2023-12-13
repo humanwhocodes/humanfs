@@ -1,3 +1,17 @@
+# 2023-12-13 `Fsx` should handle validating parameters
+
+## Background
+
+In the beginning, it was up to each impl to validate the input it was passed and throw an appropriate error. 
+
+## Decision
+
+The `Fsx` class should handle parameter validation for all of its methods.
+
+## Rationale
+
+Asking impl implementors to all implement the same input validation is a waste of everyone's time. Because an impl is designed to be used inside of `Fsx`, I can lighten implementor burden by handling parameter validation centrally and remove that from the requirements for writing an impl.
+
 # 2023-12-07 The `text()`, `json()`, and `arrayBuffer()` methods will not throw on a missing file
 
 ## Background

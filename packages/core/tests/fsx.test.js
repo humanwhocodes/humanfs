@@ -7,7 +7,6 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { describe, it } from "node:test";
 import { Fsx, NoSuchMethodError, ImplAreadySetError } from "../src/fsx.js";
 import assert from "node:assert";
 
@@ -109,7 +108,7 @@ describe("Fsx", () => {
 	});
 
 	describe("logStart() and logEnd()", () => {
-		it("should start a new log and add an entry", () => {
+		it("should start a new log and add an entry", async () => {
 			const fsx = new Fsx({
 				impl: {
 					text() {
@@ -119,7 +118,7 @@ describe("Fsx", () => {
 			});
 
 			fsx.logStart("test");
-			fsx.text("/path/to/file.txt");
+			await fsx.text("/path/to/file.txt");
 			const logs = fsx.logEnd("test").map(stripTimestamp);
 			assert.deepStrictEqual(logs, [
 				{
@@ -129,7 +128,7 @@ describe("Fsx", () => {
 			]);
 		});
 
-		it("should start two new logs and add an entry to both", () => {
+		it("should start two new logs and add an entry to both", async () => {
 			const fsx = new Fsx({
 				impl: {
 					text() {
@@ -140,7 +139,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("test1");
 			fsx.logStart("test2");
-			fsx.text("/path/to/file.txt");
+			await fsx.text("/path/to/file.txt");
 			const logs1 = fsx.logEnd("test1").map(stripTimestamp);
 			const logs2 = fsx.logEnd("test2").map(stripTimestamp);
 
@@ -156,6 +155,283 @@ describe("Fsx", () => {
 					args: ["/path/to/file.txt"],
 				},
 			]);
+		});
+	});
+
+	describe("text", () => {
+		
+		it("should return the text from the file", async () => {
+			const fsx = new Fsx({
+				impl: {
+					text() {
+						return "Hello, world!";
+					},
+				},
+			});
+
+			const result = await fsx.text("/path/to/file.txt");
+			assert.strictEqual(result, "Hello, world!");
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					text() {
+						return "Hello, world!";
+					},
+				},
+			});
+
+			fsx.logStart("text");
+			fsx.text("/path/to/file.txt");
+			const logs = fsx.logEnd("text").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "text",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should throw an error when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					text() {
+						return "Hello, world!";
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.text(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should throw an error when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					text() {
+						return "Hello, world!";
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.text(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+	});
+
+	describe("json", () => {
+
+		it("should return the JSON from the file", async () => {
+			const fsx = new Fsx({
+				impl: {
+					json() {
+						return { foo: "bar" };
+					},
+				},
+			});
+
+			const result = await fsx.json("/path/to/file.txt");
+			assert.deepStrictEqual(result, { foo: "bar" });
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					json() {
+						return { foo: "bar" };
+					},
+				},
+			});
+
+			fsx.logStart("json");
+			await fsx.json("/path/to/file.txt");
+			const logs = fsx.logEnd("json").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "json",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should throw an error when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					json() {
+						return { foo: "bar" };
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.json(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should throw an error when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					json() {
+						return { foo: "bar" };
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.json(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+	});
+
+	describe("arrayBuffer", () => {
+
+		it("should return the ArrayBuffer from the file", async () => {
+
+			const fsx = new Fsx({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			const result = await fsx.arrayBuffer("/path/to/file.txt");
+			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			fsx.logStart("arrayBuffer");
+			await fsx.arrayBuffer("/path/to/file.txt");
+			const logs = fsx.logEnd("arrayBuffer").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "arrayBuffer",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should throw an error when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.arrayBuffer(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should throw an error when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.arrayBuffer(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+	});
+
+	describe("write()", () => {
+
+		it("should not throw an error when the file path is a string", async () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			await fsx.write("/path/to/file.txt", "Hello, world!");
+		});
+
+		it("should not throw an error when the file path is an ArrayBuffer", async () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			await fsx.write("/path/to/file.txt", new Uint8Array([1, 2, 3]).buffer);
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			fsx.logStart("write");
+			await fsx.write("/path/to/file.txt", "Hello, world!");
+			const logs = fsx.logEnd("write").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "write",
+					args: ["/path/to/file.txt", "Hello, world!"],
+				},
+			]);
+		});
+
+		it("should throw an error when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.write(123, "Hello, world!"),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should throw an error when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.write("", "Hello, world!"),
+				new TypeError("File path must be a non-empty string."),
+			);
 		});
 	});
 });

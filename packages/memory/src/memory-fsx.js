@@ -170,10 +170,6 @@ export class MemoryFsxImpl {
 	 * @throws {RangeError} If the file path is not readable.
 	 */
 	async text(filePath) {
-		if (typeof filePath !== "string") {
-			throw new TypeError("filePath must be a string.");
-		}
-
 		const value = readPath(this.#volume, filePath);
 
 		if (!isFile(value)) {
@@ -211,10 +207,6 @@ export class MemoryFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async arrayBuffer(filePath) {
-		if (typeof filePath !== "string") {
-			throw new TypeError("filePath must be a string.");
-		}
-
 		const value = readPath(this.#volume, filePath);
 
 		if (!isFile(value)) {
@@ -239,10 +231,6 @@ export class MemoryFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		if (typeof filePath !== "string") {
-			throw new TypeError("filePath must be a string.");
-		}
-
 		if (typeof contents === "string" || contents instanceof ArrayBuffer) {
 			return writePath(this.#volume, filePath, contents);
 		} else {
@@ -310,10 +298,6 @@ export class MemoryFsxImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
-		if (typeof fileOrDirPath !== "string") {
-			throw new TypeError("fileOrDirPath must be a string.");
-		}
-
 		const location = findPath(this.#volume, fileOrDirPath);
 
 		if (!location) {
