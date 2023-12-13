@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 
 import { Fsx } from "@fsx/core";
-import * as path from "https://deno.land/std/path/mod.ts";
+import path from "node:path";
 
 //-----------------------------------------------------------------------------
 // Exports
