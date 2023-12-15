@@ -72,17 +72,18 @@ function assertValidFileContents(contents) {
  * A class representing a log entry.
  */
 export class LogEntry {
-	/**
-	 * The name of the method called.
-	 * @type {string}
-	 */
-	methodName;
 
 	/**
-	 * The arguments to the method.
-	 * @type {any[]}
+	 * The type of log entry.
+	 * @type {string}
 	 */
-	args;
+	#type;
+
+	/**
+	 * The data associated with the log entry.
+	 * @type {any}
+	 */
+	#data;
 
 	/**
 	 * The time at which the log entry was created.
@@ -92,12 +93,12 @@ export class LogEntry {
 
 	/**
 	 * Creates a new instance.
-	 * @param {string} methodName The name of the method called.
-	 * @param {any[]} args The arguments to the method.
+	 * @param {string} type The type of log entry.
+	 * @param {any} [data] The data associated with the log entry.
 	 */
-	constructor(methodName, args) {
-		this.methodName = methodName;
-		this.args = args;
+	constructor(type, data) {
+		this.methodName = type;
+		this.data = data;
 	}
 }
 
@@ -142,7 +143,7 @@ export class Fsx {
 	 */
 	#log(methodName, ...args) {
 		for (const logs of this.#logs.values()) {
-			logs.push(new LogEntry(methodName, args));
+			logs.push(new LogEntry("call", { methodName, args }));
 		}
 	}
 

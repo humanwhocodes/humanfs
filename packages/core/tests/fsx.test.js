@@ -19,8 +19,8 @@ import assert from "node:assert";
  * @param {LogEntry} logEntry The log entry to strip.
  * @returns {object} The log entry without the timestamp.
  */
-function stripTimestamp({ timestamp, ...rest }) {
-	return rest;
+function normalizeLogEntry(logEntry) {
+	return logEntry.data;
 }
 
 //------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("test");
 			await fsx.text("/path/to/file.txt");
-			const logs = fsx.logEnd("test").map(stripTimestamp);
+			const logs = fsx.logEnd("test").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "text",
@@ -140,8 +140,8 @@ describe("Fsx", () => {
 			fsx.logStart("test1");
 			fsx.logStart("test2");
 			await fsx.text("/path/to/file.txt");
-			const logs1 = fsx.logEnd("test1").map(stripTimestamp);
-			const logs2 = fsx.logEnd("test2").map(stripTimestamp);
+			const logs1 = fsx.logEnd("test1").map(normalizeLogEntry);
+			const logs2 = fsx.logEnd("test2").map(normalizeLogEntry);
 
 			assert.deepStrictEqual(logs1, [
 				{
@@ -184,7 +184,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("text");
 			fsx.text("/path/to/file.txt");
-			const logs = fsx.logEnd("text").map(stripTimestamp);
+			const logs = fsx.logEnd("text").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "text",
@@ -250,7 +250,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("json");
 			await fsx.json("/path/to/file.txt");
-			const logs = fsx.logEnd("json").map(stripTimestamp);
+			const logs = fsx.logEnd("json").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "json",
@@ -317,7 +317,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("arrayBuffer");
 			await fsx.arrayBuffer("/path/to/file.txt");
-			const logs = fsx.logEnd("arrayBuffer").map(stripTimestamp);
+			const logs = fsx.logEnd("arrayBuffer").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "arrayBuffer",
@@ -395,7 +395,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("write");
 			await fsx.write("/path/to/file.txt", "Hello, world!");
-			const logs = fsx.logEnd("write").map(stripTimestamp);
+			const logs = fsx.logEnd("write").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "write",
@@ -489,7 +489,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("isFile");
 			await fsx.isFile("/path/to/file.txt");
-			const logs = fsx.logEnd("isFile").map(stripTimestamp);
+			const logs = fsx.logEnd("isFile").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "isFile",
@@ -569,7 +569,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("isDirectory");
 			await fsx.isDirectory("/path/to/dir");
-			const logs = fsx.logEnd("isDirectory").map(stripTimestamp);
+			const logs = fsx.logEnd("isDirectory").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "isDirectory",
@@ -636,7 +636,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("createDirectory");
 			await fsx.createDirectory("/path/to/dir");
-			const logs = fsx.logEnd("createDirectory").map(stripTimestamp);
+			const logs = fsx.logEnd("createDirectory").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "createDirectory",
@@ -702,7 +702,7 @@ describe("Fsx", () => {
 
 			fsx.logStart("delete");
 			await fsx.delete("/path/to/file.txt");
-			const logs = fsx.logEnd("delete").map(stripTimestamp);
+			const logs = fsx.logEnd("delete").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "delete",
