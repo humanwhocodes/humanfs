@@ -109,15 +109,6 @@ export class DenoFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		if (
-			typeof contents !== "string" &&
-			!(contents instanceof ArrayBuffer)
-		) {
-			throw new TypeError(
-				"Invalid contents type. Expected string or ArrayBuffer.",
-			);
-		}
-
 		const op =
 			typeof contents === "string"
 				? () =>

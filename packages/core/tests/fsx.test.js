@@ -433,5 +433,20 @@ describe("Fsx", () => {
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
+
+		it("should throw an error when the contents are not a string or ArrayBuffer", () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.write("/path/to/file.txt", 123),
+				new TypeError("File contents must be a string or ArrayBuffer."),
+			);
+		});
 	});
 });

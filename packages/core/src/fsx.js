@@ -50,6 +50,20 @@ function assertValidFileOrDirPath(fileOrDirPath) {
 	}
 }
 
+/**
+ * Asserts that the given file contents are valid.
+ * @param {any} contents The contents to check.
+ * @returns {void}
+ * @throws {TypeError} When the contents are not a string or ArrayBuffer.
+ */
+function assertValidFileContents(contents) {
+	if (typeof contents !== "string" && !(contents instanceof ArrayBuffer)) {
+		throw new TypeError(
+			"Invalid contents type. Expected string or ArrayBuffer.",
+		);
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Exports
 //-----------------------------------------------------------------------------
@@ -264,13 +278,14 @@ export class Fsx {
 	/**
 	 * Writes the given data to the given file.
 	 * @param {string} filePath The file to write.
-	 * @param {any} data The data to write.
+	 * @param {any} contents The data to write.
 	 * @returns {Promise<void>} A promise that resolves when the file is written.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
-	async write(filePath, data) {
+	async write(filePath, contents) {
 		assertValidFileOrDirPath(filePath);
-		return this.#callImplMethod("write", filePath, data);
+		assertValidFileContents(contents);
+		return this.#callImplMethod("write", filePath, contents);
 	}
 }

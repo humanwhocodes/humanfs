@@ -110,26 +110,22 @@ export class NodeFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		if (typeof contents === "string" || contents instanceof ArrayBuffer) {
-			const value =
-				contents instanceof ArrayBuffer
-					? Buffer.from(contents)
-					: contents;
-			return this.#fs.writeFile(filePath, value).catch(error => {
-				// the directory may not exist, so create it
-				if (error.code === "ENOENT") {
-					return this.#fs
-						.mkdir(path.dirname(filePath), { recursive: true })
-						.then(() => this.#fs.writeFile(filePath, value));
-				} else {
-					throw error;
-				}
-			});
-		} else {
-			throw new TypeError(
-				"Invalid contents type. Expected string or ArrayBuffer.",
-			);
-		}
+		const value =
+			contents instanceof ArrayBuffer
+				? Buffer.from(contents)
+				: contents;
+
+		return this.#fs.writeFile(filePath, value).catch(error => {
+
+			// the directory may not exist, so create it
+			if (error.code === "ENOENT") {
+				return this.#fs
+					.mkdir(path.dirname(filePath), { recursive: true })
+					.then(() => this.#fs.writeFile(filePath, value));
+			} else {
+				throw error;
+			}
+		});
 	}
 
 	/**

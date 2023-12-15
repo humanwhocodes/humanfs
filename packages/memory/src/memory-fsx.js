@@ -231,13 +231,7 @@ export class MemoryFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		if (typeof contents === "string" || contents instanceof ArrayBuffer) {
-			return writePath(this.#volume, filePath, contents);
-		} else {
-			throw new TypeError(
-				"Invalid contents type. Expected string or ArrayBuffer.",
-			);
-		}
+		return writePath(this.#volume, filePath, contents);
 	}
 
 	/**
