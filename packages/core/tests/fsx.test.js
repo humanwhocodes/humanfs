@@ -30,7 +30,7 @@ function stripTimestamp({ timestamp, ...rest }) {
 describe("Fsx", () => {
 	describe("Missing Methods", () => {
 		["text", "json", "arrayBuffer"].forEach(methodName => {
-			it(`should throw an error when the ${methodName}() method is not present on the impl`, () => {
+			it(`should reject a promise when the ${methodName}() method is not present on the impl`, () => {
 				const fsx = new Fsx({ impl: {} });
 
 				assert.rejects(
@@ -77,7 +77,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should throw an error when setImpl() is called twice", async () => {
+		it("should reject a promise when setImpl() is called twice", async () => {
 			const fsx = new Fsx({ impl: {} });
 			fsx.setImpl({});
 
@@ -193,7 +193,7 @@ describe("Fsx", () => {
 			]);
 		});
 
-		it("should throw an error when the file path is not a string", () => {
+		it("should reject a promise when the file path is not a string", () => {
 			const fsx = new Fsx({
 				impl: {
 					text() {
@@ -208,7 +208,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should throw an error when the file path is empty", () => {
+		it("should reject a promise when the file path is empty", () => {
 			const fsx = new Fsx({
 				impl: {
 					text() {
@@ -259,7 +259,7 @@ describe("Fsx", () => {
 			]);
 		});
 
-		it("should throw an error when the file path is not a string", () => {
+		it("should reject a promise when the file path is not a string", () => {
 			const fsx = new Fsx({
 				impl: {
 					json() {
@@ -274,7 +274,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should throw an error when the file path is empty", () => {
+		it("should reject a promise when the file path is empty", () => {
 			const fsx = new Fsx({
 				impl: {
 					json() {
@@ -326,7 +326,7 @@ describe("Fsx", () => {
 			]);
 		});
 
-		it("should throw an error when the file path is not a string", () => {
+		it("should reject a promise when the file path is not a string", () => {
 			const fsx = new Fsx({
 				impl: {
 					arrayBuffer() {
@@ -341,7 +341,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should throw an error when the file path is empty", () => {
+		it("should reject a promise when the file path is empty", () => {
 			const fsx = new Fsx({
 				impl: {
 					arrayBuffer() {
@@ -360,7 +360,7 @@ describe("Fsx", () => {
 
 	describe("write()", () => {
 
-		it("should not throw an error when the file path is a string", async () => {
+		it("should not reject a promise when the file path is a string", async () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -372,7 +372,7 @@ describe("Fsx", () => {
 			await fsx.write("/path/to/file.txt", "Hello, world!");
 		});
 
-		it("should not throw an error when the file path is an ArrayBuffer", async () => {
+		it("should not reject a promise when the file path is an ArrayBuffer", async () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -404,7 +404,7 @@ describe("Fsx", () => {
 			]);
 		});
 
-		it("should throw an error when the file path is not a string", () => {
+		it("should reject a promise when the file path is not a string", () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -419,7 +419,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should throw an error when the file path is empty", () => {
+		it("should reject a promise when the file path is empty", () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -434,7 +434,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should throw an error when the contents are not a string or ArrayBuffer", () => {
+		it("should reject a promise when the contents are not a string or ArrayBuffer", () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -448,5 +448,298 @@ describe("Fsx", () => {
 				new TypeError("File contents must be a string or ArrayBuffer."),
 			);
 		});
+	});
+
+	describe("isFile()", () => {
+
+		it("should return true when the file exists", async () => {
+			const fsx = new Fsx({
+				impl: {
+					isFile() {
+						return true;
+					},
+				},
+			});
+
+			const result = await fsx.isFile("/path/to/file.txt");
+			assert.strictEqual(result, true);
+		});
+
+		it("should return false when the file does not exist", async () => {
+			const fsx = new Fsx({
+				impl: {
+					isFile() {
+						return false;
+					},
+				},
+			});
+
+			const result = await fsx.isFile("/path/to/file.txt");
+			assert.strictEqual(result, false);
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					isFile() {
+						return true;
+					},
+				},
+			});
+
+			fsx.logStart("isFile");
+			await fsx.isFile("/path/to/file.txt");
+			const logs = fsx.logEnd("isFile").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "isFile",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					isFile() {
+						return true;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.isFile(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					isFile() {
+						return true;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.isFile(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+	});
+
+	describe("isDirectory()", () => {
+
+		it("should return true when the directory exists", async () => {
+			const fsx = new Fsx({
+				impl: {
+					isDirectory() {
+						return true;
+					},
+				},
+			});
+
+			const result = await fsx.isDirectory("/path/to/dir");
+			assert.strictEqual(result, true);
+		});
+
+		it("should return false when the directory does not exist", async () => {
+			const fsx = new Fsx({
+				impl: {
+					isDirectory() {
+						return false;
+					},
+				},
+			});
+
+			const result = await fsx.isDirectory("/path/to/dir");
+			assert.strictEqual(result, false);
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					isDirectory() {
+						return true;
+					},
+				},
+			});
+
+			fsx.logStart("isDirectory");
+			await fsx.isDirectory("/path/to/dir");
+			const logs = fsx.logEnd("isDirectory").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "isDirectory",
+					args: ["/path/to/dir"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the directory path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					isDirectory() {
+						return true;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.isDirectory(123),
+				new TypeError("Directory path must be a non-empty string."),
+			);
+		});
+
+		it("should reject a promise when the directory path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					isDirectory() {
+						return true;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.isDirectory(""),
+				new TypeError("Directory path must be a non-empty string."),
+			);
+		});
+
+	});
+
+	describe("createDirectory()", () => {
+
+		it("should not reject a promise when the directory path is a string", async () => {
+
+			const fsx = new Fsx({
+				impl: {
+					createDirectory() {
+						return undefined;
+					},
+				},
+			});
+
+			await fsx.createDirectory("/path/to/dir");
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					createDirectory() {
+						return undefined;
+					},
+				},
+			});
+
+			fsx.logStart("createDirectory");
+			await fsx.createDirectory("/path/to/dir");
+			const logs = fsx.logEnd("createDirectory").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "createDirectory",
+					args: ["/path/to/dir"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the directory path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					createDirectory() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.createDirectory(123),
+				new TypeError("Directory path must be a non-empty string."),
+			);
+		});
+
+		it("should reject a promise when the directory path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					createDirectory() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.createDirectory(""),
+				new TypeError("Directory path must be a non-empty string."),
+			);
+		});
+
+	});
+
+	describe("delete()", () => {
+
+		it("should not reject a promise when the file path is a string", async () => {
+			const fsx = new Fsx({
+				impl: {
+					delete() {
+						return undefined;
+					},
+				},
+			});
+
+			await fsx.delete("/path/to/file.txt");
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					delete() {
+						return undefined;
+					},
+				},
+			});
+
+			fsx.logStart("delete");
+			await fsx.delete("/path/to/file.txt");
+			const logs = fsx.logEnd("delete").map(stripTimestamp);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "delete",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					delete() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.delete(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					delete() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.delete(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
 	});
 });

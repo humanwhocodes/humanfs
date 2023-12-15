@@ -288,4 +288,52 @@ export class Fsx {
 		assertValidFileContents(contents);
 		return this.#callImplMethod("write", filePath, contents);
 	}
+
+	/**
+	 * Determines if the given file exists.
+	 * @param {string} filePath The file to check.
+	 * @returns {Promise<boolean>} True if the file exists.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file path is not a non-empty string.
+	 */
+	async isFile(filePath) {
+		assertValidFileOrDirPath(filePath);
+		return this.#callImplMethod("isFile", filePath);
+	}
+
+	/**
+	 * Determines if the given directory exists.
+	 * @param {string} dirPath The directory to check.
+	 * @returns {Promise<boolean>} True if the directory exists.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the directory path is not a non-empty string.
+	 */
+	async isDirectory(dirPath) {
+		assertValidFileOrDirPath(dirPath);
+		return this.#callImplMethod("isDirectory", dirPath);
+	}
+
+	/**
+	 * Creates the given directory.
+	 * @param {string} dirPath The directory to create.
+	 * @returns {Promise<void>} A promise that resolves when the directory is created.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the directory path is not a non-empty string.
+	 */
+	async createDirectory(dirPath) {
+		assertValidFileOrDirPath(dirPath);
+		return this.#callImplMethod("createDirectory", dirPath);
+	}
+
+	/**
+	 * Deletes the given file or directory.
+	 * @param {string} fileOrDirPath The file or directory to delete.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is deleted.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file or directory path is not a non-empty string.
+	 */
+	async delete(fileOrDirPath) {
+		assertValidFileOrDirPath(fileOrDirPath);
+		return this.#callImplMethod("delete", fileOrDirPath);
+	}
 }
