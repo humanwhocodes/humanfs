@@ -48,3 +48,4 @@ For information about using the `fsx` object, please see the following:
 * [File Operations](./file-operations.md)
 * [Directory Operations](./directory-operations.md)
 * [Logging](./logging.md)
+* [Using Impls](./using-impls.md)
