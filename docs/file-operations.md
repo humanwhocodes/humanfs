@@ -64,8 +64,8 @@ const bytes = new TextEncoder().encode("Hello world!").buffer;
 fsx.write("/path/to/file.txt", buffer);
 ```
 
-> [!IMPORTANT]
-> There is no method to write JSON values directly to a file. To do so, you'll first need to call `JSON.stringify()` and then call `fsx.write()` with the string value.
+> [!TIP]
+> This method will create any necessary parent directories that are missing in order to write the file. Effectively, it will run `mkdir -p` and then write the file.
 
 ## Detecting Files
 

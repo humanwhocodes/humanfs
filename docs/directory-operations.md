@@ -8,8 +8,11 @@ To create a directory, use the `fsx.createDirectory(dirPath)` method, like this:
 fsx.createDirectory("/path/to/directory");
 ```
 
-> [!IMPORTANT]
+> [!TIP]
 > This method acts like `mkdir -p`, so it will create all required parent directories if they don't exist.
+
+> [!IMPORTANT]
+> This method does not throw an error if the directory already exists.
 
 ## Detecting Directories
 
