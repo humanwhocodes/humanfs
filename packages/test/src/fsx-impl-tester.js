@@ -56,9 +56,14 @@ export class FsxImplTester {
 	 * @param {object} options Options for the tester.
 	 * @param {Assert} options.assert The assert function to use.
 	 * @param {BddTest} options.test The test library to use.
-	 * @param {string} [options.outputDir] The directory where output files should be written.
+	 * @param {string} options.outputDir The directory where output files should be written.
 	 */
-	constructor({ assert, test, outputDir = ".fsx-tests" }) {
+	constructor({ assert, test, outputDir }) {
+
+		if (!outputDir) {
+			throw new Error("outputDir is required");
+		}
+
 		this.#assert = assert;
 		this.#test = test;
 		this.#outputDir = outputDir;
