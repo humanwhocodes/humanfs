@@ -1,3 +1,17 @@
+# 2024-01-02 `createDirectory()` should not return a boolean
+
+## Background
+
+In the initial implementation of `createDirectory()`, there was no way to tell if a directory was created or already existed because it always returned `undefined`. This information may be useful to developers.
+
+## Decision
+
+The `createDirectory()` method will continue to return `undefined` in all cases.
+
+## Rationale
+
+Because `createDirectory()` always works with `{ recursive: true }` in the underlying filesystem calls, it doesn't know whether or not the directory already exists. Node.js and Deno methods for creating directories don't throw errors for existing directories when using `recursive: true` as an option, meaning it would take a second filesystem call to return the correct value. Given that the behavior of `{ recursive: true }` is consistent across runtimes, it doesn't make sense for `createDirectory()` to go out of its way to give additional information that isn't provided by the runtimes automatically.
+
 # 2023-12-13 `Fsx` should handle validating parameters
 
 ## Background
