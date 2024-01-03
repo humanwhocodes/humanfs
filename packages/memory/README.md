@@ -10,7 +10,9 @@ The `fsx` bindings for using memory instead of writing to disk.
 
 ## Installation
 
-Install using your favorite Node.js-compatible package manager:
+### Node.js
+
+Install using your favorite package manager for Node.js:
 
 ```shell
 npm install @fsx/memory
@@ -28,7 +30,15 @@ yarn add @fsx/memory
 bun install @fsx/memory
 ```
 
-Or if you're using Deno, set up a `deno.json` file like this:
+Then you can import the `Fsx` class like this:
+
+```js
+import { fsx } from "@fsx/memory";
+```
+
+### Deno
+
+For Deno, set up a `deno.json` file like this:
 
 ```json
 {
@@ -36,6 +46,27 @@ Or if you're using Deno, set up a `deno.json` file like this:
 		"@fsx/memory": "npm:@fsx/memory@latest"
 	}
 }
+```
+
+Then you can import the `Fsx` class like this:
+
+```js
+import { fsx } from "@fsx/memory";
+
+```
+
+### Browser
+
+It's recommended to import the minified version to save bandwidth:
+
+```js
+import { fsx } from "https://cdn.skypack.dev/@fsx/memory?min";
+```
+
+However, you can also import the unminified version for debugging purposes:
+
+```js
+import { fsx } from "https://cdn.skypack.dev/@fsx/memory";
 ```
 
 ## Usage

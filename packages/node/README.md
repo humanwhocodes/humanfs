@@ -81,24 +81,24 @@ If you'd like to create your own instance, import the `NodeFsx` constructor:
 
 ```js
 import { NodeFsx } from "@fsx/memory";
+import fsp from "fs/promises";
 
 const fsx = new NodeFsx();
 
-// optionally specify the object to use when storing data
-const volume = {};
-const fsx = new NodeFsx({ volume });
+// optionally specify the fs/promises object to use
+const fsx = new NodeFsxImpl({ fsp });
 ```
 
 If you'd like to use just the impl, import the `NodeFsxImpl` constructor:
 
 ```js
 import { NodeFsxImpl } from "@fsx/memory";
+import fsp from "fs/promises";
 
 const fsx = new NodeFsxImpl();
 
-// optionally specify the object to use when storing data
-const volume = {};
-const fsx = new NodeFsxImpl({ volume });
+// optionally specify the fs/promises object to use
+const fsx = new NodeFsxImpl({ fsp });
 ```
 
 ## License

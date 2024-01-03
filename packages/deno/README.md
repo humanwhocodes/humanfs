@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-A utility for verifying that environment variables are present in Node.js, Deno, and Bun. The main use case is to easily throw an error when an environment variable is missing. This is most useful immediately after a Node.js or Deno program has been initiated, to fail fast and let you know that environment variables haven't been setup correctly.
+The `fsx` bindings for use in Node.js and Node.js-compatible runtimes.
 
 ## Installation
 
@@ -72,25 +72,25 @@ await fsx.delete("dir");
 If you'd like to create your own instance, import the `DenoFsx` constructor:
 
 ```js
-import { DenoFsx } from "@fsx/memory";
+import { DenoFsx } from "@fsx/deno";
 
 const fsx = new DenoFsx();
 
-// optionally specify the object to use when storing data
+// optionally specify the Deno object to use
 const volume = {};
-const fsx = new DenoFsx({ volume });
+const fsx = new DenoFsx({ deno: Deno });
 ```
 
 If you'd like to use just the impl, import the `DenoFsxImpl` constructor:
 
 ```js
-import { DenoFsxImpl } from "@fsx/memory";
+import { DenoFsxImpl } from "@fsx/deno";
 
 const fsx = new DenoFsxImpl();
 
-// optionally specify the object to use when storing data
+// optionally specify the Deno object to use
 const volume = {};
-const fsx = new DenoFsxImpl({ volume });
+const fsx = new DenoFsxImpl({ deno: Deno });
 ```
 
 ## License

@@ -1,4 +1,4 @@
-# `fsx`: A modern filesystem API for JavaScript
+# fsx: A modern filesystem API for JavaScript
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-A modern filesystem API for JavaScript.
+This is the monorepo for fsx, a modern filesystem API for JavaScript. Most of the filesystem APIs provided by JavaScript runtimes were designed to emulate Linux utilities which, while making them easy to adopt and understand, often requires writing way more code than necessary for common tasks. fsx is a new approach that streamlines the most common operations while providing useful ways to test the expected functionality.
 
 ## Dev Environment Setup
 
@@ -23,8 +23,8 @@ Then follow these steps:
 2. Clone your fork
 3. Run `npm install` to set up dependencies
 
-> **Note**
-> It's recommended to use the Deno Visual Studio Code extension for the best developer experience. When you first open the project in Visual Studio Code, you'll be prompted to install this extension.
+> [!NOTE]
+> It's recommended to use the Visual Studio Code [Deno extension](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno) for the best developer experience. When you first open the project in Visual Studio Code, you'll be prompted to install this extension.
 
 ### Testing
 
