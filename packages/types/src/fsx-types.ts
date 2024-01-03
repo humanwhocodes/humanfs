@@ -55,10 +55,11 @@ export interface FsxImpl {
 	/**
 	 * Creates the given directory, including any necessary parents.
 	 * @param dirPath The directory to create.
-	 * @returns A promise that resolves when the directory is created.
+	 * @returns A promise that resolves to true when the directory is created
+	 * 		or false if the directory already exists.
 	 * @throws {Error} If the directory cannot be created.
 	 */
-	createDirectory?(dirPath: string): Promise<void>;
+	createDirectory?(dirPath: string): Promise<boolean>;
 
 	/**
 	 * Deletes the given file or directory.

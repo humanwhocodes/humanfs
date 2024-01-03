@@ -263,12 +263,13 @@ export class FsxImplTester {
 					await impl.delete(this.#outputDir + "/tmp-create");
 				});
 
-				it("should create a directory", async () => {
+				it("should create a directory and return true when directory doesn't exist", async () => {
 					const dirPath = this.#outputDir + "/tmp-create";
-					await impl.createDirectory(dirPath);
+					const result1 = await impl.createDirectory(dirPath);
+					assert.strictEqual(result1, true, "Expected true when directory doesn't exist");
 
-					const result = await impl.isDirectory(dirPath);
-					assert.ok(result, "Expected directory to exist");
+					const result2 = await impl.isDirectory(dirPath);
+					assert.ok(result2, "Expected directory to exist");
 				});
 
 				it("should create a directory recursively", async () => {
@@ -279,11 +280,12 @@ export class FsxImplTester {
 					assert.ok(result, "Expected directory to exist");
 				});
 
-				it("should not reject a promise when the directory already exists", async () => {
+				it("should return false when the directory already exists", async () => {
 					const dirPath = this.#outputDir + "/tmp-create";
 					await impl.createDirectory(dirPath);
 
-					return impl.createDirectory(dirPath);
+					const result = await impl.createDirectory(dirPath);
+					assert.strictEqual(result, false, "Expected false when directory exists");
 				});
 			});
 

@@ -274,11 +274,17 @@ export class MemoryFsxImpl {
 	/**
 	 * Creates a directory recursively.
 	 * @param {string} dirPath The path to the directory to create.
-	 * @returns {Promise<void>} A promise that resolves when the directory is
+	 * @returns {Promise<boolean>} A promise that resolves when the directory is
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
+
+		if (await this.isDirectory(dirPath)) {
+			return false;
+		}
+
 		writePath(this.#volume, dirPath, {});
+		return true;
 	}
 
 	/**

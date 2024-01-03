@@ -166,11 +166,19 @@ export class DenoFsxImpl {
 	/**
 	 * Creates a directory recursively.
 	 * @param {string} dirPath The path to the directory to create.
-	 * @returns {Promise<void>} A promise that resolves when the directory is
+	 * @returns {Promise<boolean>} A promise that resolves when the directory is
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
-		await this.#deno.mkdir(dirPath, { recursive: true });
+		return this.#deno.mkdir(dirPath, { recursive: true })
+			.then(() => true)
+			.catch(error => {
+				if (error.code === "EEXIST") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**
