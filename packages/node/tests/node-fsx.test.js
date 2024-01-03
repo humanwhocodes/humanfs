@@ -9,7 +9,7 @@
 
 import { NodeFsxImpl } from "../src/node-fsx.js";
 import assert from "node:assert";
-import fs from "node:fs/promises";
+import fsp from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { FsxImplTester } from "@fsx/test";
@@ -34,5 +34,5 @@ const tester = new FsxImplTester({
 
 await tester.test({
 	name: "NodeFsxImpl",
-	impl: new NodeFsxImpl({ fs }),
+	impl: new NodeFsxImpl({ fsp }),
 });

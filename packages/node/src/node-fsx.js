@@ -31,15 +31,15 @@ export class NodeFsxImpl {
 	 * The file system module to use.
 	 * @type {Fsp}
 	 */
-	#fs;
+	#fsp;
 
 	/**
 	 * Creates a new instance.
 	 * @param {object} options The options for the instance.
-	 * @param {Fsp} options.fs The file system module to use.
+	 * @param {Fsp} options.fsp The file system module to use.
 	 */
-	constructor({ fs }) {
-		this.#fs = fs;
+	constructor({ fsp }) {
+		this.#fsp = fsp;
 	}
 
 	/**
@@ -54,7 +54,7 @@ export class NodeFsxImpl {
 	 * @throws {RangeError} If the file path is not readable.
 	 */
 	text(filePath) {
-		return this.#fs.readFile(filePath, "utf8").catch(error => {
+		return this.#fsp.readFile(filePath, "utf8").catch(error => {
 			if (error.code === "ENOENT") {
 				return undefined;
 			}
@@ -87,7 +87,7 @@ export class NodeFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	arrayBuffer(filePath) {
-		return this.#fs
+		return this.#fsp
 			.readFile(filePath)
 			.then(buffer => buffer.buffer)
 			.catch(error => {
@@ -115,13 +115,13 @@ export class NodeFsxImpl {
 				? Buffer.from(contents)
 				: contents;
 
-		return this.#fs.writeFile(filePath, value).catch(error => {
+		return this.#fsp.writeFile(filePath, value).catch(error => {
 
 			// the directory may not exist, so create it
 			if (error.code === "ENOENT") {
-				return this.#fs
+				return this.#fsp
 					.mkdir(path.dirname(filePath), { recursive: true })
-					.then(() => this.#fs.writeFile(filePath, value));
+					.then(() => this.#fsp.writeFile(filePath, value));
 			} else {
 				throw error;
 			}
@@ -136,7 +136,7 @@ export class NodeFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	isFile(filePath) {
-		return this.#fs
+		return this.#fsp
 			.stat(filePath)
 			.then(stat => stat.isFile())
 			.catch(() => false);
@@ -150,7 +150,7 @@ export class NodeFsxImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 */
 	isDirectory(dirPath) {
-		return this.#fs
+		return this.#fsp
 			.stat(dirPath)
 			.then(stat => stat.isDirectory())
 			.catch(() => false);
@@ -163,7 +163,7 @@ export class NodeFsxImpl {
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
-		await this.#fs.mkdir(dirPath, { recursive: true });
+		await this.#fsp.mkdir(dirPath, { recursive: true });
 	}
 
 	/**
@@ -177,7 +177,7 @@ export class NodeFsxImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	delete(fileOrDirPath) {
-		return this.#fs.rm(fileOrDirPath, { recursive: true });
+		return this.#fsp.rm(fileOrDirPath, { recursive: true });
 	}
 }
 
