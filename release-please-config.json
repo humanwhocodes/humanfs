@@ -1,0 +1,24 @@
+{
+  "plugins": ["node-workspace"],
+  "bump-minor-pre-major": true,
+  "packages": {
+    "packages/core": {
+        "release-type": "node"
+    },
+    "packages/node": {
+        "release-type": "node"
+    },
+    "packages/deno": {
+        "release-type": "node"
+    },
+    "packages/memory": {
+        "release-type": "node"
+    },
+    "packages/test": {
+        "release-type": "node"
+    },
+    "packages/types": {
+        "release-type": "node"
+    }
+  }
+}
