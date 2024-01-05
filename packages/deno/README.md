@@ -8,6 +8,9 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 The `fsx` bindings for use in Node.js and Node.js-compatible runtimes.
 
+> [!WARNING]
+> This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
+
 ## Installation
 
 Set up a `deno.json` file like this:

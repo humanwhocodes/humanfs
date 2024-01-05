@@ -10,6 +10,9 @@ The core functionality for `fsx` that is shared across all implementations for a
 
 Currently, this package simply exports the `Fsx` class, which is an abstract base class intended to be inherited from in runtime-specific fsx packages (like `fsx-node`).
 
+> [!WARNING]
+> This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
+
 ## Installation
 
 ### Node.js
