@@ -15,7 +15,7 @@ Set up a `deno.json` file like this:
 ```json
 {
 	"imports": {
-		"@fsx/deno": "npm:@fsx/deno@latest"
+		"fsx-deno": "npm:fsx-deno@latest"
 	}
 }
 ```
@@ -25,7 +25,7 @@ Set up a `deno.json` file like this:
 The easiest way to use fsx in your project is to import the `fsx` object:
 
 ```js
-import { fsx } from "@fsx/deno";
+import { fsx } from "fsx-deno";
 ```
 
 Then, you can use the API methods:
@@ -72,7 +72,7 @@ await fsx.delete("dir");
 If you'd like to create your own instance, import the `DenoFsx` constructor:
 
 ```js
-import { DenoFsx } from "@fsx/deno";
+import { DenoFsx } from "fsx-deno";
 
 const fsx = new DenoFsx();
 
@@ -84,7 +84,7 @@ const fsx = new DenoFsx({ deno: Deno });
 If you'd like to use just the impl, import the `DenoFsxImpl` constructor:
 
 ```js
-import { DenoFsxImpl } from "@fsx/deno";
+import { DenoFsxImpl } from "fsx-deno";
 
 const fsx = new DenoFsxImpl();
 

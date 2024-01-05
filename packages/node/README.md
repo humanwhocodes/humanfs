@@ -13,19 +13,19 @@ The `fsx` bindings for use in Node.js and Node.js-compatible runtimes.
 Install using your favorite package manager:
 
 ```shell
-npm install @fsx/node
+npm install fsx-node
 
 # or
 
-pnpm install @fsx/node
+pnpm install fsx-node
 
 # or
 
-yarn add @fsx/node
+yarn add fsx-node
 
 # or
 
-bun install @fsx/node
+bun install fsx-node
 ```
 
 ## Usage
@@ -33,7 +33,7 @@ bun install @fsx/node
 The easiest way to use fsx in your project is to import the `fsx` object:
 
 ```js
-import { fsx } from "@fsx/node";
+import { fsx } from "fsx-node";
 ```
 
 Then, you can use the API methods:
@@ -80,7 +80,7 @@ await fsx.delete("dir");
 If you'd like to create your own instance, import the `NodeFsx` constructor:
 
 ```js
-import { NodeFsx } from "@fsx/memory";
+import { NodeFsx } from "fsx-memory";
 import fsp from "fs/promises";
 
 const fsx = new NodeFsx();
@@ -92,7 +92,7 @@ const fsx = new NodeFsxImpl({ fsp });
 If you'd like to use just the impl, import the `NodeFsxImpl` constructor:
 
 ```js
-import { NodeFsxImpl } from "@fsx/memory";
+import { NodeFsxImpl } from "fsx-memory";
 import fsp from "fs/promises";
 
 const fsx = new NodeFsxImpl();

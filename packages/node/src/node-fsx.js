@@ -8,14 +8,14 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef{import("@fsx/types").FsxImpl} FsxImpl */
+/** @typedef{import("fsx-types").FsxImpl} FsxImpl */
 /** @typedef{import("node:fs/promises")} Fsp */
 
 //-----------------------------------------------------------------------------
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Fsx } from "@fsx/core";
+import { Fsx } from "fsx-core";
 import path from "node:path";
 
 //-----------------------------------------------------------------------------
@@ -189,10 +189,10 @@ export class NodeFsx extends Fsx {
 	/**
 	 * Creates a new instance.
 	 * @param {object} [options] The options for the instance.
-	 * @param {Fsp} [options.fs] The file system module to use.
+	 * @param {Fsp} [options.fsp] The file system module to use.
 	 */
-	constructor({ fs } = {}) {
-		super({ impl: new NodeFsxImpl({ fs }) });
+	constructor({ fsp } = {}) {
+		super({ impl: new NodeFsxImpl({ fsp }) });
 	}
 }
 

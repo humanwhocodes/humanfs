@@ -1,5 +1,5 @@
 {
-  "name": "@fsx/deno",
+  "name": "fsx-deno",
   "version": "0.0.0",
   "description": "The Deno bindings of the fsx library.",
   "type": "module",

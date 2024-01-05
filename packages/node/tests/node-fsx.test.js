@@ -12,7 +12,7 @@ import assert from "node:assert";
 import fsp from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { FsxImplTester } from "@fsx/test";
+import { FsxImplTester } from "fsx-test";
 
 //------------------------------------------------------------------------------
 // Helpers

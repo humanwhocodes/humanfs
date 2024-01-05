@@ -11,7 +11,7 @@ This separation of concerns, where the impl handles all the filesystem operation
 Each `fsx` instance is created with a *base impl* that defines how the `fsx` object should behave in production. The *active impl* is the impl in use at any given time, which may or may not be the base impl. You can change the active impl by calling `fsx.setImpl()`. For example:
 
 ```js
-import { fsx } from "@fsx/node";
+import { fsx } from "fsx-node";
 
 fsx.setImpl({
     json() {
@@ -33,7 +33,7 @@ In this example, the base impl is swapped out for a custom one that throws an er
 The `fsx.isBaseImpl()` method lets you know if the base impl is the active impl:
 
 ```js
-import { fsx } from "@fsx/node";
+import { fsx } from "fsx-node";
 
 console.log(fsx.isBaseImpl());          // true
 
@@ -45,7 +45,7 @@ console.log(fsx.isBaseImpl());          // false
 After you've changed the active impl, you can swap back to the base impl by calling `fsx.resetImpl()`:
 
 ```js
-import { fsx } from "@fsx/node";
+import { fsx } from "fsx-node";
 
 console.log(fsx.isBaseImpl());          // true
 
@@ -69,7 +69,7 @@ Consider the following function:
 
 ```js
 import path from "node:path";
-import { fsx } from "@fsx/node";
+import { fsx } from "fsx-node";
 
 const CONFIG_FILE_PATH = path.join(process.cwd(), "my.config.json");
 
@@ -82,7 +82,7 @@ This function reads JSON data from a config file in a known location. During tes
 
 ```js
 import path from "node:path";
-import { fsx } from "@fsx/node";
+import { fsx } from "fsx-node";
 import assert from "node:assert";
 import { readConfigFile } from "../src/example.js";
 

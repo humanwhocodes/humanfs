@@ -8,17 +8,17 @@ body:
   attributes:
     label: Which packages would you like to change?
     options:
-      - label: "`@fsx/core`"
+      - label: "`fsx-core`"
         required: false
-      - label: "`@fsx/node`"
+      - label: "`fsx-node`"
         required: false
-      - label: "`@fsx/deno`"
+      - label: "`fsx-deno`"
         required: false
-      - label: "`@fsx/memory`"
+      - label: "`fsx-memory`"
         required: false
-      - label: "`@fsx/test`"
+      - label: "`fsx-test`"
         required: false
-      - label: "`@fsx/types`"
+      - label: "`fsx-types`"
         required: false
 - type: textarea
   attributes:

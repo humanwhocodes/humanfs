@@ -1,5 +1,5 @@
 {
-  "name": "@fsx/core",
+  "name": "fsx-core",
   "version": "0.0.0",
   "description": "The core of the fsx library.",
   "type": "module",
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
-    "@fsx/types": "^0.0.0",
+    "fsx-types": "^0.0.0",
     "c8": "^8.0.1",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"

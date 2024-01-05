@@ -9,7 +9,7 @@
 // Types
 //------------------------------------------------------------------------------
 
-/** @typedef {import("@fsx/types").FsxImpl} FsxImpl*/
+/** @typedef {import("fsx-types").FsxImpl} FsxImpl*/
 
 /**
  * @typedef {Object} Assert

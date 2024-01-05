@@ -1,5 +1,5 @@
 {
-  "name": "@fsx/types",
+  "name": "fsx-types",
   "version": "0.0.0",
   "description": "The TypeScript types for the fsx project.",
   "type": "module",

@@ -15,25 +15,25 @@ The `fsx` bindings for using memory instead of writing to disk.
 Install using your favorite package manager for Node.js:
 
 ```shell
-npm install @fsx/memory
+npm install fsx-memory
 
 # or
 
-pnpm install @fsx/memory
+pnpm install fsx-memory
 
 # or
 
-yarn add @fsx/memory
+yarn add fsx-memory
 
 # or
 
-bun install @fsx/memory
+bun install fsx-memory
 ```
 
 Then you can import the `Fsx` class like this:
 
 ```js
-import { fsx } from "@fsx/memory";
+import { fsx } from "fsx-memory";
 ```
 
 ### Deno
@@ -43,7 +43,7 @@ For Deno, set up a `deno.json` file like this:
 ```json
 {
 	"imports": {
-		"@fsx/memory": "npm:@fsx/memory@latest"
+		"fsx-memory": "npm:fsx-memory@latest"
 	}
 }
 ```
@@ -51,7 +51,7 @@ For Deno, set up a `deno.json` file like this:
 Then you can import the `Fsx` class like this:
 
 ```js
-import { fsx } from "@fsx/memory";
+import { fsx } from "fsx-memory";
 
 ```
 
@@ -60,13 +60,13 @@ import { fsx } from "@fsx/memory";
 It's recommended to import the minified version to save bandwidth:
 
 ```js
-import { fsx } from "https://cdn.skypack.dev/@fsx/memory?min";
+import { fsx } from "https://cdn.skypack.dev/fsx-memory?min";
 ```
 
 However, you can also import the unminified version for debugging purposes:
 
 ```js
-import { fsx } from "https://cdn.skypack.dev/@fsx/memory";
+import { fsx } from "https://cdn.skypack.dev/fsx-memory";
 ```
 
 ## Usage
@@ -74,7 +74,7 @@ import { fsx } from "https://cdn.skypack.dev/@fsx/memory";
 The easiest way to use fsx in your project is to import the `fsx` object:
 
 ```js
-import { fsx } from "@fsx/memory";
+import { fsx } from "fsx-memory";
 ```
 
 Then, you can use the API methods:
@@ -121,7 +121,7 @@ await fsx.delete("dir");
 If you'd like to create your own instance, import the `MemoryFsx` constructor:
 
 ```js
-import { MemoryFsx } from "@fsx/memory";
+import { MemoryFsx } from "fsx-memory";
 
 const fsx = new MemoryFsx();
 
@@ -133,7 +133,7 @@ const fsx = new MemoryFsx({ volume });
 If you'd like to use just the impl, import the `MemoryFsxImpl` constructor:
 
 ```js
-import { MemoryFsxImpl } from "@fsx/memory";
+import { MemoryFsxImpl } from "fsx-memory";
 
 const fsx = new MemoryFsxImpl();
 

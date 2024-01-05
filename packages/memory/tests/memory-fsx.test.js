@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 
 import { MemoryFsxImpl } from "../src/memory-fsx.js";
-import { FsxImplTester } from "@fsx/test";
+import { FsxImplTester } from "fsx-test";
 import assert from "node:assert";
 
 //------------------------------------------------------------------------------
