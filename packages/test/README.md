@@ -1,4 +1,4 @@
-# `fsx/test`
+# `fsx-test`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 

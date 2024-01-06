@@ -1,4 +1,4 @@
-# `fsx/deno`
+# `fsx-deno`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 

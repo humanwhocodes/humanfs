@@ -1,4 +1,4 @@
-# `fsx/core`
+# `fsx-core`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 

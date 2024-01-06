@@ -1,4 +1,4 @@
-# `fsx/node`
+# `fsx-node`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 

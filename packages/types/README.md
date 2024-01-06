@@ -1,4 +1,4 @@
-# `fsx/types`
+# `fsx-types`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-Additional type definitions for `fsx`.
+Additional type definitions for `fsx`. These are used primarily to share type definitions across packages because there is no easy way to export imported type definitions using JavaScript and JSDoc.
 
 ## License
 
