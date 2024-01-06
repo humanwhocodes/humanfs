@@ -1,1 +1,8 @@
-{}
+{
+    "fsx-types": "0.1.0",
+    "fsx-test": "0.1.0",
+    "fsx-core": "0.1.0",
+    "fsx-node": "0.1.0",
+    "fsx-deno": "0.1.0",
+    "fsx-memory": "0.1.0"
+}
