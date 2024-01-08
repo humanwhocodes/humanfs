@@ -57,11 +57,11 @@ To write files, call the `fsx.write()` method. This method accepts two arguments
 Here's an example:
 
 ```js
-fsx.write("/path/to/file.txt", "Hello world!");
+await fsx.write("/path/to/file.txt", "Hello world!");
 
 const bytes = new TextEncoder().encode("Hello world!").buffer;
 
-fsx.write("/path/to/file.txt", buffer);
+await fsx.write("/path/to/file.txt", buffer);
 ```
 
 > [!TIP]
