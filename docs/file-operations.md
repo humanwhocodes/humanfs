@@ -72,7 +72,7 @@ fsx.write("/path/to/file.txt", buffer);
 To determine to if a file exists, use the `fsx.isFile(filePath)` method, which returns `true` if the given file exists or `false` otherwise.
 
 ```js
-if (fsx.isFile("/path/to/file.txt")) {
+if (await fsx.isFile("/path/to/file.txt")) {
     // handle the file
 }
 ```
@@ -85,5 +85,5 @@ if (fsx.isFile("/path/to/file.txt")) {
 To delete files, call the `fsx.delete(filePath)` method. For example:
 
 ```js
-fsx.delete("/path/to/file.txt");
+await fsx.delete("/path/to/file.txt");
 ```
