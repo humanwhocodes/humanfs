@@ -57,11 +57,11 @@ To write files, call the `fsx.write()` method. This method accepts two arguments
 Here's an example:
 
 ```js
-fsx.write("/path/to/file.txt", "Hello world!");
+await fsx.write("/path/to/file.txt", "Hello world!");
 
 const bytes = new TextEncoder().encode("Hello world!").buffer;
 
-fsx.write("/path/to/file.txt", buffer);
+await fsx.write("/path/to/file.txt", buffer);
 ```
 
 > [!TIP]
@@ -72,7 +72,7 @@ fsx.write("/path/to/file.txt", buffer);
 To determine to if a file exists, use the `fsx.isFile(filePath)` method, which returns `true` if the given file exists or `false` otherwise.
 
 ```js
-if (fsx.isFile("/path/to/file.txt")) {
+if (await fsx.isFile("/path/to/file.txt")) {
     // handle the file
 }
 ```
@@ -85,5 +85,5 @@ if (fsx.isFile("/path/to/file.txt")) {
 To delete files, call the `fsx.delete(filePath)` method. For example:
 
 ```js
-fsx.delete("/path/to/file.txt");
+await fsx.delete("/path/to/file.txt");
 ```
