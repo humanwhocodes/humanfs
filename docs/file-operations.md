@@ -5,9 +5,9 @@
 
 Files are read by using the method that returns the specific data type that you want:
 
-* `jsx.text(filePath)` reads the given file and returns a string.
-* `jsx.json(filePath)` reads the given file and returns a JSON value.
-* `jsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
+* `fsx.text(filePath)` reads the given file and returns a string.
+* `fsx.json(filePath)` reads the given file and returns a JSON value.
+* `fsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
 
 Here are some examples:
 

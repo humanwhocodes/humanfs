@@ -19,7 +19,7 @@ await fsx.createDirectory("/path/to/directory");
 To determine to if a directory exists, use the `fsx.isDirectory(dirPath)` method, which returns `true` if the given directory exists or `false` otherwise.
 
 ```js
-if (await fsx.isdirectory("/path/to/directory")) {
+if (await fsx.isDirectory("/path/to/directory")) {
     // handle the directory
 }
 ```
