@@ -8,9 +8,9 @@ fsx is a modern filesystem library for JavaScript runtimes. The overall goal is 
 
 To get started, choose which runtime package you'd like to use:
 
-* `fsx-node` - fsx implementation that runs on top of the Node.js `fs/promises` module
-* `fsx-deno` - fsx implementation that runs on top of the `Deno` global
-* `fsx-memory` - fsx implementation that runs in memory and is suitable for any JavaScript runtime
+-   `fsx-node` - fsx implementation that runs on top of the Node.js `fs/promises` module
+-   `fsx-deno` - fsx implementation that runs on top of the `Deno` global
+-   `fsx-memory` - fsx implementation that runs in memory and is suitable for any JavaScript runtime
 
 This document uses `fsx-node` as an example, but the API for each runtime package is effectively the same.
 
@@ -24,12 +24,11 @@ npm install fsx-node
 yarn add fsx-node
 # or
 pnpm install fsx-node
-# or 
+# or
 bun install fsx-node
 ```
 
-> [!IMPORTANT]
-> `fsx-node` requires Node.js v18.18.0 or later.
+> [!IMPORTANT] > `fsx-node` requires Node.js v18.18.0 or later.
 
 ## Importing the Library
 
@@ -45,7 +44,7 @@ You can then use `fsx` in most places where you would use the runtime's filesyst
 
 For information about using the `fsx` object, please see the following:
 
-* [File Operations](./file-operations.md)
-* [Directory Operations](./directory-operations.md)
-* [Logging](./logging.md)
-* [Using Impls](./using-impls.md)
+-   [File Operations](./file-operations.md)
+-   [Directory Operations](./directory-operations.md)
+-   [Logging](./logging.md)
+-   [Using Impls](./using-impls.md)

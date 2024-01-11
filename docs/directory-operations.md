@@ -1,4 +1,4 @@
-#  Directory Operations
+# Directory Operations
 
 ## Creating Directories
 
@@ -20,7 +20,7 @@ To determine to if a directory exists, use the `fsx.isDirectory(dirPath)` method
 
 ```js
 if (await fsx.isDirectory("/path/to/directory")) {
-    // handle the directory
+	// handle the directory
 }
 ```
 

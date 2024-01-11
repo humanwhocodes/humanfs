@@ -16,14 +16,14 @@ const logs = fsx.logEnd("test1");
 
 Each log entry is an object containing the following properties:
 
-* `timestamp` - the numeric timestamp of when the log was created
-* `type` - a string describing the type of log
-* `data` - additional data related to the log
+-   `timestamp` - the numeric timestamp of when the log was created
+-   `type` - a string describing the type of log
+-   `data` - additional data related to the log
 
 For method calls, a log entry's `type` is `"call"` and the `data` property is an object containing:
 
-* `methodName` - the name of the method that was called
-* `args` - an array of arguments passed to the method.
+-   `methodName` - the name of the method that was called
+-   `args` - an array of arguments passed to the method.
 
 For the previous example, `logs` would contain a single entry:
 

@@ -11,7 +11,6 @@ The `fsx` bindings for using memory instead of writing to disk.
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
 
-
 ## Installation
 
 ### Node.js
@@ -56,7 +55,6 @@ Then you can import the `Fsx` class like this:
 
 ```js
 import { fsx } from "fsx-memory";
-
 ```
 
 ### Browser

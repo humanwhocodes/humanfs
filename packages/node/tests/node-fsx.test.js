@@ -38,9 +38,7 @@ await tester.test({
 });
 
 describe("NodeFsxImpl Customizations", () => {
-	
 	describe("isFile()", () => {
-		
 		it("should return false when a file isn't present", async () => {
 			const impl = new NodeFsxImpl({ fsp });
 			const result = await impl.isFile("foo.txt");
@@ -60,7 +58,6 @@ describe("NodeFsxImpl Customizations", () => {
 	});
 
 	describe("isDirectory()", () => {
-		
 		it("should return false when a file isn't present", async () => {
 			const impl = new NodeFsxImpl({ fsp });
 			const result = await impl.isDirectory(".fsx/foo");

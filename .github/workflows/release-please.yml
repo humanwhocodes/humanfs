@@ -1,75 +1,75 @@
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 name: release-please
 
 permissions:
-  contents: write
-  pull-requests: write
+    contents: write
+    pull-requests: write
 
 jobs:
-  release-please:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: GoogleCloudPlatform/release-please-action@v3
-        id: release
-        with:
-          release-type: node
-          command: manifest
-          token: ${{secrets.GITHUB_TOKEN}}
-          default-branch: main
+    release-please:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: GoogleCloudPlatform/release-please-action@v3
+              id: release
+              with:
+                  release-type: node
+                  command: manifest
+                  token: ${{secrets.GITHUB_TOKEN}}
+                  default-branch: main
 
-      # Output which releases were created
-      - run: echo "A release was created."
-        if: ${{ steps.release.outputs.releases_created }}
-          
-      # Check to see if we need to do any releases and if so check out the repo
-      - uses: actions/checkout@v3
-        if: ${{ steps.release.outputs.releases_created }}
+            # Output which releases were created
+            - run: echo "A release was created."
+              if: ${{ steps.release.outputs.releases_created }}
 
-      # Node.js release
-      - uses: actions/setup-node@v3
-        if: ${{ steps.release.outputs.releases_created }}
-        with:
-          node-version: lts/*
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-        if: ${{ steps.release.outputs.releases_created }}
+            # Check to see if we need to do any releases and if so check out the repo
+            - uses: actions/checkout@v3
+              if: ${{ steps.release.outputs.releases_created }}
 
-      - name: Publish fsx-core package to npm
-        run: npm publish -w packages/fsx-core
-        if: ${{ steps.release.outputs['packages/core--release_created'] }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            # Node.js release
+            - uses: actions/setup-node@v3
+              if: ${{ steps.release.outputs.releases_created }}
+              with:
+                  node-version: lts/*
+                  registry-url: "https://registry.npmjs.org"
+            - run: npm ci
+              if: ${{ steps.release.outputs.releases_created }}
 
-      - name: Publish fsx-node package to npm
-        run: npm publish -w packages/fsx-node
-        if: ${{ steps.release.outputs['packages/node--release_created'] }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - name: Publish fsx-core package to npm
+              run: npm publish -w packages/fsx-core
+              if: ${{ steps.release.outputs['packages/core--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name : Publish fsx-deno package to npm
-        run: npm publish -w packages/fsx-deno
-        if: ${{ steps.release.outputs['packages/deno--release_created'] }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - name: Publish fsx-node package to npm
+              run: npm publish -w packages/fsx-node
+              if: ${{ steps.release.outputs['packages/node--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Publish fsx-memory package to npm
-        run: npm publish -w packages/fsx-memory
-        if: ${{ steps.release.outputs['packages/memory--release_created'] }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - name: Publish fsx-deno package to npm
+              run: npm publish -w packages/fsx-deno
+              if: ${{ steps.release.outputs['packages/deno--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Publish fsx-types package to npm
-        run: npm publish -w packages/fsx-types
-        if: ${{ steps.release.outputs['packages/types--release_created'] }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - name: Publish fsx-memory package to npm
+              run: npm publish -w packages/fsx-memory
+              if: ${{ steps.release.outputs['packages/memory--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-      - name: Publish fsx-test package to npm
-        run: npm publish -w packages/fsx-test
-        if: ${{ steps.release.outputs['packages/test--release_created'] }}
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - name: Publish fsx-types package to npm
+              run: npm publish -w packages/fsx-types
+              if: ${{ steps.release.outputs['packages/types--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+            - name: Publish fsx-test package to npm
+              run: npm publish -w packages/fsx-test
+              if: ${{ steps.release.outputs['packages/test--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

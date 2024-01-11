@@ -57,9 +57,7 @@ await tester.test({
 });
 
 describe("DenoFsxImpl Customizations", () => {
-
 	describe("isFile()", () => {
-
 		it("should return false when a file isn't present", async () => {
 			const impl = new DenoFsxImpl();
 			const result = await impl.isFile("foo.txt");
@@ -72,14 +70,13 @@ describe("DenoFsxImpl Customizations", () => {
 					async stat() {
 						throw new Error("Boom!");
 					},
-				}
+				},
 			});
 			await assertRejects(() => impl.isFile("foo.txt"), /Boom!/);
 		});
 	});
 
 	describe("isDirectory()", () => {
-
 		it("should return false when a file isn't present", async () => {
 			const impl = new DenoFsxImpl();
 			const result = await impl.isDirectory(".fsx/foo");
@@ -92,7 +89,7 @@ describe("DenoFsxImpl Customizations", () => {
 					async stat() {
 						throw new Error("Boom!");
 					},
-				}
+				},
 			});
 			await assertRejects(() => impl.isDirectory(".fsx/foo"), /Boom!/);
 		});

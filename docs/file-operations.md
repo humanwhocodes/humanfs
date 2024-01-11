@@ -1,13 +1,12 @@
 # File Operations
 
-
 ## Reading Files
 
 Files are read by using the method that returns the specific data type that you want:
 
-* `fsx.text(filePath)` reads the given file and returns a string.
-* `fsx.json(filePath)` reads the given file and returns a JSON value.
-* `fsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
+-   `fsx.text(filePath)` reads the given file and returns a string.
+-   `fsx.json(filePath)` reads the given file and returns a JSON value.
+-   `fsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
 
 Here are some examples:
 
@@ -30,7 +29,7 @@ When you attempt to read a file that doesn't exist, each of these methods return
 const text = await fsx.text("/path/to/file.txt");
 
 if (!text) {
-    // handle when the file doesn't exist
+	// handle when the file doesn't exist
 }
 ```
 
@@ -38,21 +37,22 @@ Alternatively, you can also use the nullish coalescing operator (`??`) to specif
 
 ```js
 // read plain text
-const text = await fsx.text("/path/to/file.txt") ?? "default value";
+const text = (await fsx.text("/path/to/file.txt")) ?? "default value";
 
 // read JSON
-const json = await fsx.json("/path/to/file.json") ?? {};
+const json = (await fsx.json("/path/to/file.json")) ?? {};
 
 // read bytes
-const bytes = await fsx.arrayBuffer("/path/to/file.png") ?? new ArrayBuffer(16);
+const bytes =
+	(await fsx.arrayBuffer("/path/to/file.png")) ?? new ArrayBuffer(16);
 ```
 
 ## Writing Files
 
 To write files, call the `fsx.write()` method. This method accepts two arguments:
 
-- `filePath:string` - the path to write to
-- `value:string|ArrayBuffer` - the value to write to the file
+-   `filePath:string` - the path to write to
+-   `value:string|ArrayBuffer` - the value to write to the file
 
 Here's an example:
 
@@ -73,7 +73,7 @@ To determine to if a file exists, use the `fsx.isFile(filePath)` method, which r
 
 ```js
 if (await fsx.isFile("/path/to/file.txt")) {
-    // handle the file
+	// handle the file
 }
 ```
 

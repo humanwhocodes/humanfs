@@ -16,7 +16,7 @@ Because `createDirectory()` always works with `{ recursive: true }` in the under
 
 ## Background
 
-In the beginning, it was up to each impl to validate the input it was passed and throw an appropriate error. 
+In the beginning, it was up to each impl to validate the input it was passed and throw an appropriate error.
 
 ## Decision
 

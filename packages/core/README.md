@@ -57,7 +57,6 @@ Then you can import the `Fsx` class like this:
 
 ```js
 import { Fsx } from "fsx-core";
-
 ```
 
 ### Browser
@@ -73,7 +72,6 @@ However, you can also import the unminified version for debugging purposes:
 ```js
 import { Fsx } from "https://cdn.skypack.dev/fsx-core";
 ```
-
 
 ## License
 

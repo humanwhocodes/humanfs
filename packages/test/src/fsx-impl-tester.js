@@ -59,7 +59,6 @@ export class FsxImplTester {
 	 * @param {string} options.outputDir The directory where output files should be written.
 	 */
 	constructor({ assert, test, outputDir }) {
-
 		if (!outputDir) {
 			throw new Error("outputDir is required");
 		}
@@ -217,7 +216,6 @@ export class FsxImplTester {
 					const result = await impl.text(filePath);
 					assert.strictEqual(result, "Hello, world!");
 				});
-
 			});
 
 			describe("isFile()", () => {

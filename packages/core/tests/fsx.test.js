@@ -159,7 +159,6 @@ describe("Fsx", () => {
 	});
 
 	describe("text", () => {
-		
 		it("should return the text from the file", async () => {
 			const fsx = new Fsx({
 				impl: {
@@ -225,7 +224,6 @@ describe("Fsx", () => {
 	});
 
 	describe("json", () => {
-
 		it("should return the JSON from the file", async () => {
 			const fsx = new Fsx({
 				impl: {
@@ -291,9 +289,7 @@ describe("Fsx", () => {
 	});
 
 	describe("arrayBuffer", () => {
-
 		it("should return the ArrayBuffer from the file", async () => {
-
 			const fsx = new Fsx({
 				impl: {
 					arrayBuffer() {
@@ -355,11 +351,9 @@ describe("Fsx", () => {
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
-
 	});
 
 	describe("write()", () => {
-
 		it("should not reject a promise when the file path is a string", async () => {
 			const fsx = new Fsx({
 				impl: {
@@ -381,7 +375,10 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.write("/path/to/file.txt", new Uint8Array([1, 2, 3]).buffer);
+			await fsx.write(
+				"/path/to/file.txt",
+				new Uint8Array([1, 2, 3]).buffer,
+			);
 		});
 
 		it("should log the method call", async () => {
@@ -451,7 +448,6 @@ describe("Fsx", () => {
 	});
 
 	describe("isFile()", () => {
-
 		it("should return true when the file exists", async () => {
 			const fsx = new Fsx({
 				impl: {
@@ -527,11 +523,9 @@ describe("Fsx", () => {
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
-
 	});
 
 	describe("isDirectory()", () => {
-
 		it("should return true when the directory exists", async () => {
 			const fsx = new Fsx({
 				impl: {
@@ -607,13 +601,10 @@ describe("Fsx", () => {
 				new TypeError("Directory path must be a non-empty string."),
 			);
 		});
-
 	});
 
 	describe("createDirectory()", () => {
-
 		it("should not reject a promise when the directory path is a string", async () => {
-
 			const fsx = new Fsx({
 				impl: {
 					createDirectory() {
@@ -674,11 +665,9 @@ describe("Fsx", () => {
 				new TypeError("Directory path must be a non-empty string."),
 			);
 		});
-
 	});
 
 	describe("delete()", () => {
-
 		it("should not reject a promise when the file path is a string", async () => {
 			const fsx = new Fsx({
 				impl: {
@@ -740,6 +729,5 @@ describe("Fsx", () => {
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
-
 	});
 });

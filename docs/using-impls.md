@@ -2,30 +2,29 @@
 
 ## Introduction
 
-An *impl* contains the implementation for an fsx runtime package. All of the filesystem calls are contained within an impl, and then that impl is wrapped by the `Fsx` class to create an `fsx` singleton for the runtime package. 
+An _impl_ contains the implementation for an fsx runtime package. All of the filesystem calls are contained within an impl, and then that impl is wrapped by the `Fsx` class to create an `fsx` singleton for the runtime package.
 
 This separation of concerns, where the impl handles all the filesystem operations and the `Fsx` class handles everything else, allows you to swap impls at runtime. This ability makes fsx easy to test, as you can swap out the actual operations without needing to mock out entire JavaScript modules.
 
 ## The Basics
 
-Each `fsx` instance is created with a *base impl* that defines how the `fsx` object should behave in production. The *active impl* is the impl in use at any given time, which may or may not be the base impl. You can change the active impl by calling `fsx.setImpl()`. For example:
+Each `fsx` instance is created with a _base impl_ that defines how the `fsx` object should behave in production. The _active impl_ is the impl in use at any given time, which may or may not be the base impl. You can change the active impl by calling `fsx.setImpl()`. For example:
 
 ```js
 import { fsx } from "fsx-node";
 
 fsx.setImpl({
-    json() {
-        throw Error("This operation is not supported");
-    }
-})
-
+	json() {
+		throw Error("This operation is not supported");
+	},
+});
 
 // somewhere else
 
-await fsx.json("/path/to/file.json");       // throws error
+await fsx.json("/path/to/file.json"); // throws error
 ```
 
-In this example, the base impl is swapped out for a custom one that throws an error when the `fsx.json()` method is called. 
+In this example, the base impl is swapped out for a custom one that throws an error when the `fsx.json()` method is called.
 
 > [!TIP]
 > All of the methods on an impl are optional, so you only ever need to implement the methods you plan on using. If you call a method that isn't present on the impl, an error is thrown.
@@ -35,11 +34,11 @@ The `fsx.isBaseImpl()` method lets you know if the base impl is the active impl:
 ```js
 import { fsx } from "fsx-node";
 
-console.log(fsx.isBaseImpl());          // true
+console.log(fsx.isBaseImpl()); // true
 
 fsx.setImpl({});
 
-console.log(fsx.isBaseImpl());          // false
+console.log(fsx.isBaseImpl()); // false
 ```
 
 After you've changed the active impl, you can swap back to the base impl by calling `fsx.resetImpl()`:
@@ -47,15 +46,15 @@ After you've changed the active impl, you can swap back to the base impl by call
 ```js
 import { fsx } from "fsx-node";
 
-console.log(fsx.isBaseImpl());          // true
+console.log(fsx.isBaseImpl()); // true
 
 fsx.setImpl({});
 
-console.log(fsx.isBaseImpl());          // false
+console.log(fsx.isBaseImpl()); // false
 
 fsx.resetImpl();
 
-console.log(fsx.isBaseImpl());          // true
+console.log(fsx.isBaseImpl()); // true
 ```
 
 > [!IMPORTANT]
@@ -74,7 +73,7 @@ import { fsx } from "fsx-node";
 const CONFIG_FILE_PATH = path.join(process.cwd(), "my.config.json");
 
 async function readConfigFile() {
-    return fsx.json(CONFIG_FILE_PATH);
+	return fsx.json(CONFIG_FILE_PATH);
 }
 ```
 
@@ -87,30 +86,31 @@ import assert from "node:assert";
 import { readConfigFile } from "../src/example.js";
 
 describe("readConfigFile()", () => {
+	afterEach(() => {
+		fsx.resetImpl();
+	});
 
-    afterEach(() => {
-        fsx.resetImpl();
-    });
+	it("should read data from config file", async () => {
+		fsx.setImpl({
+			json(filePath) {
+				{
+					assert.strictEquals(
+						filePath,
+						path.join(process.cwd(), "my.config.json"),
+					);
+					return {
+						success: true,
+					};
+				}
+			},
+		});
 
-    it("should read data from config file", async () => {
+		const config = await readConfigFile();
 
-        fsx.setImpl({
-            json(filePath) {{
-                assert.strictEquals(filePath, path.join(process.cwd(), "my.config.json"));
-                return {
-                    success: true
-                };
-            }}
-        });
-
-        const config = await readConfigFile();
-
-        assert.deepStrictEquals(config, {
-            success: true
-        });
-
-    });
-
+		assert.deepStrictEquals(config, {
+			success: true,
+		});
+	});
 });
 ```
 
