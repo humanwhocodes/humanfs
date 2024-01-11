@@ -8,6 +8,10 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 This is the monorepo for fsx, a modern filesystem API for JavaScript. Most of the filesystem APIs provided by JavaScript runtimes were designed to emulate Linux utilities which, while making them easy to adopt and understand, often requires writing way more code than necessary for common tasks. fsx is a new approach that streamlines the most common operations while providing useful ways to test the expected functionality.
 
+## Getting Started
+
+To get started using fsx, please see the [Getting Started](./docs/README.md).
+
 ## Dev Environment Setup
 
 ### Prerequisites
@@ -16,6 +20,9 @@ You must have the following installed:
 
 1. [Node.js](https://nodejs.org)
 1. [Deno](https://deno.land)
+
+> [!NOTE]
+> Deno is used for testing the `fsx-deno` package. If you are only working on other packages, you may not need to install Deno.
 
 Then follow these steps:
 

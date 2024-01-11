@@ -115,3 +115,35 @@ describe("readConfigFile()", () => {
 ```
 
 Here, the test sets an impl that stubs out the `fsx.json()` method. Because the `readConfigFile()` method is also using the `fsx` singleton, its behavior changes at runtime to use the new impl without any further changes. The `afterEach()` function resets the impl after each test to ensure that each test starts from scratch.
+
+Maybe you don't want to hit the actual filesystem for this test. Instead, you can swap out the impl of `fsx` and replace it with an in-memory filesystem implementation provided by `fsx-memory`, like this:
+
+```js
+import { fsx } from "fsx-node";
+import { MemoryFsxImpl } from "fsx-memory";
+import { readConfigFile } from "../src/example.js";
+import assert from "node:assert";
+
+describe("readConfigFile()", () => {
+
+    beforeEach(() => {
+        fsx.setImpl(new MemoryFsxImpl());
+    });
+
+    afterEach(() => {
+        fsx.resetImpl();
+    });
+
+    it("should read config file", async () => {
+
+        await fsx.write("config.json", JSON.stringify({ found: true });
+
+        const result = await readConfigFile();
+
+        assert.isTrue(result.found);
+    });
+
+});
+```
+
+In this example, the `fsx` singleton begins as an abstraction on top of the Node.js `fs` module but then the impl is swapped out right before each test starts. Switching to an in-memory impl means faster tests without messing up the working directory.

@@ -5,9 +5,9 @@
 
 Files are read by using the method that returns the specific data type that you want:
 
-* `jsx.text(filePath)` reads the given file and returns a string.
-* `jsx.json(filePath)` reads the given file and returns a JSON value.
-* `jsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
+* `fsx.text(filePath)` reads the given file and returns a string.
+* `fsx.json(filePath)` reads the given file and returns a JSON value.
+* `fsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
 
 Here are some examples:
 
@@ -57,11 +57,11 @@ To write files, call the `fsx.write()` method. This method accepts two arguments
 Here's an example:
 
 ```js
-fsx.write("/path/to/file.txt", "Hello world!");
+await fsx.write("/path/to/file.txt", "Hello world!");
 
 const bytes = new TextEncoder().encode("Hello world!").buffer;
 
-fsx.write("/path/to/file.txt", bytes);
+await fsx.write("/path/to/file.txt", bytes);
 ```
 
 > [!TIP]
@@ -72,7 +72,7 @@ fsx.write("/path/to/file.txt", bytes);
 To determine to if a file exists, use the `fsx.isFile(filePath)` method, which returns `true` if the given file exists or `false` otherwise.
 
 ```js
-if (fsx.isFile("/path/to/file.txt")) {
+if (await fsx.isFile("/path/to/file.txt")) {
     // handle the file
 }
 ```
@@ -85,5 +85,5 @@ if (fsx.isFile("/path/to/file.txt")) {
 To delete files, call the `fsx.delete(filePath)` method. For example:
 
 ```js
-fsx.delete("/path/to/file.txt");
+await fsx.delete("/path/to/file.txt");
 ```

@@ -89,7 +89,7 @@ import fsp from "fs/promises";
 const fsx = new NodeFsx();
 
 // optionally specify the fs/promises object to use
-const fsx = new NodeFsxImpl({ fsp });
+const fsx = new NodeFsx({ fsp });
 ```
 
 If you'd like to use just the impl, import the `NodeFsxImpl` constructor:

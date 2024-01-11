@@ -1,11 +1,11 @@
-#  Operations
+#  Directory Operations
 
 ## Creating Directories
 
 To create a directory, use the `fsx.createDirectory(dirPath)` method, like this:
 
 ```js
-fsx.createDirectory("/path/to/directory");
+await fsx.createDirectory("/path/to/directory");
 ```
 
 > [!TIP]
@@ -19,7 +19,7 @@ fsx.createDirectory("/path/to/directory");
 To determine to if a directory exists, use the `fsx.isDirectory(dirPath)` method, which returns `true` if the given directory exists or `false` otherwise.
 
 ```js
-if (fsx.isdirectory("/path/to/directory")) {
+if (await fsx.isDirectory("/path/to/directory")) {
     // handle the directory
 }
 ```
@@ -32,7 +32,7 @@ if (fsx.isdirectory("/path/to/directory")) {
 To delete directories, call the `fsx.delete(dirPath)` method. For example:
 
 ```js
-fsx.delete("/path/to/directories");
+await fsx.delete("/path/to/directories");
 ```
 
 > [!IMPORTANT]
