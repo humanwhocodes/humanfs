@@ -1,4 +1,4 @@
-# `fsx-node`
+# `fsx-memory`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
