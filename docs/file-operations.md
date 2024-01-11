@@ -61,7 +61,7 @@ await fsx.write("/path/to/file.txt", "Hello world!");
 
 const bytes = new TextEncoder().encode("Hello world!").buffer;
 
-await fsx.write("/path/to/file.txt", buffer);
+await fsx.write("/path/to/file.txt", bytes);
 ```
 
 > [!TIP]
