@@ -42,6 +42,7 @@ export interface FsxImpl {
 	 * Checks if the given file exists.
 	 * @param filePath The file to check.
 	 * @returns True if the file exists, false if not.
+	 * @throws {Error} If the operation fails with a code other than ENOENT.
 	 */
 	isFile?(filePath: string): Promise<boolean>;
 
@@ -49,6 +50,7 @@ export interface FsxImpl {
 	 * Checks if the given directory exists.
 	 * @param dirPath The directory to check.
 	 * @returns True if the directory exists, false if not.
+	 * @throws {Error} If the operation fails with a code other than ENOENT.
 	 */
 	isDirectory?(dirPath: string): Promise<boolean>;
 

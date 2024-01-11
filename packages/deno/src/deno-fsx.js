@@ -140,13 +140,19 @@ export class DenoFsxImpl {
 	 * @param {string} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    file exists or false if it does not.
-	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {Error} If the operation fails with a code other than ENOENT.
 	 */
 	isFile(filePath) {
 		return this.#deno
 			.stat(filePath)
 			.then(stat => stat.isFile)
-			.catch(() => false);
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**
@@ -154,13 +160,19 @@ export class DenoFsxImpl {
 	 * @param {string} dirPath The path to the directory to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    directory exists or false if it does not.
-	 * @throws {TypeError} If the directory path is not a string.
+	 * @throws {Error} If the operation fails with a code other than ENOENT.
 	 */
 	isDirectory(dirPath) {
 		return this.#deno
 			.stat(dirPath)
 			.then(stat => stat.isDirectory)
-			.catch(() => false);
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**

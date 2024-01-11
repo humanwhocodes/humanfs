@@ -55,3 +55,46 @@ await tester.test({
 	name: "DenoFsxImpl",
 	impl: new DenoFsxImpl(),
 });
+
+describe("DenoFsxImpl Customizations", () => {
+
+	describe("isFile()", () => {
+
+		it("should return false when a file isn't present", async () => {
+			const impl = new DenoFsxImpl();
+			const result = await impl.isFile("foo.txt");
+			assertEquals(result, false);
+		});
+
+		it("should rethrow an error that isn't ENOENT", async () => {
+			const impl = new DenoFsxImpl({
+				deno: {
+					async stat() {
+						throw new Error("Boom!");
+					},
+				}
+			});
+			await assertRejects(() => impl.isFile("foo.txt"), /Boom!/);
+		});
+	});
+
+	describe("isDirectory()", () => {
+
+		it("should return false when a file isn't present", async () => {
+			const impl = new DenoFsxImpl();
+			const result = await impl.isDirectory(".fsx/foo");
+			assertEquals(result, false);
+		});
+
+		it("should rethrow an error that isn't ENOENT", async () => {
+			const impl = new DenoFsxImpl({
+				deno: {
+					async stat() {
+						throw new Error("Boom!");
+					},
+				}
+			});
+			await assertRejects(() => impl.isDirectory(".fsx/foo"), /Boom!/);
+		});
+	});
+});
