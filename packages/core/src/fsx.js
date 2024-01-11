@@ -72,7 +72,6 @@ function assertValidFileContents(contents) {
  * A class representing a log entry.
  */
 export class LogEntry {
-
 	/**
 	 * The type of log entry.
 	 * @type {string}
@@ -240,7 +239,7 @@ export class Fsx {
 	}
 
 	/**
-	 * Reads the given file and returns the contents as text.
+	 * Reads the given file and returns the contents as text. Assumes UTF-8 encoding.
 	 * @param {string} filePath The file to read.
 	 * @returns {Promise<string>} The contents of the file.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
@@ -252,7 +251,7 @@ export class Fsx {
 	}
 
 	/**
-	 * Reads the given file and returns the contents as JSON.
+	 * Reads the given file and returns the contents as JSON. Assumes UTF-8 encoding.
 	 * @param {string} filePath The file to read.
 	 * @returns {Promise<any>} The contents of the file as JSON.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
@@ -277,7 +276,8 @@ export class Fsx {
 	}
 
 	/**
-	 * Writes the given data to the given file.
+	 * Writes the given data to the given file. Creates any necessary directories along the way.
+	 * If the data is a string, UTF-8 encoding is used.
 	 * @param {string} filePath The file to write.
 	 * @param {any} contents The data to write.
 	 * @returns {Promise<void>} A promise that resolves when the file is written.

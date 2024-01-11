@@ -9,14 +9,14 @@
 
 export interface FsxImpl {
 	/**
-	 * Reads the given file and returns the contents as text.
+	 * Reads the given file and returns the contents as text. Assumes the file is UTF-8 encoded.
 	 * @param filePath The file to read.
 	 * @returns The contents of the file or undefined if the file is empty.
 	 */
 	text?(filePath: string): Promise<string>;
 
 	/**
-	 * Reads the given file and returns the contents as JSON.
+	 * Reads the given file and returns the contents as JSON. Assumes the file is UTF-8 encoded.
 	 * @param filePath The file to read.
 	 * @returns The contents of the file as JSON or undefined if the file is empty.
 	 */
@@ -30,7 +30,7 @@ export interface FsxImpl {
 	arrayBuffer?(filePath: string): Promise<ArrayBuffer>;
 
 	/**
-	 * Writes the given data to the given file.
+	 * Writes the given data to the given file. For text, assumes UTF-8 encoding.
 	 * @param filePath The file to write to.
 	 * @param data The data to write.
 	 * @returns A promise that resolves when the file is written.

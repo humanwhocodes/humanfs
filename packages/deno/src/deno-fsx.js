@@ -42,7 +42,7 @@ export class DenoFsxImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a string.
+	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
 	 * @param {string} filePath The path to the file to read.
 	 * @returns {Promise<string>} A promise that resolves with the contents of
 	 *     the file.
@@ -63,7 +63,7 @@ export class DenoFsxImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a JSON object.
+	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
 	 * @param {string} filePath The path to the file to read.
 	 * @returns {Promise<object>} A promise that resolves with the contents of
 	 *    the file.
@@ -100,6 +100,7 @@ export class DenoFsxImpl {
 
 	/**
 	 * Writes a value to a file, creating any necessary directories along the way.
+	 * If the value is a string, UTF-8 encoding is used.
 	 * @param {string} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer} contents The contents to write to the
 	 *   file.

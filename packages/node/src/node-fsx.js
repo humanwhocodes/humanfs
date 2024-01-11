@@ -43,7 +43,7 @@ export class NodeFsxImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a string.
+	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
 	 * @param {string} filePath The path to the file to read.
 	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
 	 *     the file or undefined if the file doesn't exist.
@@ -64,7 +64,7 @@ export class NodeFsxImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a JSON object.
+	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
 	 * @param {string} filePath The path to the file to read.
 	 * @returns {Promise<object|undefined>} A promise that resolves with the contents of
 	 *    the file or undefined if the file doesn't exist.
@@ -100,7 +100,7 @@ export class NodeFsxImpl {
 	}
 
 	/**
-	 * Writes a value to a file.
+	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer} contents The contents to write to the
 	 *   file.
@@ -111,12 +111,9 @@ export class NodeFsxImpl {
 	 */
 	async write(filePath, contents) {
 		const value =
-			contents instanceof ArrayBuffer
-				? Buffer.from(contents)
-				: contents;
+			contents instanceof ArrayBuffer ? Buffer.from(contents) : contents;
 
 		return this.#fsp.writeFile(filePath, value).catch(error => {
-
 			// the directory may not exist, so create it
 			if (error.code === "ENOENT") {
 				return this.#fsp

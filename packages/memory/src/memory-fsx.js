@@ -160,7 +160,7 @@ export class MemoryFsxImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a string.
+	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
 	 * @param {string} filePath The path to the file to read.
 	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
 	 *     the file or undefined if the file does not exist.
@@ -184,7 +184,7 @@ export class MemoryFsxImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a JSON object.
+	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
 	 * @param {string} filePath The path to the file to read.
 	 * @returns {Promise<object|null>} A promise that resolves with the contents of
 	 *    the file or undefined if the file does not exist.
@@ -221,7 +221,7 @@ export class MemoryFsxImpl {
 	}
 
 	/**
-	 * Writes a value to a file.
+	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer} contents The contents to write to the
 	 *   file.
