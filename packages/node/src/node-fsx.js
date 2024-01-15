@@ -96,43 +96,47 @@ class Retrier {
 	#timerId;
 
 	/**
-	 * The fsx instance to use.
-	 * @type {Fsx}
+	 * The function to call.
+	 * @type {Function}
 	 */
-	#fsx;
+	#check;
 
 	/**
 	 * Creates a new instance.
+	 * @param {Function} check The function to call.
 	 * @param {object} [options] The options for the instance.
-	 * @param {Fsx} [options.fsx] The fsx instance to use.
 	 * @param {number} [options.timeout] The timeout for the queue.
 	 */
-	constructor({ fsx, timeout = 60000 } = {}) {
+	constructor(check, { timeout = 60000 } = {}) {
 		this.#queue = [];
 		this.#timeout = timeout;
-		this.#fsx = fsx;
+		this.#check = check;
 	}
 
 	/**
 	 * Adds a new retry job to the queue.
-	 * @param {string} name The name of the method to call.
-	 * @param {Array<any>} args The arguments to pass to the method.
-	 * @param {Error} error The error that occurred. (We may need to rethrow it.)
+	 * @param {Function} fn The function to call.
 	 * @returns {Promise<any>} A promise that resolves when the queue is
 	 *  processed.
 	 */
-	retry(name, args, error) {
-		return new Promise((resolve, reject) => {
-			this.#queue.push({
-				name,
-				args,
-				error,
-				timestamp: Date.now(),
-				lastAttempt: Date.now(),
-				resolve,
-				reject,
+	retry(fn) {
+		// call the original function and catch any ENFILE or EMFILE errors
+		return fn().catch(error => {
+			if (!this.#check(error)) {
+				throw error;
+			}
+
+			return new Promise((resolve, reject) => {
+				this.#queue.push({
+					fn,
+					error,
+					timestamp: Date.now(),
+					lastAttempt: Date.now(),
+					resolve,
+					reject,
+				});
+				this.#processQueue();
 			});
-			this.#processQueue();
 		});
 	}
 
@@ -168,11 +172,16 @@ class Retrier {
 
 		// otherwise, try again
 		task.lastAttempt = Date.now();
-		this.#fsx
-			[task.name](...task.args)
+		task.fn()
 			.then(result => task.resolve(result))
 			.catch(error => {
-				task.reject(error);
+				if (!this.#check(error)) {
+					task.reject(error);
+				}
+
+				// update the task timestamp and push to back of queue to try again
+				task.lastAttempt = Date.now();
+				this.#queue.push(task);
 			})
 			.finally(() => this.#processQueue());
 	}
@@ -197,7 +206,7 @@ export class NodeFsxImpl {
 	 * The retryer object used for retrying operations.
 	 * @type {Retrier}
 	 */
-	retrier;
+	#retrier;
 
 	/**
 	 * Creates a new instance.
@@ -206,7 +215,7 @@ export class NodeFsxImpl {
 	 */
 	constructor({ fsp }) {
 		this.#fsp = fsp;
-		this.retrier = new Retrier({ fsx: this });
+		this.#retrier = new Retrier(error => RETRY_ERROR_CODES.has(error.code));
 	}
 
 	/**
@@ -221,17 +230,15 @@ export class NodeFsxImpl {
 	 * @throws {RangeError} If the file path is not readable.
 	 */
 	text(filePath) {
-		return this.#fsp.readFile(filePath, "utf8").catch(error => {
-			if (error.code === "ENOENT") {
-				return undefined;
-			}
+		return this.#retrier
+			.retry(() => this.#fsp.readFile(filePath, "utf8"))
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return undefined;
+				}
 
-			if (RETRY_ERROR_CODES.has(error.code)) {
-				return this.retrier.retry("text", [filePath], error);
-			}
-
-			throw error;
-		});
+				throw error;
+			});
 	}
 
 	/**
@@ -258,16 +265,12 @@ export class NodeFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	arrayBuffer(filePath) {
-		return this.#fsp
-			.readFile(filePath)
+		return this.#retrier
+			.retry(() => this.#fsp.readFile(filePath))
 			.then(buffer => buffer.buffer)
 			.catch(error => {
 				if (error.code === "ENOENT") {
 					return undefined;
-				}
-
-				if (RETRY_ERROR_CODES.has(error.code)) {
-					return this.retrier.retry("arrayBuffer", [filePath], error);
 				}
 
 				throw error;
@@ -288,20 +291,18 @@ export class NodeFsxImpl {
 		const value =
 			contents instanceof ArrayBuffer ? Buffer.from(contents) : contents;
 
-		return this.#fsp.writeFile(filePath, value).catch(error => {
-			// the directory may not exist, so create it
-			if (error.code === "ENOENT") {
-				return this.#fsp
-					.mkdir(path.dirname(filePath), { recursive: true })
-					.then(() => this.#fsp.writeFile(filePath, value));
-			}
+		return this.#retrier
+			.retry(() => this.#fsp.writeFile(filePath, value))
+			.catch(error => {
+				// the directory may not exist, so create it
+				if (error.code === "ENOENT") {
+					return this.#fsp
+						.mkdir(path.dirname(filePath), { recursive: true })
+						.then(() => this.#fsp.writeFile(filePath, value));
+				}
 
-			if (RETRY_ERROR_CODES.has(error.code)) {
-				return this.retrier.retry("write", [filePath, contents], error);
-			}
-
-			throw error;
-		});
+				throw error;
+			});
 	}
 
 	/**

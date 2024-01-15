@@ -125,7 +125,7 @@ describe("NodeFsxImpl Customizations", () => {
 			assert.strictEqual(result, "Hello world!");
 		});
 
-		it("should return text contents when EMFILE error occurs  multiple times", async () => {
+		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			let callCount = 0;
 			const impl = new NodeFsxImpl({
 				fsp: {
