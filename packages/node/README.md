@@ -83,7 +83,7 @@ await fsx.delete("dir");
 If you'd like to create your own instance, import the `NodeFsx` constructor:
 
 ```js
-import { NodeFsx } from "fsx-memory";
+import { NodeFsx } from "fsx-node";
 import fsp from "fs/promises";
 
 const fsx = new NodeFsx();
@@ -95,7 +95,7 @@ const fsx = new NodeFsx({ fsp });
 If you'd like to use just the impl, import the `NodeFsxImpl` constructor:
 
 ```js
-import { NodeFsxImpl } from "fsx-memory";
+import { NodeFsxImpl } from "fsx-node";
 import fsp from "fs/promises";
 
 const fsx = new NodeFsxImpl();
