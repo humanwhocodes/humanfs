@@ -1,6 +1,6 @@
 {
   "name": "fsx-node",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The Node.js bindings of the fsx library.",
   "type": "module",
   "types": "dist/node-fsx.d.ts",
@@ -40,9 +40,9 @@
     "mocha": "^10.2.0",
     "typescript": "^5.2.2",
     "fsx-test": "^0.1.0",
-    "fsx-types": "^0.0.2"
+    "fsx-types": "^0.0.3"
   },
   "dependencies": {
-    "fsx-core": "^0.1.0"
+    "fsx-core": "^0.1.1"
   }
 }

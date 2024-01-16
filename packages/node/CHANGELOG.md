@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.1.0...fsx-node-v0.2.0) (2024-01-16)
+
+
+### Features
+
+* Add EMFILE/ENFILE retrying for Node.js ([#19](https://github.com/humanwhocodes/fsx/issues/19)) ([cfd2402](https://github.com/humanwhocodes/fsx/commit/cfd2402d10e2974963124391483d0592ce4d469c))
+
+
+### Bug Fixes
+
+* Ensure isFile/isDirectory rethrow non-ENOENT errors. ([d31ee56](https://github.com/humanwhocodes/fsx/commit/d31ee56788e898cbc1fc0d6a54d1551f9b17cd45)), closes [#14](https://github.com/humanwhocodes/fsx/issues/14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fsx-core bumped from ^0.1.0 to ^0.1.1
+  * devDependencies
+    * fsx-types bumped from ^0.0.2 to ^0.0.3
+
 ## [0.1.0](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.0.1...fsx-node-v0.1.0) (2024-01-06)
 
 ### Features

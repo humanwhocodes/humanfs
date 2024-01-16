@@ -1,5 +1,11 @@
 # Changelog
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * fsx-types bumped from ^0.0.2 to ^0.0.3
+
 ## [0.1.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.0.1...fsx-core-v0.1.0) (2024-01-06)
 
 ### Features
