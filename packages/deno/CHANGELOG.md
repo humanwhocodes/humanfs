@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.1.0...fsx-deno-v0.1.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* Ensure isFile/isDirectory rethrow non-ENOENT errors. ([d31ee56](https://github.com/humanwhocodes/fsx/commit/d31ee56788e898cbc1fc0d6a54d1551f9b17cd45)), closes [#14](https://github.com/humanwhocodes/fsx/issues/14)
+
 ## [0.1.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.0.1...fsx-deno-v0.1.0) (2024-01-06)
 
 ### Features

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.1](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.1.0...fsx-memory-v0.1.1) (2024-01-16)
+
+
+### Bug Fixes
+
+* **docs:** Correct package name of fsx-memory in README ([#4](https://github.com/humanwhocodes/fsx/issues/4)) ([92022c4](https://github.com/humanwhocodes/fsx/commit/92022c41e30ca7213e0de78093796308d5951ba1))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fsx-core bumped from ^0.1.0 to ^0.1.1
+  * devDependencies
+    * fsx-types bumped from ^0.0.2 to ^0.0.3
+
 ## [0.1.0](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.0.1...fsx-memory-v0.1.0) (2024-01-06)
 
 ### Features
