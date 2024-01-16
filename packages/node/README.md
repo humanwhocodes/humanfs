@@ -104,6 +104,11 @@ const fsx = new NodeFsxImpl();
 const fsx = new NodeFsxImpl({ fsp });
 ```
 
+## Errors Handled
+
+* `ENOENT` - in most cases, these errors are handled silently.
+* `ENFILE` and `EMFILE` - calls that result in these errors are retried for up to 60 seconds before giving up for good.
+
 ## License
 
 Apache 2.0
