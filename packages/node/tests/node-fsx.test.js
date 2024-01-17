@@ -158,6 +158,27 @@ describe("NodeFsxImpl Customizations", () => {
 			});
 			await assert.rejects(() => impl.text(".fsx/foo"), /Boom!/);
 		});
+
+		it("should rethrow an error that isn't ENFILE after ENFILE occurs", async () => {
+			let callCount = 0;
+			const impl = new NodeFsxImpl({
+				fsp: {
+					async readFile() {
+						if (callCount < 3) {
+							callCount++;
+							const error = new Error(
+								"EMFILE: file table overflow",
+							);
+							error.code = "EMFILE";
+							throw error;
+						}
+
+						throw new Error("Boom!");
+					},
+				},
+			});
+			await assert.rejects(() => impl.text(".fsx/foo"), /Boom!/);
+		});
 	});
 
 	describe("arrayBuffer()", () => {

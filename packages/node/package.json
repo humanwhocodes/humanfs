@@ -43,7 +43,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@humanwhocodes/retry": "^0.1.1",
+    "@humanwhocodes/retry": "^0.1.2",
     "fsx-core": "^0.1.1"
   }
 }
