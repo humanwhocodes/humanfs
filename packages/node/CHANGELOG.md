@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.2.0...fsx-node-v0.2.1) (2024-01-17)
+
+
+### Bug Fixes
+
+* **deps:** Retry logic in read/write operations ([9a6b62d](https://github.com/humanwhocodes/fsx/commit/9a6b62d6300799bb405893cb0a59be1988c558d5))
+
 ## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.1.0...fsx-node-v0.2.0) (2024-01-16)
 
 

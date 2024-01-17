@@ -2,7 +2,7 @@
   "packages/types": "0.0.3",
   "packages/test": "0.1.0",
   "packages/core": "0.1.1",
-  "packages/node": "0.2.0",
-  "packages/deno": "0.1.1",
+  "packages/node": "0.2.1",
+  "packages/deno": "0.2.0",
   "packages/memory": "0.1.1"
 }

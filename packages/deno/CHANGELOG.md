@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.1.1...fsx-deno-v0.2.0) (2024-01-17)
+
+
+### Features
+
+* Add EMFILE/ENFILE retry ([c2db624](https://github.com/humanwhocodes/fsx/commit/c2db624f974e111017a3783ac8d4ea9a4a3a87e6))
+
 ## [0.1.1](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.1.0...fsx-deno-v0.1.1) (2024-01-16)
 
 

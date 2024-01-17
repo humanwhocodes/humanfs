@@ -1,6 +1,6 @@
 {
   "name": "fsx-node",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "The Node.js bindings of the fsx library.",
   "type": "module",
   "types": "dist/node-fsx.d.ts",

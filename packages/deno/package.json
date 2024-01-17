@@ -1,6 +1,6 @@
 {
   "name": "fsx-deno",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "The Deno bindings of the fsx library.",
   "type": "module",
   "types": "dist/deno-fsx.d.ts",
