@@ -36,7 +36,10 @@
   },
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "@types/node": "^20.9.4"
+    "@types/node": "^20.9.4",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@humanwhocodes/retry": "^0.1.2"
   }
 }

@@ -2,9 +2,14 @@
   "version": "3",
   "packages": {
     "specifiers": {
+      "npm:@humanwhocodes/retry@latest": "npm:@humanwhocodes/retry@0.1.2",
       "npm:@types/node": "npm:@types/node@18.16.19"
     },
     "npm": {
+      "@humanwhocodes/retry@0.1.2": {
+        "integrity": "sha512-JNWGHkYfWI0+YgRHOwkFKjOuelfypQtp0GSx0lsOP9jU1Tj4f8k0x4dcaJSEZTp61THZJ+f9PJRh1GzYlQqHOQ==",
+        "dependencies": {}
+      },
       "@types/node@18.16.19": {
         "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
         "dependencies": {}

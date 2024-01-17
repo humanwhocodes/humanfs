@@ -15,7 +15,14 @@
 //-----------------------------------------------------------------------------
 
 import { Fsx } from "fsx-core";
+import { Retrier } from "@humanwhocodes/retry";
 import path from "node:path";
+
+//-----------------------------------------------------------------------------
+// Constants
+//-----------------------------------------------------------------------------
+
+const RETRY_ERROR_CODES = new Set(["ENFILE", "EMFILE"]);
 
 //-----------------------------------------------------------------------------
 // Exports
@@ -33,12 +40,19 @@ export class DenoFsxImpl {
 	#deno;
 
 	/**
+	 * The retryer object used for retrying operations.
+	 * @type {Retrier}
+	 */
+	#retrier;
+
+	/**
 	 * Creates a new instance.
 	 * @param {object} [options] The options for the instance.
 	 * @param {Deno} [options.deno] The Deno object to use.
 	 */
 	constructor({ deno = Deno } = {}) {
 		this.#deno = deno;
+		this.#retrier = new Retrier(error => RETRY_ERROR_CODES.has(error.code));
 	}
 
 	/**
@@ -53,13 +67,15 @@ export class DenoFsxImpl {
 	 * @throws {RangeError} If the file path is not readable.
 	 */
 	text(filePath) {
-		return this.#deno.readTextFile(filePath).catch(error => {
-			if (error.code === "ENOENT") {
-				return undefined;
-			} else {
+		return this.#retrier
+			.retry(() => this.#deno.readTextFile(filePath))
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return undefined;
+				}
+
 				throw error;
-			}
-		});
+			});
 	}
 
 	/**
@@ -86,15 +102,15 @@ export class DenoFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	arrayBuffer(filePath) {
-		return this.#deno
-			.readFile(filePath)
+		return this.#retrier
+			.retry(() => this.#deno.readFile(filePath))
 			.then(bytes => bytes.buffer)
 			.catch(error => {
 				if (error.code === "ENOENT") {
 					return undefined;
-				} else {
-					throw error;
 				}
+
+				throw error;
 			});
 	}
 
@@ -125,7 +141,7 @@ export class DenoFsxImpl {
 							},
 						);
 
-		return op().catch(error => {
+		return this.#retrier.retry(op).catch(error => {
 			if (error.code === "ENOENT") {
 				return this.#deno
 					.mkdir(path.dirname(filePath), { recursive: true })
