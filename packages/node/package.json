@@ -37,12 +37,13 @@
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
     "@types/node": "^20.9.4",
-    "mocha": "^10.2.0",
-    "typescript": "^5.2.2",
     "fsx-test": "^0.1.0",
-    "fsx-types": "^0.0.3"
+    "fsx-types": "^0.0.3",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@humanwhocodes/retry": "^0.1.1",
     "fsx-core": "^0.1.1"
   }
 }

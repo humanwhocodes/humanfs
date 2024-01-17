@@ -2,7 +2,7 @@
  * @fileoverview The main file for the fsx package.
  * @author Nicholas C. Zakas
  */
-/* global Buffer:readonly, clearTimeout:readonly, setTimeout:readonly */
+/* global Buffer:readonly */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -17,175 +17,13 @@
 
 import { Fsx } from "fsx-core";
 import path from "node:path";
+import { Retrier } from "@humanwhocodes/retry";
 
 //-----------------------------------------------------------------------------
 // Constants
 //-----------------------------------------------------------------------------
 
-const MAX_TASK_TIMEOUT = 60000;
-const MAX_TASK_DELAY = 100;
 const RETRY_ERROR_CODES = new Set(["ENFILE", "EMFILE"]);
-
-//-----------------------------------------------------------------------------
-// Helpers
-//-----------------------------------------------------------------------------
-
-/*
- * The following logic has been extracted from graceful-fs.
- *
- * The ISC License
- *
- * Copyright (c) 2011-2023 Isaac Z. Schlueter, Ben Noordhuis, and Contributors
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
- * IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
-
-/**
- * Checks if it is time to retry a task based on the timestamp and last attempt time.
- * @param {number} timestamp The timestamp of the task.
- * @param {number} lastAttempt The timestamp of the last attempt.
- * @returns {boolean} true if it is time to retry, false otherwise.
- */
-function isTimeToRetry(timestamp, lastAttempt) {
-	const timeSinceLastAttempt = Date.now() - lastAttempt;
-	const timeSinceStart = Math.max(lastAttempt - timestamp, 1);
-	const desiredDelay = Math.min(timeSinceStart * 1.2, MAX_TASK_DELAY);
-
-	return timeSinceLastAttempt >= desiredDelay;
-}
-
-/**
- * Checks if it is time to bail out based on the given timestamp.
- * @param {number} timestamp The timestamp to compare against.
- * @returns {boolean} true if it is time to bail, false otherwise.
- */
-function isTimeToBail(timestamp) {
-	return Date.now() - timestamp > MAX_TASK_TIMEOUT;
-}
-
-/**
- * A class that manages a queue of retry jobs.
- */
-class Retrier {
-	/**
-	 * Represents the queue for processing tasks.
-	 * @type {Array<object>}
-	 */
-	#queue;
-
-	/**
-	 * The timeout for the queue.
-	 * @type {number}
-	 */
-	#timeout;
-
-	/**
-	 * The setTimeout() timer ID.
-	 * @type {NodeJS.Timeout|undefined}
-	 */
-	#timerId;
-
-	/**
-	 * The function to call.
-	 * @type {Function}
-	 */
-	#check;
-
-	/**
-	 * Creates a new instance.
-	 * @param {Function} check The function to call.
-	 * @param {object} [options] The options for the instance.
-	 * @param {number} [options.timeout] The timeout for the queue.
-	 */
-	constructor(check, { timeout = 60000 } = {}) {
-		this.#queue = [];
-		this.#timeout = timeout;
-		this.#check = check;
-	}
-
-	/**
-	 * Adds a new retry job to the queue.
-	 * @param {Function} fn The function to call.
-	 * @returns {Promise<any>} A promise that resolves when the queue is
-	 *  processed.
-	 */
-	retry(fn) {
-		// call the original function and catch any ENFILE or EMFILE errors
-		return fn().catch(error => {
-			if (!this.#check(error)) {
-				throw error;
-			}
-
-			return new Promise((resolve, reject) => {
-				this.#queue.push({
-					fn,
-					error,
-					timestamp: Date.now(),
-					lastAttempt: Date.now(),
-					resolve,
-					reject,
-				});
-				this.#processQueue();
-			});
-		});
-	}
-
-	/**
-	 * Processes the queue.
-	 * @returns {void}
-	 */
-	#processQueue() {
-		// clear any timer because we're going to check right now
-		clearTimeout(this.#timerId);
-		this.#timerId = undefined;
-
-		// if there's nothing in the queue, we're done
-		if (this.#queue.length === 0) {
-			return;
-		}
-
-		const task = this.#queue.shift();
-
-		// if it's time to bail, then bail
-		if (isTimeToBail(task.timestamp)) {
-			task.reject(task.error);
-			this.#processQueue();
-			return;
-		}
-
-		// if it's not time to retry, then wait and try again
-		if (!isTimeToRetry(task.timestamp, task.lastAttempt)) {
-			this.#queue.unshift(task);
-			this.#timerId = setTimeout(() => this.#processQueue(), 0);
-			return;
-		}
-
-		// otherwise, try again
-		task.lastAttempt = Date.now();
-		task.fn()
-			.then(result => task.resolve(result))
-			.catch(error => {
-				if (!this.#check(error)) {
-					task.reject(error);
-				}
-
-				// update the task timestamp and push to back of queue to try again
-				task.lastAttempt = Date.now();
-				this.#queue.push(task);
-			})
-			.finally(() => this.#processQueue());
-	}
-}
 
 //-----------------------------------------------------------------------------
 // Exports
