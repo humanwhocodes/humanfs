@@ -6,7 +6,8 @@ Files are read by using the method that returns the specific data type that you 
 
 -   `fsx.text(filePath)` reads the given file and returns a string.
 -   `fsx.json(filePath)` reads the given file and returns a JSON value.
--   `fsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
+-   `fsx.bytes(filePath)` reads the given file and returns an `Uint8Array`.
+-   **Deprecated:** `fsx.arrayBuffer(filePath)` reads the given file and returns an `ArrayBuffer`.
 
 Here are some examples:
 
@@ -18,7 +19,10 @@ const text = await fsx.text("/path/to/file.txt");
 const json = await fsx.json("/path/to/file.json");
 
 // read bytes
-const bytes = await fsx.arrayBuffer("/path/to/file.png");
+const bytes = await fsx.bytes("/path/to/file.png");
+
+// read buffer
+const buffer = await fsx.arrayBuffer("/path/to/file.png");
 ```
 
 ### When Files Don't Exist
@@ -44,7 +48,7 @@ const json = (await fsx.json("/path/to/file.json")) ?? {};
 
 // read bytes
 const bytes =
-	(await fsx.arrayBuffer("/path/to/file.png")) ?? new ArrayBuffer(16);
+	(await fsx.bytes("/path/to/file.png")) ?? new Uint8Array();
 ```
 
 ## Writing Files
