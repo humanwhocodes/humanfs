@@ -26,8 +26,16 @@ export interface FsxImpl {
 	 * Reads the given file and returns the contents as an ArrayBuffer.
 	 * @param filePath The file to read.
 	 * @returns The contents of the file as an ArrayBuffer or undefined if the file is empty.
+	 * @deprecated Use bytes() instead.
 	 */
 	arrayBuffer?(filePath: string): Promise<ArrayBuffer>;
+
+	/**
+	 * Reads the given file and returns the contents as an Uint8Array.
+	 * @param filePath The file to read.
+	 * @returns The contents of the file as a Uint8Array or undefined if the file is empty.
+	 */
+	bytes?(filePath: string): Promise<Uint8Array>;
 
 	/**
 	 * Writes the given data to the given file. For text, assumes UTF-8 encoding.

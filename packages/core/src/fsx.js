@@ -241,7 +241,7 @@ export class Fsx {
 	/**
 	 * Reads the given file and returns the contents as text. Assumes UTF-8 encoding.
 	 * @param {string} filePath The file to read.
-	 * @returns {Promise<string>} The contents of the file.
+	 * @returns {Promise<string|undefined>} The contents of the file.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
@@ -253,7 +253,7 @@ export class Fsx {
 	/**
 	 * Reads the given file and returns the contents as JSON. Assumes UTF-8 encoding.
 	 * @param {string} filePath The file to read.
-	 * @returns {Promise<any>} The contents of the file as JSON.
+	 * @returns {Promise<any|undefined>} The contents of the file as JSON.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {SyntaxError} When the file contents are not valid JSON.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -266,13 +266,26 @@ export class Fsx {
 	/**
 	 * Reads the given file and returns the contents as an ArrayBuffer.
 	 * @param {string} filePath The file to read.
-	 * @returns {Promise<ArrayBuffer>} The contents of the file as an ArrayBuffer.
+	 * @returns {Promise<ArrayBuffer|undefined>} The contents of the file as an ArrayBuffer.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
+	 * @deprecated Use bytes() instead.
 	 */
 	async arrayBuffer(filePath) {
 		assertValidFileOrDirPath(filePath);
 		return this.#callImplMethod("arrayBuffer", filePath);
+	}
+
+	/**
+	 * Reads the given file and returns the contents as an Uint8Array.
+	 * @param {string} filePath The file to read.
+	 * @returns {Promise<Uint8Array|undefined>} The contents of the file as an Uint8Array.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file path is not a non-empty string.
+	 */
+	async bytes(filePath) {
+		assertValidFileOrDirPath(filePath);
+		return this.#callImplMethod("bytes", filePath);
 	}
 
 	/**

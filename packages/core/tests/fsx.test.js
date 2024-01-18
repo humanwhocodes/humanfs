@@ -2,6 +2,7 @@
  * @fileoverview Tests for the Fsx class.
  * @author Nicholas C. Zakas
  */
+/* global it, describe */
 
 //------------------------------------------------------------------------------
 // Imports
@@ -29,7 +30,7 @@ function normalizeLogEntry(logEntry) {
 
 describe("Fsx", () => {
 	describe("Missing Methods", () => {
-		["text", "json", "arrayBuffer"].forEach(methodName => {
+		["text", "json", "bytes", "bytes"].forEach(methodName => {
 			it(`should reject a promise when the ${methodName}() method is not present on the impl`, () => {
 				const fsx = new Fsx({ impl: {} });
 
@@ -288,35 +289,35 @@ describe("Fsx", () => {
 		});
 	});
 
-	describe("arrayBuffer", () => {
-		it("should return the ArrayBuffer from the file", async () => {
+	describe("bytes", () => {
+		it("should return the bytes from the file", async () => {
 			const fsx = new Fsx({
 				impl: {
-					arrayBuffer() {
+					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
 					},
 				},
 			});
 
-			const result = await fsx.arrayBuffer("/path/to/file.txt");
+			const result = await fsx.bytes("/path/to/file.txt");
 			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
 		});
 
 		it("should log the method call", async () => {
 			const fsx = new Fsx({
 				impl: {
-					arrayBuffer() {
+					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
 					},
 				},
 			});
 
-			fsx.logStart("arrayBuffer");
-			await fsx.arrayBuffer("/path/to/file.txt");
-			const logs = fsx.logEnd("arrayBuffer").map(normalizeLogEntry);
+			fsx.logStart("bytes");
+			await fsx.bytes("/path/to/file.txt");
+			const logs = fsx.logEnd("bytes").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "arrayBuffer",
+					methodName: "bytes",
 					args: ["/path/to/file.txt"],
 				},
 			]);
@@ -325,14 +326,14 @@ describe("Fsx", () => {
 		it("should reject a promise when the file path is not a string", () => {
 			const fsx = new Fsx({
 				impl: {
-					arrayBuffer() {
+					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
 					},
 				},
 			});
 
 			assert.rejects(
-				fsx.arrayBuffer(123),
+				fsx.bytes(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -340,14 +341,79 @@ describe("Fsx", () => {
 		it("should reject a promise when the file path is empty", () => {
 			const fsx = new Fsx({
 				impl: {
-					arrayBuffer() {
+					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
 					},
 				},
 			});
 
 			assert.rejects(
-				fsx.arrayBuffer(""),
+				fsx.bytes(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+	});
+
+	describe("bytes", () => {
+		it("should return the bytes from the file", async () => {
+			const fsx = new Fsx({
+				impl: {
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
+					},
+				},
+			});
+
+			const result = await fsx.bytes("/path/to/file.txt");
+			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]));
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
+					},
+				},
+			});
+
+			fsx.logStart("bytes");
+			await fsx.bytes("/path/to/file.txt");
+			const logs = fsx.logEnd("bytes").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "bytes",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.bytes(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.bytes(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -366,7 +432,7 @@ describe("Fsx", () => {
 			await fsx.write("/path/to/file.txt", "Hello, world!");
 		});
 
-		it("should not reject a promise when the file path is an ArrayBuffer", async () => {
+		it("should not reject a promise when the file path is an bytes", async () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -431,7 +497,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should reject a promise when the contents are not a string or ArrayBuffer", () => {
+		it("should reject a promise when the contents are not a string or bytes", () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -442,7 +508,7 @@ describe("Fsx", () => {
 
 			assert.rejects(
 				fsx.write("/path/to/file.txt", 123),
-				new TypeError("File contents must be a string or ArrayBuffer."),
+				new TypeError("File contents must be a string or bytes."),
 			);
 		});
 	});

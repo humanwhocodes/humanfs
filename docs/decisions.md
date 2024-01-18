@@ -1,3 +1,21 @@
+# 2024-01-18 `arrayBuffer()` should be replaced by `bytes()`
+
+## Background
+
+The `arrayBuffer()` method was added to match with the methods available on the `Response` object (via `fetch()`), but it seems like most APIs now expect `Unit8Array` objects.
+
+## Decision
+
+A new `bytes()` method that returns a `Uint8Array` replaces the `arrayBufer()` method. The `arrayBuffer()` method is deprecated and will be removed in a future version.
+
+## Rationale
+
+APIs typically don't work on raw `ArrayBuffer` objects (such as `TextEncoder`), and on most runtimes, the underlying filesystem APIs don't return `ArrayBuffer` objects (Node.js returns `Buffer` and Deno returns `Uint8Array`), requiring an extra step to extract the `ArrayBuffer`, which the end user will likely just wrap in a `Uint8Array` anyway. By providing a `bytes()` method, users will get the data structure they need immediately and will still have access to an `ArrayBuffer` as necessary using the `.buffer` property.
+
+## Related
+
+* https://github.com/humanwhocodes/fsx/discussions/12
+
 # 2024-01-02 `createDirectory()` should not return a boolean
 
 ## Background

@@ -101,11 +101,26 @@ export class NodeFsxImpl {
 	 *    of the file or undefined if the file doesn't exist.
 	 * @throws {Error} If the file cannot be read.
 	 * @throws {TypeError} If the file path is not a string.
+	 * @deprecated Use bytes() instead.
 	 */
 	arrayBuffer(filePath) {
+		return this.bytes(filePath).then(bytes =>
+			bytes === undefined ? bytes : bytes.buffer,
+		);
+	}
+
+	/**
+	 * Reads a file and returns the contents as an Uint8Array.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
+	 *    of the file or undefined if the file doesn't exist.
+	 * @throws {Error} If the file cannot be read.
+	 * @throws {TypeError} If the file path is not a string.
+	 */
+	bytes(filePath) {
 		return this.#retrier
 			.retry(() => this.#fsp.readFile(filePath))
-			.then(buffer => buffer.buffer)
+			.then(buffer => new Uint8Array(buffer.buffer))
 			.catch(error => {
 				if (error.code === "ENOENT") {
 					return undefined;

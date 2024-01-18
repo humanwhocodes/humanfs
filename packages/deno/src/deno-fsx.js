@@ -96,15 +96,27 @@ export class DenoFsxImpl {
 	/**
 	 * Reads a file and returns the contents as an ArrayBuffer.
 	 * @param {string} filePath The path to the file to read.
-	 * @returns {Promise<ArrayBuffer>} A promise that resolves with the contents
+	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
+	 *    of the file.
+	 * @throws {Error} If the file cannot be read.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @deprecated Use bytes() instead.
+	 */
+	arrayBuffer(filePath) {
+		return this.bytes(filePath).then(bytes => bytes?.buffer);
+	}
+
+	/**
+	 * Reads a file and returns the contents as an Uint8Array.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
 	 *    of the file.
 	 * @throws {Error} If the file cannot be read.
 	 * @throws {TypeError} If the file path is not a string.
 	 */
-	arrayBuffer(filePath) {
+	bytes(filePath) {
 		return this.#retrier
 			.retry(() => this.#deno.readFile(filePath))
-			.then(bytes => bytes.buffer)
 			.catch(error => {
 				if (error.code === "ENOENT") {
 					return undefined;

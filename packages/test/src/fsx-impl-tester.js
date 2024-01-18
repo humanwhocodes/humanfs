@@ -160,6 +160,30 @@ export class FsxImplTester {
 				});
 			});
 
+			describe("bytes()", () => {
+				it("should read a file and return the contents as an Uint8Array", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const result = await impl.bytes(filePath);
+					assert.ok(result instanceof Uint8Array);
+					const decoder = new TextDecoder();
+					assert.strictEqual(
+						decoder.decode(result),
+						"Hello world!\n",
+					);
+				});
+
+				it("should return undefined when a file doesn't exist", async () => {
+					const result = await impl.bytes(
+						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+			});
+
 			describe("write()", () => {
 				beforeEach(async () => {
 					await impl.createDirectory(this.#outputDir + "/tmp-write");
