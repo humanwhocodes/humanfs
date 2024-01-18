@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.1.1...fsx-memory-v0.2.0) (2024-01-18)
+
+
+### Features
+
+* Add bytes() method, deprecate arrayBuffer() ([718c9c8](https://github.com/humanwhocodes/fsx/commit/718c9c84a0a1dcaef3cc032c882b1308e9cb3273))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fsx-core bumped from ^0.1.1 to ^0.2.0
+  * devDependencies
+    * fsx-test bumped from ^0.1.0 to ^0.2.0
+    * fsx-types bumped from ^0.0.3 to ^0.1.0
+
 ## [0.1.1](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.1.0...fsx-memory-v0.1.1) (2024-01-16)
 
 

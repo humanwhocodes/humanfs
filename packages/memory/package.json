@@ -1,6 +1,6 @@
 {
   "name": "fsx-memory",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "The in-memory bindings for the fsx library.",
   "type": "module",
   "types": "dist/memory-fsx.d.ts",
@@ -39,10 +39,10 @@
     "@types/node": "^20.9.4",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2",
-    "fsx-test": "^0.1.0",
-    "fsx-types": "^0.0.3"
+    "fsx-test": "^0.2.0",
+    "fsx-types": "^0.1.0"
   },
   "dependencies": {
-    "fsx-core": "^0.1.1"
+    "fsx-core": "^0.2.0"
   }
 }

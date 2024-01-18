@@ -6,6 +6,20 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.1.1...fsx-core-v0.2.0) (2024-01-18)
+
+
+### Features
+
+* Add bytes() method, deprecate arrayBuffer() ([718c9c8](https://github.com/humanwhocodes/fsx/commit/718c9c84a0a1dcaef3cc032c882b1308e9cb3273))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * fsx-types bumped from ^0.0.3 to ^0.1.0
+
 ## [0.1.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.0.1...fsx-core-v0.1.0) (2024-01-06)
 
 ### Features

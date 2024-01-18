@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.2.0...fsx-deno-v0.3.0) (2024-01-18)
+
+
+### Features
+
+* Add bytes() method, deprecate arrayBuffer() ([718c9c8](https://github.com/humanwhocodes/fsx/commit/718c9c84a0a1dcaef3cc032c882b1308e9cb3273))
+
 ## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.1.1...fsx-deno-v0.2.0) (2024-01-17)
 
 
