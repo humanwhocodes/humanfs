@@ -358,6 +358,62 @@ export class FsxImplTester {
 					assert.strictEqual(await impl.isFile(filePath), false);
 				});
 			});
+
+			describe("list()", () => {
+				it("should return an async iterable", async () => {
+					const dirPath = this.#outputDir + "/tmp-list";
+					await impl.createDirectory(dirPath + "/subdir");
+					await impl.write(dirPath + "/test1.txt", "Hello, world!");
+					await impl.write(dirPath + "/test2.txt", "Hello, world!");
+
+					const result = await impl.list(dirPath);
+					assert.ok(result[Symbol.asyncIterator]);
+				});
+
+				it("should list the contents of a directory", async () => {
+					const dirPath = this.#outputDir + "/tmp-list";
+					await impl.createDirectory(dirPath + "/subdir");
+					await impl.write(dirPath + "/test1.txt", "Hello, world!");
+					await impl.write(dirPath + "/test2.txt", "Hello, world!");
+					const result = [];
+
+					for await (const entry of impl.list(dirPath)) {
+						result.push(entry);
+					}
+
+					const expected = [
+						{
+							name: "subdir",
+							isDirectory: true,
+							isFile: false,
+							isSymlink: false,
+						},
+						{
+							name: "test1.txt",
+							isDirectory: false,
+							isFile: true,
+							isSymlink: false,
+						},
+						{
+							name: "test2.txt",
+							isDirectory: false,
+							isFile: true,
+							isSymlink: false,
+						},
+					];
+
+					for (const entry of expected) {
+						const item = result.find(
+							item => item.name === entry.name,
+						);
+						assert.ok(item);
+
+						assert.strictEqual(item.isDirectory, entry.isDirectory);
+						assert.strictEqual(item.isFile, entry.isFile);
+						assert.strictEqual(item.isSymlink, entry.isSymlink);
+					}
+				});
+			});
 		});
 	}
 }

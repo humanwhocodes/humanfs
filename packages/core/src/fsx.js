@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------------
 
 /** @typedef{import("fsx-types").FsxImpl} FsxImpl */
+/** @typedef{import("fsx-types").FsxDirectoryEntry} FsxDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -349,5 +350,18 @@ export class Fsx {
 	async delete(fileOrDirPath) {
 		assertValidFileOrDirPath(fileOrDirPath);
 		return this.#callImplMethod("delete", fileOrDirPath);
+	}
+
+	/**
+	 * Returns a list of directory entries for the given path.
+	 * @param {string} dirPath The path to the directory to read.
+	 * @returns {AsyncIterable<FsxDirectoryEntry>} A promise that resolves with the
+	 *   directory entries.
+	 * @throws {TypeError} If the directory path is not a string.
+	 * @throws {Error} If the directory cannot be read.
+	 */
+	async *list(dirPath) {
+		assertValidFileOrDirPath(dirPath);
+		yield* await this.#callImplMethod("list", dirPath);
 	}
 }

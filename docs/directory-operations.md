@@ -37,3 +37,19 @@ await fsx.delete("/path/to/directories");
 
 > [!IMPORTANT]
 > This method acts like `rm -rf`, so it will delete directories that aren't empty.
+
+## Reading Directory Entries
+
+To read all of the entries in a given directory, use the `fsx.list()` method. This method returns an async iterable and is meant to be used with the `for await-of` statement:
+
+```js
+for await (const entry of fsx.list("/path/to/directory")) {
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+Each entry in the async iterator implements the [`FsxDirectoryEntry` interface](../packages/types/src/fsx-types.ts).
