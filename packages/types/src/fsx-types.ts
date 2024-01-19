@@ -13,7 +13,7 @@ export interface FsxImpl {
 	 * @param filePath The file to read.
 	 * @returns The contents of the file or undefined if the file is empty.
 	 */
-	text?(filePath: string): Promise<string>;
+	text?(filePath: string): Promise<string | undefined>;
 
 	/**
 	 * Reads the given file and returns the contents as JSON. Assumes the file is UTF-8 encoded.
@@ -28,14 +28,14 @@ export interface FsxImpl {
 	 * @returns The contents of the file as an ArrayBuffer or undefined if the file is empty.
 	 * @deprecated Use bytes() instead.
 	 */
-	arrayBuffer?(filePath: string): Promise<ArrayBuffer>;
+	arrayBuffer?(filePath: string): Promise<ArrayBuffer | undefined>;
 
 	/**
 	 * Reads the given file and returns the contents as an Uint8Array.
 	 * @param filePath The file to read.
 	 * @returns The contents of the file as a Uint8Array or undefined if the file is empty.
 	 */
-	bytes?(filePath: string): Promise<Uint8Array>;
+	bytes?(filePath: string): Promise<Uint8Array | undefined>;
 
 	/**
 	 * Writes the given data to the given file. For text, assumes UTF-8 encoding.
@@ -86,7 +86,7 @@ export interface FsxImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 * @throws {Error} If the directory cannot be read.
 	 */
-	list?(dirPath:string): AsyncIterable<FsxDirectoryEntry>;
+	list?(dirPath: string): AsyncIterable<FsxDirectoryEntry>;
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,6 @@ export interface FsxImpl {
 //------------------------------------------------------------------------------
 
 export interface FsxDirectoryEntry {
-
 	/**
 	 * The name of the file or directory.
 	 */
@@ -114,5 +113,4 @@ export interface FsxDirectoryEntry {
 	 * True if the entry is a symbolic link, false if not.
 	 */
 	isSymlink: boolean;
-
 }
