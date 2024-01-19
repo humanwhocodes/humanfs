@@ -1,3 +1,21 @@
+# 2024-01-18 The `list()` method should return an async iterable
+
+## Background
+
+Different runtimes have different interfaces for reading entries in a directory: Node.js returns `Promise<Array<string>>` by default while Deno returns `AsyncIterable<DirEnt>`.
+
+## Decision
+
+The `list()` method should return an `AsyncIterable<DirEnt>`.
+
+## Rationale
+
+Node.js' interface really only works with normal file system where everything about it is known ahead of time. For where this project wants to go, implementing impls for cloud drives, it's just not practical to return all of the entries in a directory at once. It's clear that Deno's interface allows for the possibility of returning batches of results and only fetching further results when needed, which is exactly what this project needs for cloud drives.
+
+## Related
+
+* https://github.com/humanwhocodes/fsx/issues/10
+
 # 2024-01-18 `arrayBuffer()` should be replaced by `bytes()`
 
 ## Background
