@@ -1,6 +1,6 @@
 {
   "name": "fsx-test",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Testing utilities for fsx",
   "type": "module",
   "types": "dist/index.d.ts",

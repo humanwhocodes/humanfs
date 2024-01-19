@@ -1,6 +1,6 @@
 {
   "name": "fsx-node",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The Node.js bindings of the fsx library.",
   "type": "module",
   "types": "dist/node-fsx.d.ts",
@@ -37,13 +37,13 @@
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
     "@types/node": "^20.9.4",
-    "fsx-test": "^0.2.0",
-    "fsx-types": "^0.1.0",
+    "fsx-test": "^0.3.0",
+    "fsx-types": "^0.2.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
     "@humanwhocodes/retry": "^0.1.2",
-    "fsx-core": "^0.2.0"
+    "fsx-core": "^0.3.0"
   }
 }

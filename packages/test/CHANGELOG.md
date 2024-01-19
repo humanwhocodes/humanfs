@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-test-v0.2.0...fsx-test-v0.3.0) (2024-01-19)
+
+
+### Features
+
+* Add list() method ([#25](https://github.com/humanwhocodes/fsx/issues/25)) ([dad841b](https://github.com/humanwhocodes/fsx/commit/dad841b7c9f5312996ff23db9be36774af985157))
+
 ## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-test-v0.1.0...fsx-test-v0.2.0) (2024-01-18)
 
 
