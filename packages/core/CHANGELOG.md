@@ -6,6 +6,20 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.2.0...fsx-core-v0.3.0) (2024-01-19)
+
+
+### Features
+
+* Add list() method ([#25](https://github.com/humanwhocodes/fsx/issues/25)) ([dad841b](https://github.com/humanwhocodes/fsx/commit/dad841b7c9f5312996ff23db9be36774af985157))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * fsx-types bumped from ^0.1.0 to ^0.2.0
+
 ## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.1.1...fsx-core-v0.2.0) (2024-01-18)
 
 

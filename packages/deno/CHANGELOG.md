@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.3.0...fsx-deno-v0.4.0) (2024-01-19)
+
+
+### Features
+
+* Add list() method ([#25](https://github.com/humanwhocodes/fsx/issues/25)) ([dad841b](https://github.com/humanwhocodes/fsx/commit/dad841b7c9f5312996ff23db9be36774af985157))
+
 ## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.2.0...fsx-deno-v0.3.0) (2024-01-18)
 
 
