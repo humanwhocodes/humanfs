@@ -6,7 +6,7 @@ The `arrayBuffer()` method was added to match with the methods available on the 
 
 ## Decision
 
-A new `bytes()` method that returns a `Uint8Array` replaces the `arrayBufer()` method. The `arrayBuffer()` method is deprecated and will be removed in a future version.
+A new `bytes()` method that returns a `Uint8Array` replaces the `arrayBuffer()` method. The `arrayBuffer()` method is deprecated and will be removed in a future version.
 
 ## Rationale
 
