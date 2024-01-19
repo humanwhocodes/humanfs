@@ -120,7 +120,7 @@ While the `impl` concept is powerful, allowing users to override the `impl` with
 
 ## Rationale
 
-The worst case scenario is if somewhere in the code calls `setImpl()` and then later on, in some other section of code, `setImpl()` is called again with a different value. This is really confusing as it's never clear which `impl` should be used at any given point in the code. By limiting when `setImpl()` is called, that means the `Fsx` class is guaranteed to either be using the base `impl` or the one passed to `setImpl()`, which drammatically reduces the likelihood of unexpected behavior, especially in a codebase where multiple people might be participating.
+The worst case scenario is if somewhere in the code calls `setImpl()` and then later on, in some other section of code, `setImpl()` is called again with a different value. This is really confusing as it's never clear which `impl` should be used at any given point in the code. By limiting when `setImpl()` is called, that means the `Fsx` class is guaranteed to either be using the base `impl` or the one passed to `setImpl()`, which dramatically reduces the likelihood of unexpected behavior, especially in a codebase where multiple people might be participating.
 
 This is the problem scenario. Consider that you have a test where you want to mock out `fsx` to verify some method gets called:
 
