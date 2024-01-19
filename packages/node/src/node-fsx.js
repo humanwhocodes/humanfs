@@ -8,8 +8,10 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef{import("fsx-types").FsxImpl} FsxImpl */
-/** @typedef{import("node:fs/promises")} Fsp */
+/** @typedef {import("fsx-types").FsxImpl} FsxImpl */
+/** @typedef {import("fsx-types").FsxDirectoryEntry} FsxDirectoryEntry */
+/** @typedef {import("node:fs/promises")} Fsp */
+/** @typedef {import("fs").Dirent} Dirent */
 
 //-----------------------------------------------------------------------------
 // Imports
@@ -24,6 +26,51 @@ import { Retrier } from "@humanwhocodes/retry";
 //-----------------------------------------------------------------------------
 
 const RETRY_ERROR_CODES = new Set(["ENFILE", "EMFILE"]);
+
+//-----------------------------------------------------------------------------
+// Helpers
+//-----------------------------------------------------------------------------
+
+/**
+ * A class representing a directory entry.
+ * @implements {FsxDirectoryEntry}
+ */
+class NodeFsxDirectoryEntry {
+	/**
+	 * The name of the directory entry.
+	 * @type {string}
+	 */
+	name;
+
+	/**
+	 * True if the entry is a file.
+	 * @type {boolean}
+	 */
+	isFile;
+
+	/**
+	 * True if the entry is a directory.
+	 * @type {boolean}
+	 */
+	isDirectory;
+
+	/**
+	 * True if the entry is a symbolic link.
+	 * @type {boolean}
+	 */
+	isSymlink;
+
+	/**
+	 * Creates a new instance.
+	 * @param {Dirent} dirent The directory entry to wrap.
+	 */
+	constructor(dirent) {
+		this.name = dirent.name;
+		this.isFile = dirent.isFile();
+		this.isDirectory = dirent.isDirectory();
+		this.isSymlink = dirent.isSymbolicLink();
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Exports
@@ -220,6 +267,24 @@ export class NodeFsxImpl {
 	 */
 	delete(fileOrDirPath) {
 		return this.#fsp.rm(fileOrDirPath, { recursive: true });
+	}
+
+	/**
+	 * Returns a list of directory entries for the given path.
+	 * @param {string} dirPath The path to the directory to read.
+	 * @returns {AsyncIterable<FsxDirectoryEntry>} A promise that resolves with the
+	 *   directory entries.
+	 * @throws {TypeError} If the directory path is not a string.
+	 * @throws {Error} If the directory cannot be read.
+	 */
+	async *list(dirPath) {
+		const entries = await this.#fsp.readdir(dirPath, {
+			withFileTypes: true,
+		});
+
+		for (const entry of entries) {
+			yield new NodeFsxDirectoryEntry(entry);
+		}
 	}
 }
 

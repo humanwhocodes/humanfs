@@ -796,4 +796,65 @@ describe("Fsx", () => {
 			);
 		});
 	});
+
+	describe("list()", () => {
+		it("should return the list of files", async () => {
+			const data = [
+				{
+					name: "file1.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file2.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file3.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "subdir",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+			];
+
+			const fsx = new Fsx({
+				impl: {
+					list() {
+						return data;
+					},
+				},
+			});
+
+			const result = await fsx.list("/path/to/dir");
+			assert.ok(
+				result[Symbol.asyncIterator],
+				"list() should return an AsyncIterable.",
+			);
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.strictEqual(entries.length, data.length);
+
+			for (const entry of data) {
+				const item = entries.find(item => item.name === entry.name);
+				assert.ok(item, `Could not find item with name ${entry.name}.`);
+
+				assert.strictEqual(item.isDirectory, entry.isDirectory);
+				assert.strictEqual(item.isFile, entry.isFile);
+				assert.strictEqual(item.isSymlink, entry.isSymlink);
+			}
+		});
+	});
 });

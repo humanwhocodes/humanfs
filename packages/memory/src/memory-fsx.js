@@ -9,6 +9,7 @@
 //-----------------------------------------------------------------------------
 
 /** @typedef{import("fsx-types").FsxImpl} FsxImpl */
+/** @typedef{import("fsx-types").FsxDirectoryEntry} FsxDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Imports
@@ -326,6 +327,33 @@ export class MemoryFsxImpl {
 		const { object, key } = location;
 
 		delete object[key];
+	}
+
+	/**
+	 * Returns a list of directory entries for the given path.
+	 * @param {string} dirPath The path to the directory to read.
+	 * @returns {AsyncIterable<FsxDirectoryEntry>} A promise that resolves with the
+	 *   directory entries.
+	 */
+	async *list(dirPath) {
+		const location = findPath(this.#volume, dirPath);
+
+		if (!location) {
+			throw new Error(
+				`ENOENT: no such file or directory, unlink '${dirPath}'`,
+			);
+		}
+
+		const { object, key } = location;
+
+		for (const [name, value] of Object.entries(object[key])) {
+			yield {
+				name,
+				isDirectory: isDirectory(value),
+				isFile: isFile(value),
+				isSymlink: false,
+			};
+		}
 	}
 }
 

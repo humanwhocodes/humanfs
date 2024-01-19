@@ -8,7 +8,8 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef{import("fsx-types").FsxImpl} FsxImpl */
+/** @typedef {import("fsx-types").FsxImpl} FsxImpl */
+/** @typedef {import("fsx-types").FsxDirectoryEntry} FsxDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Imports
@@ -226,6 +227,16 @@ export class DenoFsxImpl {
 	 */
 	delete(fileOrDirPath) {
 		return this.#deno.remove(fileOrDirPath, { recursive: true });
+	}
+
+	/**
+	 * Lists the files and directories in a directory.
+	 * @param {string} dirPath The path to the directory to list.
+	 * @returns {AsyncIterable<FsxDirectoryEntry>} An async iterator
+	 *  that yields the files and directories in the directory.
+	 */
+	async *list(dirPath) {
+		yield* this.#deno.readDir(dirPath);
 	}
 }
 

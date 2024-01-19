@@ -77,4 +77,42 @@ export interface FsxImpl {
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
 	delete?(fileOrDirPath: string): Promise<void>;
+
+	/**
+	 * Returns a list of directory entries for the given path.
+	 * @param dirPath The path to the directory to read.
+	 * @returns A promise that resolves with the
+	 *   directory entries.
+	 * @throws {TypeError} If the directory path is not a string.
+	 * @throws {Error} If the directory cannot be read.
+	 */
+	list?(dirPath:string): AsyncIterable<FsxDirectoryEntry>;
+}
+
+//------------------------------------------------------------------------------
+// FsxDirEnt
+//------------------------------------------------------------------------------
+
+export interface FsxDirectoryEntry {
+
+	/**
+	 * The name of the file or directory.
+	 */
+	name: string;
+
+	/**
+	 * True if the entry is a directory, false if not.
+	 */
+	isDirectory: boolean;
+
+	/**
+	 * True if the entry is a file, false if not.
+	 */
+	isFile: boolean;
+
+	/**
+	 * True if the entry is a symbolic link, false if not.
+	 */
+	isSymlink: boolean;
+
 }
