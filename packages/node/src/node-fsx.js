@@ -180,7 +180,7 @@ export class NodeFsxImpl {
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string} filePath The path to the file to write.
-	 * @param {string|ArrayBuffer} contents The contents to write to the
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 *  written.
@@ -188,8 +188,15 @@ export class NodeFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		const value =
-			contents instanceof ArrayBuffer ? Buffer.from(contents) : contents;
+		let value;
+
+		if (typeof contents === "string") {
+			value = contents;
+		} else if (contents instanceof ArrayBuffer) {
+			value = Buffer.from(contents);
+		} else if (ArrayBuffer.isView(contents)) {
+			value = Buffer.from(contents.buffer);
+		}
 
 		return this.#retrier
 			.retry(() => this.#fsp.writeFile(filePath, value))

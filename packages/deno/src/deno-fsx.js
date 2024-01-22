@@ -131,7 +131,7 @@ export class DenoFsxImpl {
 	 * Writes a value to a file, creating any necessary directories along the way.
 	 * If the value is a string, UTF-8 encoding is used.
 	 * @param {string} filePath The path to the file to write.
-	 * @param {string|ArrayBuffer} contents The contents to write to the
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 *  written.
@@ -139,20 +139,28 @@ export class DenoFsxImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
+		let value;
+
+		if (typeof contents === "string") {
+			value = contents;
+		} else if (contents instanceof Uint8Array) {
+			value = contents;
+		} else if (contents instanceof ArrayBuffer) {
+			value = new Uint8Array(contents);
+		} else if (ArrayBuffer.isView(contents)) {
+			value = new Uint8Array(contents.buffer);
+		}
+
 		const op =
-			typeof contents === "string"
+			typeof value === "string"
 				? () =>
-						this.#deno.writeTextFile(filePath, contents, {
+						this.#deno.writeTextFile(filePath, value, {
 							create: true,
 						})
 				: () =>
-						this.#deno.writeFile(
-							filePath,
-							new Uint8Array(contents),
-							{
-								create: true,
-							},
-						);
+						this.#deno.writeFile(filePath, new Uint8Array(value), {
+							create: true,
+						});
 
 		return this.#retrier.retry(op).catch(error => {
 			if (error.code === "ENOENT") {

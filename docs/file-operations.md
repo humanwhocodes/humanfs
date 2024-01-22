@@ -56,14 +56,14 @@ const bytes =
 To write files, call the `fsx.write()` method. This method accepts two arguments:
 
 -   `filePath:string` - the path to write to
--   `value:string|ArrayBuffer` - the value to write to the file
+-   `value:string|ArrayBuffer|ArrayBufferView` - the value to write to the file
 
 Here's an example:
 
 ```js
 await fsx.write("/path/to/file.txt", "Hello world!");
 
-const bytes = new TextEncoder().encode("Hello world!").buffer;
+const bytes = new TextEncoder().encode("Hello world!");
 
 await fsx.write("/path/to/file.txt", bytes);
 ```

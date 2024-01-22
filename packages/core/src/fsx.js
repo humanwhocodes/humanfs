@@ -58,9 +58,13 @@ function assertValidFileOrDirPath(fileOrDirPath) {
  * @throws {TypeError} When the contents are not a string or ArrayBuffer.
  */
 function assertValidFileContents(contents) {
-	if (typeof contents !== "string" && !(contents instanceof ArrayBuffer)) {
+	if (
+		typeof contents !== "string" &&
+		!(contents instanceof ArrayBuffer) &&
+		!ArrayBuffer.isView(contents)
+	) {
 		throw new TypeError(
-			"Invalid contents type. Expected string or ArrayBuffer.",
+			"Invalid contents type. Expected string, ArrayBuffer, or ArrayBuffer view.",
 		);
 	}
 }

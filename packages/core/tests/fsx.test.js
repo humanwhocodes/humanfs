@@ -420,7 +420,7 @@ describe("Fsx", () => {
 	});
 
 	describe("write()", () => {
-		it("should not reject a promise when the file path is a string", async () => {
+		it("should not reject a promise when the value to write is a string", async () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -432,7 +432,7 @@ describe("Fsx", () => {
 			await fsx.write("/path/to/file.txt", "Hello, world!");
 		});
 
-		it("should not reject a promise when the file path is an bytes", async () => {
+		it("should not reject a promise when the value to write is an ArayBuffer", async () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {
@@ -445,6 +445,18 @@ describe("Fsx", () => {
 				"/path/to/file.txt",
 				new Uint8Array([1, 2, 3]).buffer,
 			);
+		});
+
+		it("should not reject a promise when the value to write is a Uint8Array", async () => {
+			const fsx = new Fsx({
+				impl: {
+					write() {
+						return undefined;
+					},
+				},
+			});
+
+			await fsx.write("/path/to/file.txt", new Uint8Array([1, 2, 3]));
 		});
 
 		it("should log the method call", async () => {
@@ -497,7 +509,7 @@ describe("Fsx", () => {
 			);
 		});
 
-		it("should reject a promise when the contents are not a string or bytes", () => {
+		it("should reject a promise when the contents are a number", () => {
 			const fsx = new Fsx({
 				impl: {
 					write() {

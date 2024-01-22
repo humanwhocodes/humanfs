@@ -217,6 +217,20 @@ export class FsxImplTester {
 					assert.strictEqual(result, "Hello, world!");
 				});
 
+				it("should write a Uint8Array to a file", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/test-generated-arraybuffer.txt";
+					await impl.write(
+						filePath,
+						new TextEncoder().encode("Hello, world!"),
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
 				it("should write to an already existing file", async () => {
 					const filePath =
 						this.#outputDir + "/tmp-write/test-generated-text.txt";

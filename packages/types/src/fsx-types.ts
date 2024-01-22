@@ -44,7 +44,7 @@ export interface FsxImpl {
 	 * @returns A promise that resolves when the file is written.
 	 * @throws {Error} If the file cannot be written.
 	 */
-	write?(filePath: string, data: string | ArrayBuffer): Promise<void>;
+	write?(filePath: string, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
 
 	/**
 	 * Checks if the given file exists.
