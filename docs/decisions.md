@@ -1,3 +1,21 @@
+# 2024-01-22 The `delete()` method should only delete files and empty directories
+
+## Background
+
+Originally, the `delete()` method would delete either files or directories, whether empty or not, depending on the path it was passed.
+
+## Decision
+
+The `delete()` method should only delete files and empty directories. A new method, `deleteAll()`, should be created to delete directories.
+
+## Rationale
+
+While convenient to have just one method to delete both files and directories, it also introduces the possibility that someone could *think* they are deleting a file but actually be deleting a full directory. Deleting a full directory recursively is a much more destructive action than deleting a file, so it makes sense to protect against that case. By splitting `deleteAll()` off from `delete()`, the code now makes it obvious that you are choosing the more destructive option explicitly. This also mimics the Deno functionality where `remove(path)` can be used to delete files and empty directories while `remove(path, {recursive:true})` deletes files and recursively deletes directories.
+
+## Related
+
+* https://github.com/humanwhocodes/fsx/discussions/22
+
 # 2024-01-18 The `list()` method should return an async iterable
 
 ## Background

@@ -345,15 +345,27 @@ export class Fsx {
 	}
 
 	/**
-	 * Deletes the given file or directory.
-	 * @param {string} fileOrDirPath The file or directory to delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or directory is deleted.
+	 * Deletes the given file.
+	 * @param {string} filePath The file to delete.
+	 * @returns {Promise<void>} A promise that resolves when the file is deleted.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
-	 * @throws {TypeError} When the file or directory path is not a non-empty string.
+	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
-	async delete(fileOrDirPath) {
-		assertValidFileOrDirPath(fileOrDirPath);
-		return this.#callImplMethod("delete", fileOrDirPath);
+	async delete(filePath) {
+		assertValidFileOrDirPath(filePath);
+		return this.#callImplMethod("delete", filePath);
+	}
+
+	/**
+	 * Deletes the given directory.
+	 * @param {string} dirPath The directory to delete.
+	 * @returns {Promise<void>} A promise that resolves when the directory is deleted.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the directory path is not a non-empty string.
+	 */
+	async deleteAll(dirPath) {
+		assertValidFileOrDirPath(dirPath);
+		return this.#callImplMethod("deleteAll", dirPath);
 	}
 
 	/**

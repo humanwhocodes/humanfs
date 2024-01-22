@@ -316,7 +316,7 @@ export class MemoryFsxImpl {
 	}
 
 	/**
-	 * Deletes a file or directory recursively.
+	 * Deletes a file or empty directory.
 	 * @param {string} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
@@ -326,6 +326,38 @@ export class MemoryFsxImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
+		const location = findPath(this.#volume, fileOrDirPath);
+
+		if (!location) {
+			throw new Error(
+				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
+			);
+		}
+
+		const { object, key } = location;
+
+		const value = object[key];
+
+		if (isDirectory(value) && Object.keys(value).length > 0) {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, unlink '${fileOrDirPath}'`,
+			);
+		}
+
+		delete object[key];
+	}
+
+	/**
+	 * Deletes a file or directory recursively.
+	 * @param {string} fileOrDirPath The path to the file or directory to
+	 *   delete.
+	 * @returns {Promise<void>} A promise that resolves when the file or
+	 *   directory is deleted.
+	 * @throws {TypeError} If the file or directory path is not a string.
+	 * @throws {Error} If the file or directory cannot be deleted.
+	 * @throws {Error} If the file or directory is not found.
+	 */
+	async deleteAll(fileOrDirPath) {
 		const location = findPath(this.#volume, fileOrDirPath);
 
 		if (!location) {
