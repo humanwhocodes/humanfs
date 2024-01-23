@@ -8,7 +8,7 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { Fsx, NoSuchMethodError, ImplAreadySetError } from "../src/fsx.js";
+import { Fsx, NoSuchMethodError, ImplAlreadySetError } from "../src/fsx.js";
 import assert from "node:assert";
 
 //-----------------------------------------------------------------------------
@@ -84,7 +84,7 @@ describe("Fsx", () => {
 
 			assert.throws(() => {
 				fsx.setImpl({});
-			}, new ImplAreadySetError());
+			}, new ImplAlreadySetError());
 		});
 
 		it("should return true for isBaseImpl() when the base impl is in use", () => {
