@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.4.0](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.3.0...fsx-memory-v0.4.0) (2024-01-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* Safer delete(); new deleteAll() method ([#37](https://github.com/humanwhocodes/fsx/issues/37))
+
+### Features
+
+* Safer delete(); new deleteAll() method ([#37](https://github.com/humanwhocodes/fsx/issues/37)) ([2e85142](https://github.com/humanwhocodes/fsx/commit/2e85142e34bdc3cc18e18aa0b051cc9007fca4b8))
+* write() to accept ArrayBuffer views as file contents ([1fd5517](https://github.com/humanwhocodes/fsx/commit/1fd55174a528ef3dcbabc154347006bec799f3f9))
+
+
+### Bug Fixes
+
+* Ensure only appropriate bytes are written ([356957b](https://github.com/humanwhocodes/fsx/commit/356957bf5ebef086e1b9efedeecad182edfb6f10)), closes [#43](https://github.com/humanwhocodes/fsx/issues/43)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fsx-core bumped from ^0.3.0 to ^0.4.0
+  * devDependencies
+    * fsx-test bumped from ^0.3.0 to ^0.4.0
+    * fsx-types bumped from ^0.2.0 to ^0.3.0
+
 ## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.2.0...fsx-memory-v0.3.0) (2024-01-19)
 
 

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-types-v0.2.0...fsx-types-v0.3.0) (2024-01-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* Safer delete(); new deleteAll() method ([#37](https://github.com/humanwhocodes/fsx/issues/37))
+
+### Features
+
+* Safer delete(); new deleteAll() method ([#37](https://github.com/humanwhocodes/fsx/issues/37)) ([2e85142](https://github.com/humanwhocodes/fsx/commit/2e85142e34bdc3cc18e18aa0b051cc9007fca4b8))
+* write() to accept ArrayBuffer views as file contents ([1fd5517](https://github.com/humanwhocodes/fsx/commit/1fd55174a528ef3dcbabc154347006bec799f3f9))
+
+
+### Bug Fixes
+
+* **types:** Ensure FsxImpl methods also return undefined ([14eadc6](https://github.com/humanwhocodes/fsx/commit/14eadc66b19e40d7406a166e019004d9888075d3)), closes [#32](https://github.com/humanwhocodes/fsx/issues/32)
+
 ## [0.2.0](https://github.com/humanwhocodes/fsx/compare/fsx-types-v0.1.0...fsx-types-v0.2.0) (2024-01-19)
 
 
