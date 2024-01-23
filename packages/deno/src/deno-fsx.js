@@ -148,7 +148,11 @@ export class DenoFsxImpl {
 		} else if (contents instanceof ArrayBuffer) {
 			value = new Uint8Array(contents);
 		} else if (ArrayBuffer.isView(contents)) {
-			value = new Uint8Array(contents.buffer);
+			const bytes = contents.buffer.slice(
+				contents.byteOffset,
+				contents.byteOffset + contents.byteLength,
+			);
+			value = new Uint8Array(bytes);
 		}
 
 		const op =

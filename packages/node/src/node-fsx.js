@@ -195,7 +195,11 @@ export class NodeFsxImpl {
 		} else if (contents instanceof ArrayBuffer) {
 			value = Buffer.from(contents);
 		} else if (ArrayBuffer.isView(contents)) {
-			value = Buffer.from(contents.buffer);
+			const bytes = contents.buffer.slice(
+				contents.byteOffset,
+				contents.byteOffset + contents.byteLength,
+			);
+			value = Buffer.from(bytes);
 		}
 
 		return this.#retrier

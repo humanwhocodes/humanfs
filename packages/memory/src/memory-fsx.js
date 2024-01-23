@@ -262,7 +262,10 @@ export class MemoryFsxImpl {
 		} else if (contents instanceof ArrayBuffer) {
 			value = contents;
 		} else if (ArrayBuffer.isView(contents)) {
-			value = contents.buffer;
+			value = contents.buffer.slice(
+				contents.byteOffset,
+				contents.byteOffset + contents.byteLength,
+			);
 		}
 
 		return writePath(this.#volume, filePath, value);
