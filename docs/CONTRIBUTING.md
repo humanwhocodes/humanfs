@@ -110,7 +110,7 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/humanw
 
 ### Submitting a Pull Request
 
-> [IMPORTANT]
+> [!IMPORTANT]
 > Pull requests that change code *must* be related to an accepted issue. Code changes that aren't related to accepted issues are immediately closed without review. Pull requests that change only documentation (`.md` files) do not need an issue.
 
 #### How Do I Set Up a Dev Environment?
