@@ -263,7 +263,7 @@ export class NodeFsxImpl {
 	}
 
 	/**
-	 * Deletes a file or directory recursively.
+	 * Deletes a file or empty directory.
 	 * @param {string} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
@@ -273,6 +273,26 @@ export class NodeFsxImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	delete(fileOrDirPath) {
+		return this.#fsp.rm(fileOrDirPath).catch(error => {
+			if (error.code === "ERR_FS_EISDIR") {
+				return this.#fsp.rmdir(fileOrDirPath);
+			}
+
+			throw error;
+		});
+	}
+
+	/**
+	 * Deletes a file or directory recursively.
+	 * @param {string} fileOrDirPath The path to the file or directory to
+	 *   delete.
+	 * @returns {Promise<void>} A promise that resolves when the file or
+	 *   directory is deleted.
+	 * @throws {TypeError} If the file or directory path is not a string.
+	 * @throws {Error} If the file or directory cannot be deleted.
+	 * @throws {Error} If the file or directory is not found.
+	 */
+	deleteAll(fileOrDirPath) {
 		return this.#fsp.rm(fileOrDirPath, { recursive: true });
 	}
 

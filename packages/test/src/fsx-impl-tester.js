@@ -95,7 +95,7 @@ export class FsxImplTester {
 
 			// clean up the fixtures directory
 			afterEach(async () => {
-				await impl.delete(this.#outputDir);
+				await impl.deleteAll(this.#outputDir);
 			});
 
 			describe("text()", () => {
@@ -190,7 +190,7 @@ export class FsxImplTester {
 				});
 
 				afterEach(async () => {
-					await impl.delete(this.#outputDir + "/tmp-write");
+					await impl.deleteAll(this.#outputDir + "/tmp-write");
 				});
 
 				it("should write a string to a file", async () => {
@@ -296,7 +296,7 @@ export class FsxImplTester {
 
 			describe("createDirectory()", () => {
 				afterEach(async () => {
-					await impl.delete(this.#outputDir + "/tmp-create");
+					await impl.deleteAll(this.#outputDir + "/tmp-create");
 				});
 
 				it("should create a directory", async () => {
@@ -329,6 +329,7 @@ export class FsxImplTester {
 				beforeEach(async () => {
 					await impl.createDirectory(dirPath);
 					await impl.createDirectory(dirPath + "/subdir");
+					await impl.createDirectory(dirPath + "/empty-subdir");
 					await impl.createDirectory(dirPath + "/subdir/subsubdir");
 					await impl.write(
 						dirPath + "/subdir/subsubdir/test.txt",
@@ -337,7 +338,7 @@ export class FsxImplTester {
 				});
 
 				afterEach(async () => {
-					await impl.delete(dirPath);
+					await impl.deleteAll(dirPath);
 				});
 
 				it("should delete a file", async () => {
@@ -347,9 +348,55 @@ export class FsxImplTester {
 					assert.strictEqual(await impl.isFile(filePath), false);
 				});
 
+				it("should delete an empty directory", async () => {
+					const emptySubdirPath = dirPath + "/empty-subdir";
+					await impl.delete(emptySubdirPath);
+
+					assert.strictEqual(
+						await impl.isDirectory(emptySubdirPath),
+						false,
+					);
+				});
+
+				it("should reject a promise when the file doesn't exist", async () => {
+					const filePath = dirPath + "/nonexistent.txt";
+					assert.rejects(() => impl.delete(filePath), /ENOENT/);
+				});
+
+				it("should reject a promise when path is a nonempty directory", async () => {
+					const subdirPath = dirPath + "/subdir";
+					assert.rejects(() => impl.delete(subdirPath), /EPERM/);
+				});
+			});
+
+			describe("deleteAll()", () => {
+				let dirPath = this.#outputDir + "/tmp-delete";
+
+				beforeEach(async () => {
+					await impl.createDirectory(dirPath);
+					await impl.createDirectory(dirPath + "/subdir");
+					await impl.createDirectory(dirPath + "/empty-subdir");
+					await impl.createDirectory(dirPath + "/subdir/subsubdir");
+					await impl.write(
+						dirPath + "/subdir/subsubdir/test.txt",
+						"Hello, world!",
+					);
+				});
+
+				afterEach(async () => {
+					await impl.deleteAll(dirPath);
+				});
+
+				it("should delete a file", async () => {
+					const filePath = dirPath + "/subdir/subsubdir/test.txt";
+					await impl.deleteAll(filePath);
+
+					assert.strictEqual(await impl.isFile(filePath), false);
+				});
+
 				it("should delete a directory", async () => {
 					const subsubdirPath = dirPath + "/subdir/subsubdir";
-					await impl.delete(subsubdirPath);
+					await impl.deleteAll(subsubdirPath);
 
 					assert.strictEqual(
 						await impl.isDirectory(subsubdirPath),
@@ -359,7 +406,7 @@ export class FsxImplTester {
 
 				it("should delete a directory recursively", async () => {
 					const subdirPath = dirPath + "/subdir";
-					await impl.delete(subdirPath);
+					await impl.deleteAll(subdirPath);
 
 					assert.strictEqual(
 						await impl.isDirectory(subdirPath),
@@ -367,9 +414,10 @@ export class FsxImplTester {
 					);
 				});
 
-				it("should reject a promise when the file or directory doesn't exist", async () => {
+				it("should reject a promise when the file doesn't exist", async () => {
 					const filePath = dirPath + "/nonexistent.txt";
 					assert.strictEqual(await impl.isFile(filePath), false);
+					assert.rejects(() => impl.deleteAll(filePath), /ENOENT/);
 				});
 			});
 

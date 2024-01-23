@@ -661,7 +661,7 @@ describe("Fsx", () => {
 
 			assert.rejects(
 				fsx.isDirectory(123),
-				new TypeError("Directory path must be a non-empty string."),
+				/Path must be a non-empty string./,
 			);
 		});
 
@@ -676,7 +676,7 @@ describe("Fsx", () => {
 
 			assert.rejects(
 				fsx.isDirectory(""),
-				new TypeError("Directory path must be a non-empty string."),
+				/Path must be a non-empty string./,
 			);
 		});
 	});
@@ -725,7 +725,7 @@ describe("Fsx", () => {
 
 			assert.rejects(
 				fsx.createDirectory(123),
-				new TypeError("Directory path must be a non-empty string."),
+				/Path must be a non-empty string./,
 			);
 		});
 
@@ -740,7 +740,7 @@ describe("Fsx", () => {
 
 			assert.rejects(
 				fsx.createDirectory(""),
-				new TypeError("Directory path must be a non-empty string."),
+				/Path must be a non-empty string./,
 			);
 		});
 	});
@@ -805,6 +805,70 @@ describe("Fsx", () => {
 			assert.rejects(
 				fsx.delete(""),
 				new TypeError("File path must be a non-empty string."),
+			);
+		});
+	});
+
+	describe("deleteAll()", () => {
+		it("should not reject a promise when the file path is a string", async () => {
+			const fsx = new Fsx({
+				impl: {
+					delete() {
+						return undefined;
+					},
+				},
+			});
+
+			await fsx.delete("/path/to/directory");
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					deleteAll() {
+						return undefined;
+					},
+				},
+			});
+
+			fsx.logStart("delete");
+			await fsx.deleteAll("/path/to/directory");
+			const logs = fsx.logEnd("delete").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "deleteAll",
+					args: ["/path/to/directory"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					deleteAll() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.deleteAll(123),
+				/Path must be a non-empty string./,
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					deleteAll() {
+						return undefined;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.deleteAll(""),
+				/Path must be a non-empty string./,
 			);
 		});
 	});

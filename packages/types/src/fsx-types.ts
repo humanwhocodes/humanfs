@@ -71,12 +71,20 @@ export interface FsxImpl {
 	createDirectory?(dirPath: string): Promise<void>;
 
 	/**
-	 * Deletes the given file or directory.
+	 * Deletes the given file or empty directory.
 	 * @param fileOrDirPath The file or directory to delete.
 	 * @returns A promise that resolves when the file or directory is deleted.
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
 	delete?(fileOrDirPath: string): Promise<void>;
+
+	/**
+	 * Deletes the given file or directory recursively.
+	 * @param fileOrDirPath The file or directory to delete.
+	 * @returns A promise that resolves when the file or directory is deleted.
+	 * @throws {Error} If the file or directory cannot be deleted.
+	 */
+	deleteAll?(fileOrDirPath: string): Promise<void>;
 
 	/**
 	 * Returns a list of directory entries for the given path.

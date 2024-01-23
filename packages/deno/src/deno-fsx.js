@@ -224,8 +224,8 @@ export class DenoFsxImpl {
 	}
 
 	/**
-	 * Deletes a file or directory recursively.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * Deletes a file or empty directory.
+	 * @param {string} filePath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -233,8 +233,22 @@ export class DenoFsxImpl {
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 * @throws {Error} If the file or directory is not found.
 	 */
-	delete(fileOrDirPath) {
-		return this.#deno.remove(fileOrDirPath, { recursive: true });
+	delete(filePath) {
+		return this.#deno.remove(filePath);
+	}
+
+	/**
+	 * Deletes a file or directory recursively.
+	 * @param {string} filePath The path to the file or directory to
+	 *   delete.
+	 * @returns {Promise<void>} A promise that resolves when the file or
+	 *   directory is deleted.
+	 * @throws {TypeError} If the file or directory path is not a string.
+	 * @throws {Error} If the file or directory cannot be deleted.
+	 * @throws {Error} If the file or directory is not found.
+	 */
+	deleteAll(filePath) {
+		return this.#deno.remove(filePath, { recursive: true });
 	}
 
 	/**
