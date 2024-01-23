@@ -78,6 +78,9 @@ const dirFound = await fsx.isDirectory("dir");
 
 // delete a directory
 await fsx.delete("dir");
+
+// delete a non-empty directory
+await fsx.deleteAll("dir");
 ```
 
 If you'd like to create your own instance, import the `NodeFsx` constructor:

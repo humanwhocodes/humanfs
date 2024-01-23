@@ -68,8 +68,11 @@ await fsx.createDirectory("dir/subdir");
 // does the directory exist?
 const dirFound = await fsx.isDirectory("dir");
 
-// delete a directory
+// delete an empty directory
 await fsx.delete("dir");
+
+// delete a non-empty directory
+await fsx.deleteAll("dir");
 ```
 
 If you'd like to create your own instance, import the `DenoFsx` constructor:

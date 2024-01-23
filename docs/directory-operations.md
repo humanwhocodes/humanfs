@@ -29,14 +29,20 @@ if (await fsx.isDirectory("/path/to/directory")) {
 
 ## Deleting directories
 
-To delete directories, call the `fsx.delete(dirPath)` method. For example:
+To delete an empty directory, call the `fsx.delete(dirPath)` method. For example:
 
 ```js
 await fsx.delete("/path/to/directories");
 ```
 
+To delete a non-empty directory recursively, call the `fsx.deleteAll(dirPath)` method. For example:
+
+```js
+await fsx.deleteAll("/path/to/directories");
+```
+
 > [!IMPORTANT]
-> This method acts like `rm -rf`, so it will delete directories that aren't empty.
+> The `deleteAll()` method acts like `rm -rf`, so it will delete directories that aren't empty. Use with caution.
 
 ## Reading Directory Entries
 
