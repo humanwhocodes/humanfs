@@ -1,0 +1,50 @@
+{
+  "name": "fsx-web",
+  "version": "0.4.0",
+  "description": "The in-web bindings for the fsx library.",
+  "type": "module",
+  "types": "dist/web-fsx.d.ts",
+  "main": "dist/web-fsx.js",
+  "exports": {
+    "import": {
+      "default": "./src/web-fsx.js",
+      "types": "./dist/web-fsx.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "mocha tests/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/humanwhocodes/fsx.git"
+  },
+  "keywords": [
+    "filesystem",
+    "fs",
+    "fsx",
+    "files"
+  ],
+  "author": "Nicholas C. Zakas",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/humanwhocodes/fsx/issues"
+  },
+  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "devDependencies": {
+    "@types/node": "^20.9.4",
+    "chai": "^5.0.0",
+    "fsx-test": "^0.4.0",
+    "fsx-types": "^0.3.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "fsx-core": "^0.4.0"
+  }
+}
