@@ -30,7 +30,7 @@ export class NoSuchMethodError extends Error {
 /**
  * Error to represent when an impl is already set.
  */
-export class ImplAreadySetError extends Error {
+export class ImplAlreadySetError extends Error {
 	/**
 	 * Creates a new instance.
 	 */
@@ -203,7 +203,7 @@ export class Fsx {
 		this.#log("implSet", impl);
 
 		if (this.#impl !== this.#baseImpl) {
-			throw new ImplAreadySetError();
+			throw new ImplAlreadySetError();
 		}
 
 		this.#impl = impl;
