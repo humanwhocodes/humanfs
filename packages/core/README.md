@@ -73,6 +73,30 @@ However, you can also import the unminified version for debugging purposes:
 import { Fsx } from "https://cdn.skypack.dev/fsx-core";
 ```
 
+## Usage
+
+The `Fsx` class contains all of the basic functionality for an `Fsx` instance *without* a predefined impl. This class is mostly used for creating runtime-specific impls, such as `NodeFsx` and `DenoFsx`.
+
+You can create your own instance by providing an `impl` directly:
+
+```js
+const fsx = new Fsx({ impl: { async text() {} }});
+```
+
+The specified `impl` becomes the base impl for the instance, meaning you can always reset back to it using `resetImpl()`.
+
+You can also inherit from `Fsx` to create your own class with a preconfigured impl, such as:
+
+```js
+class MyFsx extends Fsx {
+	constructor() {
+		super({
+			impl: myImpl
+		});
+	}
+}
+```
+
 ## License
 
 Apache 2.0
