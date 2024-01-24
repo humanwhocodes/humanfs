@@ -17,6 +17,7 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
+    "pretest": "npm run build",
     "test": "c8 mocha tests"
   },
   "repository": {
