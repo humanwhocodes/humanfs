@@ -18,7 +18,8 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
-    "test": "mocha tests/*.js"
+    "test": "mocha tests/*.js",
+        "wdio": "wdio run ./wdio.conf.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,10 @@
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
     "@types/node": "^20.9.4",
+    "@wdio/browser-runner": "^8.29.1",
+    "@wdio/cli": "^8.29.1",
+    "@wdio/mocha-framework": "^8.29.1",
+    "@wdio/spec-reporter": "^8.29.1",
     "chai": "^5.0.0",
     "fsx-test": "^0.4.0",
     "fsx-types": "^0.3.0",
