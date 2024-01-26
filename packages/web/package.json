@@ -40,7 +40,6 @@
   },
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
-    "@types/web": "^0.0.135",
     "@wdio/browser-runner": "^8.29.1",
     "@wdio/cli": "^8.29.1",
     "@wdio/mocha-framework": "^8.29.1",
