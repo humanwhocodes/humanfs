@@ -10,6 +10,7 @@ To get started, choose which runtime package you'd like to use:
 
 -   `fsx-node` - fsx implementation that runs on top of the Node.js `fs/promises` module
 -   `fsx-deno` - fsx implementation that runs on top of the `Deno` global
+-   `fsx-web` - fsx implementation that runs on top of the Origin Private File System in browsers
 -   `fsx-memory` - fsx implementation that runs in memory and is suitable for any JavaScript runtime
 
 This document uses `fsx-node` as an example, but the API for each runtime package is effectively the same.
