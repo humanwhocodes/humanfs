@@ -91,3 +91,11 @@ To delete files, call the `fsx.delete(filePath)` method. For example:
 ```js
 await fsx.delete("/path/to/file.txt");
 ```
+
+## Retrieving File Size
+
+To get the size of a file in bytes, call the `fsx.size(filePath)` method. This method returns the size in bytes of the file if found and `undefined` if not found. Here's an example:
+
+```js
+const size = await fsx.size("/path/to/file.txt");
+```

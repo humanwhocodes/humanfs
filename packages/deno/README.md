@@ -54,6 +54,9 @@ await fsx.write("file.txt", new TextEncoder().encode("Hello world!"));
 // does the file exist?
 const found = await fsx.isFile("file.txt");
 
+// how big is the file?
+const size = await fsx.size("file.txt");
+
 // delete a file
 await fsx.delete("file.txt");
 

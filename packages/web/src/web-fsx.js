@@ -407,6 +407,24 @@ export class WebFsxImpl {
 			};
 		}
 	}
+
+	/**
+	 * Returns the size of a file.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
+	 *  file in bytes or undefined if the file doesn't exist.
+	 */
+	async size(filePath) {
+		const handle = await findPath(this.#root, filePath);
+
+		if (!handle || handle.kind !== "file") {
+			return undefined;
+		}
+
+		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
+		const file = await fileHandle.getFile();
+		return file.size;
+	}
 }
 
 /**

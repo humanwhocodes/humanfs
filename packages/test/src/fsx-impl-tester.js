@@ -504,6 +504,20 @@ export class FsxImplTester {
 					}
 				});
 			});
+
+			describe("size()", () => {
+				it("should return the size of a file", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const result = await impl.size(filePath);
+					assert.strictEqual(result, 13);
+				});
+
+				it("should return undefined if the file doesn't exist", async () => {
+					const filePath = this.#outputDir + "/nonexistent.txt";
+					const result = await impl.size(filePath);
+					assert.strictEqual(result, undefined);
+				});
+			});
 		});
 	}
 }

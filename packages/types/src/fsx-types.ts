@@ -95,6 +95,15 @@ export interface FsxImpl {
 	 * @throws {Error} If the directory cannot be read.
 	 */
 	list?(dirPath:string): AsyncIterable<FsxDirectoryEntry>;
+
+	/**
+	 * Returns the size of the given file.
+	 * @param filePath The path to the file to check.
+	 * @returns A promise that resolves with the size of the file in bytes or
+	 * 		undefined if the file does not exist.
+	 * @throws {Error} If the file cannot be read.
+	 */
+	size?(filePath: string): Promise<number|undefined>;
 }
 
 //------------------------------------------------------------------------------
