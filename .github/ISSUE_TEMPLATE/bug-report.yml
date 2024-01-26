@@ -17,6 +17,8 @@ body:
                 required: false
               - label: "`fsx-memory`"
                 required: false
+              - label: "`fsx-web`"
+                required: false
               - label: "`fsx-test`"
                 required: false
               - label: "`fsx-types`"

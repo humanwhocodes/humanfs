@@ -18,8 +18,8 @@
   "scripts": {
     "build": "tsc",
     "prepare": "npm run build",
-    "test": "mocha tests/*.js",
-        "wdio": "wdio run ./wdio.conf.js"
+    "pretest": "npm run build",
+    "test": "wdio run ./wdio.conf.js"
   },
   "repository": {
     "type": "git",
@@ -29,7 +29,9 @@
     "filesystem",
     "fs",
     "fsx",
-    "files"
+    "files",
+    "opfs",
+    "web"
   ],
   "author": "Nicholas C. Zakas",
   "license": "Apache-2.0",
@@ -38,7 +40,7 @@
   },
   "homepage": "https://github.com/humanwhocodes/fsx#readme",
   "devDependencies": {
-    "@types/node": "^20.9.4",
+    "@types/web": "^0.0.135",
     "@wdio/browser-runner": "^8.29.1",
     "@wdio/cli": "^8.29.1",
     "@wdio/mocha-framework": "^8.29.1",

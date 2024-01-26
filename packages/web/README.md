@@ -6,58 +6,12 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `fsx` bindings for using web instead of writing to disk.
+The `fsx` bindings for the [Origin Private File System (OPFS)](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) in web browsers.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
 
 ## Installation
-
-### Node.js
-
-Install using your favorite package manager for Node.js:
-
-```shell
-npm install fsx-web
-
-# or
-
-pnpm install fsx-web
-
-# or
-
-yarn add fsx-web
-
-# or
-
-bun install fsx-web
-```
-
-Then you can import the `Fsx` class like this:
-
-```js
-import { fsx } from "fsx-web";
-```
-
-### Deno
-
-For Deno, set up a `deno.json` file like this:
-
-```json
-{
-	"imports": {
-		"fsx-web": "npm:fsx-web@latest"
-	}
-}
-```
-
-Then you can import the `Fsx` class like this:
-
-```js
-import { fsx } from "fsx-web";
-```
-
-### Browser
 
 It's recommended to import the minified version to save bandwidth:
 
@@ -91,7 +45,7 @@ const text = await fsx.text("file.txt");
 const json = await fsx.json("file.json");
 
 // read raw bytes from a text file
-const arrayBuffer = await fsx.arrayBuffer("file.txt");
+const bytes = await fsx.bytes("file.txt");
 
 // write text to a file
 await fsx.write("file.txt", "Hello world!");
@@ -123,28 +77,24 @@ await fsx.delete("dir");
 await fsx.deleteAll("dir");
 ```
 
-If you'd like to create your own instance, import the `webFsx` constructor:
+If you'd like to create your own instance, import the `WebFsx` constructor:
 
 ```js
-import { webFsx } from "fsx-web";
+import { WebFsx } from "fsx-web";
 
-const fsx = new webFsx();
-
-// optionally specify the object to use when storing data
-const volume = {};
-const fsx = new webFsx({ volume });
+const fsx = new WebFsx({
+	root: await navigator.storage.getDirectory()
+});
 ```
 
-If you'd like to use just the impl, import the `webFsxImpl` constructor:
+If you'd like to use just the impl, import the `WebFsxImpl` constructor:
 
 ```js
-import { webFsxImpl } from "fsx-web";
+import { WebFsxImpl } from "fsx-web";
 
-const fsx = new webFsxImpl();
-
-// optionally specify the object to use when storing data
-const volume = {};
-const fsx = new webFsxImpl({ volume });
+const fsx = new WebFsxImpl({
+	root: await navigator.storage.getDirectory()
+});
 ```
 
 ## License

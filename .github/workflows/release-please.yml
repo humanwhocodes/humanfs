@@ -62,6 +62,12 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
+            - name: Publish fsx-web package to npm
+              run: npm publish -w packages/web
+              if: ${{ steps.release.outputs['packages/web--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
             - name: Publish fsx-types package to npm
               run: npm publish -w packages/types
               if: ${{ steps.release.outputs['packages/types--release_created'] }}

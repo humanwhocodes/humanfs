@@ -3,13 +3,14 @@
  * @author Nicholas C. Zakas
  */
 
+/* global navigator */
+
 //------------------------------------------------------------------------------
 // Imports
 //------------------------------------------------------------------------------
 
 import { WebFsxImpl } from "../src/web-fsx.js";
 import { FsxImplTester } from "fsx-test";
-// import { assert } from "chai"
 import assert from "node:assert";
 
 //------------------------------------------------------------------------------
@@ -30,5 +31,5 @@ const tester = new FsxImplTester({
 
 await tester.test({
 	name: "MemoryFsxImpl",
-	impl: new WebFsxImpl(),
+	impl: new WebFsxImpl({ root: await navigator.storage.getDirectory() }),
 });

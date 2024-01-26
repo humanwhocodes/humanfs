@@ -2,7 +2,7 @@
  * @fileoverview The main file for the fsx package.
  * @author Nicholas C. Zakas
  */
-/* global TextEncoder, TextDecoder */
+/* global navigator */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -20,24 +20,6 @@ import { Fsx } from "fsx-core";
 //-----------------------------------------------------------------------------
 // Helpers
 //-----------------------------------------------------------------------------
-
-/**
- * Checks if a value is a file.
- * @param {string|ArrayBuffer|object|undefined} value The value to check.
- * @returns {boolean} True if the value is a file, false if not.
- */
-function isFile(value) {
-	return typeof value === "string" || value instanceof ArrayBuffer;
-}
-
-/**
- * Checks if a value is a directory.
- * @param {string|ArrayBuffer|object|undefined} value The value to check.
- * @returns {boolean} True if the value is a directory, false if not.
- */
-function isDirectory(value) {
-	return typeof value === "object" && !isFile(value);
-}
 
 /**
  * Normalizes a path to use forward slashes.
@@ -65,75 +47,88 @@ function normalizePath(filePath) {
 }
 
 /**
- * Finds a file or directory in the volume.
- * @param {object} volume The volume to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
- * @returns {{object:object,key:string}|undefined} The file or directory found.
+ * Gets the steps in a path.
+ * @param {string} filePath The path to get steps for.
+ * @returns {string[]} The steps in the path.
  */
-function findPath(volume, fileOrDirPath) {
-	const parts = normalizePath(fileOrDirPath).split("/");
+function getPathSteps(filePath) {
+	return normalizePath(filePath).split("/");
+}
 
-	let object = volume;
-	let key = parts.shift();
+/**
+ * Finds a file or directory in the OPFS root.
+ * @param {FileSystemDirectoryHandle} root The root directory to search.
+ * @param {string} fileOrDirPath The path to the file or directory to find.
+ * @param {object} [options] The options for finding.
+ * @param {boolean} [options.returnParent] True if the parent directory should be
+ *  returned instead of the file or directory.
+ * @param {boolean} [options.create] True if the file or directory should be
+ *  created if it doesn't exist.
+ * @returns {Promise<FileSystemHandle|undefined>} The file or directory found.
+ */
+async function findPath(
+	root,
+	fileOrDirPath,
+	{ returnParent = false, create = false } = {},
+) {
+	const steps = getPathSteps(fileOrDirPath);
 
-	while (object[key]) {
-		if (parts.length === 0) {
-			return { object, key };
+	if (returnParent) {
+		steps.pop();
+	}
+
+	let handle = root;
+	let name = steps.shift();
+
+	while (handle && name) {
+		// `name` must represent a directory
+		if (steps.length > 0) {
+			try {
+				handle = await handle.getDirectoryHandle(name, { create });
+			} catch {
+				return undefined;
+			}
+		} else {
+			try {
+				return await handle.getDirectoryHandle(name, { create });
+			} catch {
+				try {
+					return await handle.getFileHandle(name, { create });
+				} catch {
+					return undefined;
+				}
+			}
 		}
 
-		object = object[key];
-		key = parts.shift();
+		name = steps.shift();
 	}
 
 	return undefined;
 }
 
 /**
- * Finds a file or directory in the volume.
- * @param {object} volume The volume to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
- * @returns {string|ArrayBuffer|object|undefined} The file or directory found.
+ * Reads a file from the specified root.
+ * @param {FileSystemDirectoryHandle} root The root directory to search.
+ * @param {string} filePath The path to the file to read.
+ * @param {"text"|"arrayBuffer"} dataType The type of data to read.
+ * @returns {Promise<string|ArrayBuffer|undefined>} The contents of the file or
+ *   undefined if the file does not exist.
  */
-function readPath(volume, fileOrDirPath) {
-	const location = findPath(volume, fileOrDirPath);
+async function readFile(root, filePath, dataType) {
+	const handle = await findPath(root, filePath);
 
-	if (!location) {
+	if (!handle || handle.kind !== "file") {
 		return undefined;
 	}
 
-	const { object, key } = location;
-	return object[key];
-}
+	const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
+	const file = await fileHandle.getFile();
 
-/**
- * Writes a file or directory to the volume.
- * @param {object} volume The volume to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
- * @param {string|ArrayBuffer|object|undefined} value The value to write.
- * @returns {void}
- */
-function writePath(volume, fileOrDirPath, value) {
-	const parts = normalizePath(fileOrDirPath).split("/");
-	let part = parts.shift();
-	let object = volume;
-
-	do {
-		let entry = object[part];
-
-		if (!entry) {
-			entry = object[part] = {};
-		}
-
-		object = entry;
-		part = parts.shift();
-	} while (parts.length > 0);
-
-	// we don't want to overwrite an existing directory
-	if (object && isDirectory(object[part]) && isDirectory(value)) {
-		return;
+	if (dataType === "arrayBuffer") {
+		return file.arrayBuffer();
 	}
 
-	object[part] = value;
+	return file.text();
 }
 
 //-----------------------------------------------------------------------------
@@ -146,15 +141,24 @@ function writePath(volume, fileOrDirPath, value) {
  */
 export class WebFsxImpl {
 	/**
-	 * The in-memory file system volume to use.
-	 * @type {object}
+	 * The root directory to work on.
+	 * @type {FileSystemDirectoryHandle}
 	 */
-	#volume = {};
+	#root;
 
 	/**
 	 * Creates a new instance.
+	 * @param {object} options The options for the instance.
+	 * @param {FileSystemDirectoryHandle} options.root The root directory to work on.
+	 * @throws {TypeError} If options.root is not provided.
 	 */
-	constructor() {}
+	constructor({ root }) {
+		if (!root) {
+			throw new TypeError("options.root is required");
+		}
+
+		this.#root = root;
+	}
 
 	/**
 	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
@@ -167,17 +171,10 @@ export class WebFsxImpl {
 	 * @throws {RangeError} If the file path is not readable.
 	 */
 	async text(filePath) {
-		const value = readPath(this.#volume, filePath);
-
-		if (!isFile(value)) {
-			return undefined;
-		}
-
-		if (value instanceof ArrayBuffer) {
-			return new TextDecoder().decode(value);
-		}
-
-		return value;
+		const text = /** @type {string|undefined} */ (
+			await readFile(this.#root, filePath, "text")
+		);
+		return text;
 	}
 
 	/**
@@ -205,17 +202,10 @@ export class WebFsxImpl {
 	 * @deprecated Use bytes() instead.
 	 */
 	async arrayBuffer(filePath) {
-		const value = readPath(this.#volume, filePath);
-
-		if (!isFile(value)) {
-			return undefined;
-		}
-
-		if (typeof value === "string") {
-			return new TextEncoder().encode(value).buffer;
-		}
-
-		return value;
+		const buffer = /** @type {ArrayBuffer|undefined} */ (
+			await readFile(this.#root, filePath, "arrayBuffer")
+		);
+		return buffer;
 	}
 
 	/**
@@ -227,17 +217,10 @@ export class WebFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async bytes(filePath) {
-		const value = readPath(this.#volume, filePath);
-
-		if (!isFile(value)) {
-			return undefined;
-		}
-
-		if (typeof value === "string") {
-			return new TextEncoder().encode(value);
-		}
-
-		return value;
+		const buffer = /** @type {ArrayBuffer|undefined} */ (
+			await readFile(this.#root, filePath, "arrayBuffer")
+		);
+		return buffer ? new Uint8Array(buffer) : undefined;
 	}
 
 	/**
@@ -264,7 +247,25 @@ export class WebFsxImpl {
 			);
 		}
 
-		return writePath(this.#volume, filePath, value);
+		let handle = /** @type {FileSystemFileHandle} */ (
+			await findPath(this.#root, filePath)
+		);
+
+		if (!handle) {
+			const name = getPathSteps(filePath).pop();
+			const parentHandle =
+				/** @type {FileSystemDirectoryHandle} */ (
+					await findPath(this.#root, filePath, {
+						create: true,
+						returnParent: true,
+					})
+				) ?? this.#root;
+			handle = await parentHandle.getFileHandle(name, { create: true });
+		}
+
+		const writable = await handle.createWritable();
+		await writable.write(value);
+		await writable.close();
 	}
 
 	/**
@@ -275,15 +276,8 @@ export class WebFsxImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async isFile(filePath) {
-		const location = findPath(this.#volume, filePath);
-
-		if (!location) {
-			return false;
-		}
-
-		const { object, key } = location;
-
-		return isFile(object[key]);
+		const handle = await findPath(this.#root, filePath);
+		return !!(handle && handle.kind === "file");
 	}
 
 	/**
@@ -294,14 +288,8 @@ export class WebFsxImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 */
 	async isDirectory(dirPath) {
-		const location = findPath(this.#volume, dirPath);
-
-		if (!location) {
-			return false;
-		}
-
-		const { object, key } = location;
-		return isDirectory(object[key]);
+		const handle = await findPath(this.#root, dirPath);
+		return !!(handle && handle.kind === "directory");
 	}
 
 	/**
@@ -311,7 +299,14 @@ export class WebFsxImpl {
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
-		writePath(this.#volume, dirPath, {});
+		const steps = getPathSteps(dirPath);
+		let handle = this.#root;
+		let name = steps.shift();
+
+		while (name) {
+			handle = await handle.getDirectoryHandle(name, { create: true });
+			name = steps.shift();
+		}
 	}
 
 	/**
@@ -325,25 +320,21 @@ export class WebFsxImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
-		const location = findPath(this.#volume, fileOrDirPath);
+		const handle = await findPath(this.#root, fileOrDirPath);
+		const parentHandle =
+			/** @type {FileSystemDirectoryHandle} */ (
+				await findPath(this.#root, fileOrDirPath, {
+					returnParent: true,
+				})
+			) ?? this.#root;
 
-		if (!location) {
+		if (!handle) {
 			throw new Error(
 				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
 			);
 		}
 
-		const { object, key } = location;
-
-		const value = object[key];
-
-		if (isDirectory(value) && Object.keys(value).length > 0) {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, unlink '${fileOrDirPath}'`,
-			);
-		}
-
-		delete object[key];
+		parentHandle.removeEntry(handle.name);
 	}
 
 	/**
@@ -357,17 +348,35 @@ export class WebFsxImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async deleteAll(fileOrDirPath) {
-		const location = findPath(this.#volume, fileOrDirPath);
+		const handle = await findPath(this.#root, fileOrDirPath);
 
-		if (!location) {
+		/*
+		 * Note: This is a workaround for Chrome not supporting the
+		 * `recursive` option on `FileSystemDirectoryHandle.removeEntry()`. This will be
+		 * removed when Chrome supports it.
+		 * https://bugs.chromium.org/p/chromium/issues/detail?id=1521975
+		 */
+
+		// @ts-ignore -- only supported by Chrome right now
+		if (handle.remove) {
+			// @ts-ignore -- only supported by Chrome right now
+			await handle.remove({ recursive: true });
+			return;
+		}
+
+		const parentHandle =
+			/** @type {FileSystemDirectoryHandle} */ (
+				await findPath(this.#root, fileOrDirPath, {
+					returnParent: true,
+				})
+			) ?? this.#root;
+
+		if (!handle) {
 			throw new Error(
 				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
 			);
 		}
-
-		const { object, key } = location;
-
-		delete object[key];
+		parentHandle.removeEntry(handle.name, { recursive: true });
 	}
 
 	/**
@@ -377,21 +386,23 @@ export class WebFsxImpl {
 	 *   directory entries.
 	 */
 	async *list(dirPath) {
-		const location = findPath(this.#volume, dirPath);
+		const handle = /** @type {FileSystemDirectoryHandle} */ (
+			await findPath(this.#root, dirPath)
+		);
 
-		if (!location) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${dirPath}'`,
-			);
+		if (!handle) {
+			return;
 		}
 
-		const { object, key } = location;
+		// @ts-ignore -- TS doesn't know about this yet
+		for await (const entry of handle.values()) {
+			const isDirectory = entry.kind === "directory";
+			const isFile = entry.kind === "file";
 
-		for (const [name, value] of Object.entries(object[key])) {
 			yield {
-				name,
-				isDirectory: isDirectory(value),
-				isFile: isFile(value),
+				name: entry.name,
+				isDirectory,
+				isFile,
 				isSymlink: false,
 			};
 		}
@@ -405,10 +416,12 @@ export class WebFsxImpl {
 export class WebFsx extends Fsx {
 	/**
 	 * Creates a new instance.
+	 * @param {object} options The options for the instance.
+	 * @param {FileSystemDirectoryHandle} options.root The root directory to work on.
 	 */
-	constructor() {
-		super({ impl: new WebFsxImpl() });
+	constructor({ root }) {
+		super({ impl: new WebFsxImpl({ root }) });
 	}
 }
 
-export const fsx = new WebFsx();
+export const fsx = new WebFsx({ root: await navigator.storage.getDirectory() });
