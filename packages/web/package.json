@@ -1,6 +1,6 @@
 {
   "name": "fsx-web",
-  "version": "0.4.0",
+  "version": "0.1.0",
   "description": "The in-web bindings for the fsx library.",
   "type": "module",
   "types": "dist/web-fsx.d.ts",
@@ -45,12 +45,12 @@
     "@wdio/mocha-framework": "^8.29.1",
     "@wdio/spec-reporter": "^8.29.1",
     "chai": "^5.0.0",
-    "fsx-test": "^0.4.0",
-    "fsx-types": "^0.3.0",
+    "fsx-test": "^0.5.0",
+    "fsx-types": "^0.4.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "fsx-core": "^0.4.0"
+    "fsx-core": "^0.5.0"
   }
 }

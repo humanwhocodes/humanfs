@@ -6,6 +6,25 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.5.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.4.0...fsx-core-v0.5.0) (2024-01-27)
+
+
+### Features
+
+* New size() method ([#51](https://github.com/humanwhocodes/fsx/issues/51)) ([ffd12e6](https://github.com/humanwhocodes/fsx/commit/ffd12e6b0db318320dd5a9dbb8eb248106d60afa))
+
+
+### Bug Fixes
+
+* Error class name misspelling ([30efc2a](https://github.com/humanwhocodes/fsx/commit/30efc2ade7778dac9fa734c36a4e84bb1f4c2db6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * fsx-types bumped from ^0.3.0 to ^0.4.0
+
 ## [0.4.0](https://github.com/humanwhocodes/fsx/compare/fsx-core-v0.3.0...fsx-core-v0.4.0) (2024-01-23)
 
 
