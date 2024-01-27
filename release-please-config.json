@@ -15,6 +15,9 @@
     "packages/memory": {
       "release-type": "node"
     },
+    "packages/web": {
+      "release-type": "node"
+    },
     "packages/test": {
       "release-type": "node"
     },
