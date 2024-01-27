@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/humanwhocodes/fsx/compare/fsx-types-v0.3.0...fsx-types-v0.4.0) (2024-01-27)
+
+
+### Features
+
+* New size() method ([#51](https://github.com/humanwhocodes/fsx/issues/51)) ([ffd12e6](https://github.com/humanwhocodes/fsx/commit/ffd12e6b0db318320dd5a9dbb8eb248106d60afa))
+
 ## [0.3.0](https://github.com/humanwhocodes/fsx/compare/fsx-types-v0.2.0...fsx-types-v0.3.0) (2024-01-23)
 
 

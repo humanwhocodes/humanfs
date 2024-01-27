@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.5.0](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.4.0...fsx-memory-v0.5.0) (2024-01-27)
+
+
+### Features
+
+* New size() method ([#51](https://github.com/humanwhocodes/fsx/issues/51)) ([ffd12e6](https://github.com/humanwhocodes/fsx/commit/ffd12e6b0db318320dd5a9dbb8eb248106d60afa))
+
+
+### Bug Fixes
+
+* **types:** correctly type `MemoryFsx` and `MemoryFsxImpl` constructors ([#48](https://github.com/humanwhocodes/fsx/issues/48)) ([5eaa655](https://github.com/humanwhocodes/fsx/commit/5eaa65513ad6b2b6c3ebdf1d0414299045d16e6c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fsx-core bumped from ^0.4.0 to ^0.5.0
+  * devDependencies
+    * fsx-test bumped from ^0.4.0 to ^0.5.0
+    * fsx-types bumped from ^0.3.0 to ^0.4.0
+
 ## [0.4.0](https://github.com/humanwhocodes/fsx/compare/fsx-memory-v0.3.0...fsx-memory-v0.4.0) (2024-01-23)
 
 

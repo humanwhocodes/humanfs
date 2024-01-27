@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.0](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.5.0...fsx-node-v0.6.0) (2024-01-27)
+
+
+### Features
+
+* New size() method ([#51](https://github.com/humanwhocodes/fsx/issues/51)) ([ffd12e6](https://github.com/humanwhocodes/fsx/commit/ffd12e6b0db318320dd5a9dbb8eb248106d60afa))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * fsx-core bumped from ^0.4.0 to ^0.5.0
+  * devDependencies
+    * fsx-test bumped from ^0.4.0 to ^0.5.0
+    * fsx-types bumped from ^0.3.0 to ^0.4.0
+
 ## [0.5.0](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.4.0...fsx-node-v0.5.0) (2024-01-23)
 
 
