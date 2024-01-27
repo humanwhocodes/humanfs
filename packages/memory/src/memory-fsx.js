@@ -400,6 +400,27 @@ export class MemoryFsxImpl {
 			};
 		}
 	}
+
+	/**
+	 * Returns the size of a file.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
+	 *  file in bytes or undefined if the file doesn't exist.
+	 */
+	async size(filePath) {
+		const value = readPath(this.#volume, filePath);
+
+		if (!isFile(value)) {
+			return undefined;
+		}
+
+		if (value instanceof ArrayBuffer) {
+			return value.byteLength;
+		}
+
+		// use byteLength for strings for accuracy
+		return new TextEncoder().encode(value).byteLength;
+	}
 }
 
 /**

@@ -933,4 +933,69 @@ describe("Fsx", () => {
 			}
 		});
 	});
+
+	describe("size()", () => {
+		it("should return the size of the file", async () => {
+			const fsx = new Fsx({
+				impl: {
+					size() {
+						return 123;
+					},
+				},
+			});
+
+			const result = await fsx.size("/path/to/file.txt");
+			assert.strictEqual(result, 123);
+		});
+
+		it("should log the method call", async () => {
+			const fsx = new Fsx({
+				impl: {
+					size() {
+						return 123;
+					},
+				},
+			});
+
+			fsx.logStart("size");
+			await fsx.size("/path/to/file.txt");
+			const logs = fsx.logEnd("size").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "size",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const fsx = new Fsx({
+				impl: {
+					size() {
+						return 123;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.size(123),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const fsx = new Fsx({
+				impl: {
+					size() {
+						return 123;
+					},
+				},
+			});
+
+			assert.rejects(
+				fsx.size(""),
+				new TypeError("File path must be a non-empty string."),
+			);
+		});
+	});
 });

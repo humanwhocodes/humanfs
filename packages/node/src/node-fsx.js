@@ -317,6 +317,25 @@ export class NodeFsxImpl {
 			yield new NodeFsxDirectoryEntry(entry);
 		}
 	}
+
+	/**
+	 * Returns the size of a file.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
+	 *  file in bytes or undefined if the file doesn't exist.
+	 */
+	size(filePath) {
+		return this.#fsp
+			.stat(filePath)
+			.then(stat => stat.size)
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return undefined;
+				}
+
+				throw error;
+			});
+	}
 }
 
 /**

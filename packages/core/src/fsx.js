@@ -380,4 +380,16 @@ export class Fsx {
 		assertValidFileOrDirPath(dirPath);
 		yield* await this.#callImplMethod("list", dirPath);
 	}
+
+	/**
+	 * Returns the size of the given file.
+	 * @param {string} filePath The path to the file to read.
+	 * @returns {Promise<number>} A promise that resolves with the size of the file.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {Error} If the file cannot be read.
+	 */
+	async size(filePath) {
+		assertValidFileOrDirPath(filePath);
+		return this.#callImplMethod("size", filePath);
+	}
 }
