@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.6.0...fsx-node-v0.6.1) (2024-01-29)
+
+
+### Bug Fixes
+
+* NodeFsx not working without arguments ([cce67e0](https://github.com/humanwhocodes/fsx/commit/cce67e0fa0f0ababc0b802b84101306ec168fd5e)), closes [#52](https://github.com/humanwhocodes/fsx/issues/52)
+
 ## [0.6.0](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.5.0...fsx-node-v0.6.0) (2024-01-27)
 
 
