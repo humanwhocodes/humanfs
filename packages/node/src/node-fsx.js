@@ -20,6 +20,7 @@
 import { Fsx } from "fsx-core";
 import path from "node:path";
 import { Retrier } from "@humanwhocodes/retry";
+import nativeFsp from "node:fs/promises";
 
 //-----------------------------------------------------------------------------
 // Constants
@@ -95,10 +96,10 @@ export class NodeFsxImpl {
 
 	/**
 	 * Creates a new instance.
-	 * @param {object} options The options for the instance.
-	 * @param {Fsp} options.fsp The file system module to use.
+	 * @param {object} [options] The options for the instance.
+	 * @param {Fsp} [options.fsp] The file system module to use.
 	 */
-	constructor({ fsp }) {
+	constructor({ fsp = nativeFsp } = {}) {
 		this.#fsp = fsp;
 		this.#retrier = new Retrier(error => RETRY_ERROR_CODES.has(error.code));
 	}

@@ -35,8 +35,13 @@ const tester = new FsxImplTester({
 });
 
 await tester.test({
-	name: "NodeFsxImpl",
+	name: "NodeFsxImpl (with fsp)",
 	impl: new NodeFsxImpl({ fsp }),
+});
+
+await tester.test({
+	name: "NodeFsxImpl (without fsp)",
+	impl: new NodeFsxImpl(),
 });
 
 describe("NodeFsxImpl Customizations", () => {
