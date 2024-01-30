@@ -14,7 +14,7 @@ While convenient to have just one method to delete both files and directories, i
 
 ## Related
 
-* https://github.com/humanwhocodes/fsx/discussions/22
+* https://github.com/humanwhocodes/humanfs/discussions/22
 
 # 2024-01-18 The `list()` method should return an async iterable
 
@@ -32,7 +32,7 @@ Node.js' interface really only works with normal file system where everything ab
 
 ## Related
 
-* https://github.com/humanwhocodes/fsx/issues/10
+* https://github.com/humanwhocodes/humanfs/issues/10
 
 # 2024-01-18 `arrayBuffer()` should be replaced by `bytes()`
 
@@ -50,7 +50,7 @@ APIs typically don't work on raw `ArrayBuffer` objects (such as `TextEncoder`), 
 
 ## Related
 
-* https://github.com/humanwhocodes/fsx/discussions/12
+* https://github.com/humanwhocodes/humanfs/discussions/12
 
 # 2024-01-02 `createDirectory()` should not return a boolean
 
@@ -66,7 +66,7 @@ The `createDirectory()` method will continue to return `undefined` in all cases.
 
 Because `createDirectory()` always works with `{ recursive: true }` in the underlying filesystem calls, it doesn't know whether or not the directory already exists. Node.js and Deno methods for creating directories don't throw errors for existing directories when using `recursive: true` as an option, meaning it would take a second filesystem call to return the correct value. Given that the behavior of `{ recursive: true }` is consistent across runtimes, it doesn't make sense for `createDirectory()` to go out of its way to give additional information that isn't provided by the runtimes automatically.
 
-# 2023-12-13 `Fsx` should handle validating parameters
+# 2023-12-13 `Hfs` should handle validating parameters
 
 ## Background
 
@@ -74,11 +74,11 @@ In the beginning, it was up to each impl to validate the input it was passed and
 
 ## Decision
 
-The `Fsx` class should handle parameter validation for all of its methods.
+The `Hfs` class should handle parameter validation for all of its methods.
 
 ## Rationale
 
-Asking impl implementors to all implement the same input validation is a waste of everyone's time. Because an impl is designed to be used inside of `Fsx`, I can lighten implementor burden by handling parameter validation centrally and remove that from the requirements for writing an impl.
+Asking impl implementors to all implement the same input validation is a waste of everyone's time. Because an impl is designed to be used inside of `Hfs`, I can lighten implementor burden by handling parameter validation centrally and remove that from the requirements for writing an impl.
 
 # 2023-12-07 The `text()`, `json()`, and `arrayBuffer()` methods will not throw on a missing file
 
@@ -130,10 +130,10 @@ In an effort to streamline the API, I considered using an old pattern from jQuer
 
 ```js
 // read
-const result = await fsx.text("file.txt");
+const result = await hfs.text("file.txt");
 
 // write
-await fsx.text("file.txt", "Hello world!");
+await hfs.text("file.txt", "Hello world!");
 ```
 
 ## Decision
@@ -148,7 +148,7 @@ While there is an argument for end-user convenience, having the same method beha
 
 ## Background
 
-While the `impl` concept is powerful, allowing users to override the `impl` without editing the code it affects, it does come with a price: it's not always clear whether an `Fsx` instance is using the base `impl` or an overridden one. The `isBaseImpl()` method provides a way to determine this programmatically, but that requires users to call it before proceeding.
+While the `impl` concept is powerful, allowing users to override the `impl` without editing the code it affects, it does come with a price: it's not always clear whether an `Hfs` instance is using the base `impl` or an overridden one. The `isBaseImpl()` method provides a way to determine this programmatically, but that requires users to call it before proceeding.
 
 ## Decision
 
@@ -156,22 +156,22 @@ While the `impl` concept is powerful, allowing users to override the `impl` with
 
 ## Rationale
 
-The worst case scenario is if somewhere in the code calls `setImpl()` and then later on, in some other section of code, `setImpl()` is called again with a different value. This is really confusing as it's never clear which `impl` should be used at any given point in the code. By limiting when `setImpl()` is called, that means the `Fsx` class is guaranteed to either be using the base `impl` or the one passed to `setImpl()`, which dramatically reduces the likelihood of unexpected behavior, especially in a codebase where multiple people might be participating.
+The worst case scenario is if somewhere in the code calls `setImpl()` and then later on, in some other section of code, `setImpl()` is called again with a different value. This is really confusing as it's never clear which `impl` should be used at any given point in the code. By limiting when `setImpl()` is called, that means the `Hfs` class is guaranteed to either be using the base `impl` or the one passed to `setImpl()`, which dramatically reduces the likelihood of unexpected behavior, especially in a codebase where multiple people might be participating.
 
-This is the problem scenario. Consider that you have a test where you want to mock out `fsx` to verify some method gets called:
+This is the problem scenario. Consider that you have a test where you want to mock out `hfs` to verify some method gets called:
 
 ```js
-fsx.setImpl(mockImpl);
-fsx.logStart("test");
+hfs.setImpl(mockImpl);
+hfs.logStart("test");
 
 /*
- * The expectation is that this function now uses `fsx` with `fooImpl`,
+ * The expectation is that this function now uses `hfs` with `fooImpl`,
  * but how do we know that this function doesn't also call `setImpl()`?
  * By throwing an error when `setImpl()` is called again, we know for sure.
  */
-someFunctionThatUsesFsx();
+someFunctionThatUsesHfs();
 
-validateLogs(fsx.logEnd("test"));
+validateLogs(hfs.logEnd("test"));
 
-fsx.resetImpl();
+hfs.resetImpl();
 ```

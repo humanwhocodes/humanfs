@@ -1,12 +1,12 @@
 {
-  "name": "fsx-types",
+  "name": "@humanfs/types",
   "version": "0.4.0",
-  "description": "The TypeScript types for the fsx project.",
+  "description": "The TypeScript types for the hfs project.",
   "type": "module",
-  "types": "src/fsx-types.ts",
+  "types": "src/hfs-types.ts",
   "exports": {
     ".": {
-      "types": "./src/fsx-types.ts"
+      "types": "./src/hfs-types.ts"
     },
     "./package.json": "./package.json"
   },
@@ -16,20 +16,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/humanwhocodes/fsx.git"
+    "url": "git+https://github.com/humanwhocodes/humanfs.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "filesystem",
     "fs",
-    "fsx",
+    "hfs",
     "files"
   ],
   "author": "Nicholas C. Zakas",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/humanwhocodes/fsx/issues"
+    "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
-  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "homepage": "https://github.com/humanwhocodes/humanfs#readme",
   "devDependencies": {
     "typescript": "^5.2.2"
   }

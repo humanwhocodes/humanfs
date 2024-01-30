@@ -1,6 +1,6 @@
 /**
- * @fileoverview API entrypoint for fsx/test
+ * @fileoverview API entrypoint for hfs/test
  * @author Nicholas C. Zakas
  */
 
-export { FsxImplTester } from "./fsx-impl-tester.js";
+export { HfsImplTester } from "./hfs-impl-tester.js";

@@ -1,7 +1,7 @@
 
-# Maintaining fsx
+# Maintaining humanfs
 
-This document contains common processes used in maintaining fsx so they don't get lost.
+This document contains common processes used in maintaining humanfs so they don't get lost.
 
 ## Add a New Package
 
@@ -13,8 +13,8 @@ This document contains common processes used in maintaining fsx so they don't ge
 ## Add a New Impl Method
 
 1. Update the type definition in `packages/types`.
-1. Update the `Fsx` class and tests in `package/core`.
-1. Update `FsxImplTester` in `packages/test`.
+1. Update the `Hfs` class and tests in `package/core`.
+1. Update `HfsImplTester` in `packages/test`.
 1. Update each impl.
 1. Update documentation in `docs`.
 1. Update package READMEs.

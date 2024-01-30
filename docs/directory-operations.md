@@ -2,10 +2,10 @@
 
 ## Creating Directories
 
-To create a directory, use the `fsx.createDirectory(dirPath)` method, like this:
+To create a directory, use the `hfs.createDirectory(dirPath)` method, like this:
 
 ```js
-await fsx.createDirectory("/path/to/directory");
+await hfs.createDirectory("/path/to/directory");
 ```
 
 > [!TIP]
@@ -16,29 +16,29 @@ await fsx.createDirectory("/path/to/directory");
 
 ## Detecting Directories
 
-To determine to if a directory exists, use the `fsx.isDirectory(dirPath)` method, which returns `true` if the given directory exists or `false` otherwise.
+To determine to if a directory exists, use the `hfs.isDirectory(dirPath)` method, which returns `true` if the given directory exists or `false` otherwise.
 
 ```js
-if (await fsx.isDirectory("/path/to/directory")) {
+if (await hfs.isDirectory("/path/to/directory")) {
 	// handle the directory
 }
 ```
 
 > [!IMPORTANT]
-> If the directory doesn't exist, `fsx.isDirectory()` returns `false`. This method does not throw errors unless the directorysystem cannot be accessed.
+> If the directory doesn't exist, `hfs.isDirectory()` returns `false`. This method does not throw errors unless the directorysystem cannot be accessed.
 
 ## Deleting directories
 
-To delete an empty directory, call the `fsx.delete(dirPath)` method. For example:
+To delete an empty directory, call the `hfs.delete(dirPath)` method. For example:
 
 ```js
-await fsx.delete("/path/to/directories");
+await hfs.delete("/path/to/directories");
 ```
 
-To delete a non-empty directory recursively, call the `fsx.deleteAll(dirPath)` method. For example:
+To delete a non-empty directory recursively, call the `hfs.deleteAll(dirPath)` method. For example:
 
 ```js
-await fsx.deleteAll("/path/to/directories");
+await hfs.deleteAll("/path/to/directories");
 ```
 
 > [!IMPORTANT]
@@ -46,10 +46,10 @@ await fsx.deleteAll("/path/to/directories");
 
 ## Reading Directory Entries
 
-To read all of the entries in a given directory, use the `fsx.list()` method. This method returns an async iterable and is meant to be used with the `for await-of` statement:
+To read all of the entries in a given directory, use the `hfs.list()` method. This method returns an async iterable and is meant to be used with the `for await-of` statement:
 
 ```js
-for await (const entry of fsx.list("/path/to/directory")) {
+for await (const entry of hfs.list("/path/to/directory")) {
 	if (entry.isFile) {
 		processFile(entry.name);
 	} else if (entry.isDirectory) {
@@ -58,4 +58,4 @@ for await (const entry of fsx.list("/path/to/directory")) {
 }
 ```
 
-Each entry in the async iterator implements the [`FsxDirectoryEntry` interface](../packages/types/src/fsx-types.ts).
+Each entry in the async iterator implements the [`HfsDirectoryEntry` interface](../packages/types/src/@humanfs/types.ts).

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tests for the Fsx class.
+ * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
 /* global it, describe */
@@ -8,7 +8,7 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { Fsx, NoSuchMethodError, ImplAlreadySetError } from "../src/fsx.js";
+import { Hfs, NoSuchMethodError, ImplAlreadySetError } from "../src/hfs.js";
 import assert from "node:assert";
 
 //-----------------------------------------------------------------------------
@@ -28,14 +28,14 @@ function normalizeLogEntry(logEntry) {
 // Tests
 //------------------------------------------------------------------------------
 
-describe("Fsx", () => {
+describe("Hfs", () => {
 	describe("Missing Methods", () => {
 		["text", "json", "bytes", "bytes"].forEach(methodName => {
 			it(`should reject a promise when the ${methodName}() method is not present on the impl`, () => {
-				const fsx = new Fsx({ impl: {} });
+				const hfs = new Hfs({ impl: {} });
 
 				assert.rejects(
-					fsx[methodName]("/path/to/file.txt"),
+					hfs[methodName]("/path/to/file.txt"),
 					new NoSuchMethodError(methodName),
 				);
 			});
@@ -44,73 +44,73 @@ describe("Fsx", () => {
 
 	describe("Changing impl", () => {
 		it("should change the impl when setImpl() is called", async () => {
-			const fsx = new Fsx({ impl: {} });
+			const hfs = new Hfs({ impl: {} });
 			const impl1 = {
 				text() {
 					return "Hello, world!";
 				},
 			};
 
-			fsx.setImpl(impl1);
+			hfs.setImpl(impl1);
 
-			const result = await fsx.text("/path/to/file.txt");
+			const result = await hfs.text("/path/to/file.txt");
 			assert.strictEqual(result, "Hello, world!");
 		});
 
 		it("should change the impl back when resetImpl() is called", async () => {
-			const fsx = new Fsx({ impl: {} });
+			const hfs = new Hfs({ impl: {} });
 			const impl1 = {
 				text() {
 					return "Hello, world!";
 				},
 			};
 
-			fsx.setImpl(impl1);
+			hfs.setImpl(impl1);
 
-			const result = await fsx.text("/path/to/file.txt");
+			const result = await hfs.text("/path/to/file.txt");
 			assert.strictEqual(result, "Hello, world!");
 
-			fsx.resetImpl();
+			hfs.resetImpl();
 
 			assert.rejects(
-				fsx.text("/path/to/file.txt"),
+				hfs.text("/path/to/file.txt"),
 				new NoSuchMethodError("text"),
 			);
 		});
 
 		it("should reject a promise when setImpl() is called twice", async () => {
-			const fsx = new Fsx({ impl: {} });
-			fsx.setImpl({});
+			const hfs = new Hfs({ impl: {} });
+			hfs.setImpl({});
 
 			assert.throws(() => {
-				fsx.setImpl({});
+				hfs.setImpl({});
 			}, new ImplAlreadySetError());
 		});
 
 		it("should return true for isBaseImpl() when the base impl is in use", () => {
-			const fsx = new Fsx({ impl: {} });
-			assert.strictEqual(fsx.isBaseImpl(), true);
+			const hfs = new Hfs({ impl: {} });
+			assert.strictEqual(hfs.isBaseImpl(), true);
 		});
 
 		it("should return true for isBaseImpl() when the impl is reset", () => {
-			const fsx = new Fsx({ impl: {} });
+			const hfs = new Hfs({ impl: {} });
 			const impl1 = {
 				text() {
 					return "Hello, world!";
 				},
 			};
 
-			fsx.setImpl(impl1);
-			assert.strictEqual(fsx.isBaseImpl(), false);
+			hfs.setImpl(impl1);
+			assert.strictEqual(hfs.isBaseImpl(), false);
 
-			fsx.resetImpl();
-			assert.strictEqual(fsx.isBaseImpl(), true);
+			hfs.resetImpl();
+			assert.strictEqual(hfs.isBaseImpl(), true);
 		});
 	});
 
 	describe("logStart() and logEnd()", () => {
 		it("should start a new log and add an entry", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					text() {
 						return "Hello, world!";
@@ -118,9 +118,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("test");
-			await fsx.text("/path/to/file.txt");
-			const logs = fsx.logEnd("test").map(normalizeLogEntry);
+			hfs.logStart("test");
+			await hfs.text("/path/to/file.txt");
+			const logs = hfs.logEnd("test").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "text",
@@ -130,7 +130,7 @@ describe("Fsx", () => {
 		});
 
 		it("should start two new logs and add an entry to both", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					text() {
 						return "Hello, world!";
@@ -138,11 +138,11 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("test1");
-			fsx.logStart("test2");
-			await fsx.text("/path/to/file.txt");
-			const logs1 = fsx.logEnd("test1").map(normalizeLogEntry);
-			const logs2 = fsx.logEnd("test2").map(normalizeLogEntry);
+			hfs.logStart("test1");
+			hfs.logStart("test2");
+			await hfs.text("/path/to/file.txt");
+			const logs1 = hfs.logEnd("test1").map(normalizeLogEntry);
+			const logs2 = hfs.logEnd("test2").map(normalizeLogEntry);
 
 			assert.deepStrictEqual(logs1, [
 				{
@@ -161,7 +161,7 @@ describe("Fsx", () => {
 
 	describe("text", () => {
 		it("should return the text from the file", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					text() {
 						return "Hello, world!";
@@ -169,12 +169,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.text("/path/to/file.txt");
+			const result = await hfs.text("/path/to/file.txt");
 			assert.strictEqual(result, "Hello, world!");
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					text() {
 						return "Hello, world!";
@@ -182,9 +182,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("text");
-			fsx.text("/path/to/file.txt");
-			const logs = fsx.logEnd("text").map(normalizeLogEntry);
+			hfs.logStart("text");
+			hfs.text("/path/to/file.txt");
+			const logs = hfs.logEnd("text").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "text",
@@ -194,7 +194,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					text() {
 						return "Hello, world!";
@@ -203,13 +203,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.text(123),
+				hfs.text(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					text() {
 						return "Hello, world!";
@@ -218,7 +218,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.text(""),
+				hfs.text(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -226,7 +226,7 @@ describe("Fsx", () => {
 
 	describe("json", () => {
 		it("should return the JSON from the file", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					json() {
 						return { foo: "bar" };
@@ -234,12 +234,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.json("/path/to/file.txt");
+			const result = await hfs.json("/path/to/file.txt");
 			assert.deepStrictEqual(result, { foo: "bar" });
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					json() {
 						return { foo: "bar" };
@@ -247,9 +247,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("json");
-			await fsx.json("/path/to/file.txt");
-			const logs = fsx.logEnd("json").map(normalizeLogEntry);
+			hfs.logStart("json");
+			await hfs.json("/path/to/file.txt");
+			const logs = hfs.logEnd("json").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "json",
@@ -259,7 +259,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					json() {
 						return { foo: "bar" };
@@ -268,13 +268,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.json(123),
+				hfs.json(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					json() {
 						return { foo: "bar" };
@@ -283,7 +283,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.json(""),
+				hfs.json(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -291,7 +291,7 @@ describe("Fsx", () => {
 
 	describe("bytes", () => {
 		it("should return the bytes from the file", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
@@ -299,12 +299,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.bytes("/path/to/file.txt");
+			const result = await hfs.bytes("/path/to/file.txt");
 			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
@@ -312,9 +312,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("bytes");
-			await fsx.bytes("/path/to/file.txt");
-			const logs = fsx.logEnd("bytes").map(normalizeLogEntry);
+			hfs.logStart("bytes");
+			await hfs.bytes("/path/to/file.txt");
+			const logs = hfs.logEnd("bytes").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "bytes",
@@ -324,7 +324,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
@@ -333,13 +333,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.bytes(123),
+				hfs.bytes(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]).buffer;
@@ -348,7 +348,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.bytes(""),
+				hfs.bytes(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -356,7 +356,7 @@ describe("Fsx", () => {
 
 	describe("bytes", () => {
 		it("should return the bytes from the file", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]);
@@ -364,12 +364,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.bytes("/path/to/file.txt");
+			const result = await hfs.bytes("/path/to/file.txt");
 			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]));
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]);
@@ -377,9 +377,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("bytes");
-			await fsx.bytes("/path/to/file.txt");
-			const logs = fsx.logEnd("bytes").map(normalizeLogEntry);
+			hfs.logStart("bytes");
+			await hfs.bytes("/path/to/file.txt");
+			const logs = hfs.logEnd("bytes").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "bytes",
@@ -389,7 +389,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]);
@@ -398,13 +398,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.bytes(123),
+				hfs.bytes(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					bytes() {
 						return new Uint8Array([1, 2, 3]);
@@ -413,7 +413,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.bytes(""),
+				hfs.bytes(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -421,7 +421,7 @@ describe("Fsx", () => {
 
 	describe("write()", () => {
 		it("should not reject a promise when the value to write is a string", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -429,11 +429,11 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.write("/path/to/file.txt", "Hello, world!");
+			await hfs.write("/path/to/file.txt", "Hello, world!");
 		});
 
 		it("should not reject a promise when the value to write is an ArayBuffer", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -441,14 +441,14 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.write(
+			await hfs.write(
 				"/path/to/file.txt",
 				new Uint8Array([1, 2, 3]).buffer,
 			);
 		});
 
 		it("should not reject a promise when the value to write is a Uint8Array", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -456,11 +456,11 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.write("/path/to/file.txt", new Uint8Array([1, 2, 3]));
+			await hfs.write("/path/to/file.txt", new Uint8Array([1, 2, 3]));
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -468,9 +468,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("write");
-			await fsx.write("/path/to/file.txt", "Hello, world!");
-			const logs = fsx.logEnd("write").map(normalizeLogEntry);
+			hfs.logStart("write");
+			await hfs.write("/path/to/file.txt", "Hello, world!");
+			const logs = hfs.logEnd("write").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "write",
@@ -480,7 +480,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -489,13 +489,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.write(123, "Hello, world!"),
+				hfs.write(123, "Hello, world!"),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -504,13 +504,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.write("", "Hello, world!"),
+				hfs.write("", "Hello, world!"),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the contents are a number", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					write() {
 						return undefined;
@@ -519,7 +519,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.write("/path/to/file.txt", 123),
+				hfs.write("/path/to/file.txt", 123),
 				new TypeError("File contents must be a string or bytes."),
 			);
 		});
@@ -527,7 +527,7 @@ describe("Fsx", () => {
 
 	describe("isFile()", () => {
 		it("should return true when the file exists", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isFile() {
 						return true;
@@ -535,12 +535,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.isFile("/path/to/file.txt");
+			const result = await hfs.isFile("/path/to/file.txt");
 			assert.strictEqual(result, true);
 		});
 
 		it("should return false when the file does not exist", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isFile() {
 						return false;
@@ -548,12 +548,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.isFile("/path/to/file.txt");
+			const result = await hfs.isFile("/path/to/file.txt");
 			assert.strictEqual(result, false);
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isFile() {
 						return true;
@@ -561,9 +561,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("isFile");
-			await fsx.isFile("/path/to/file.txt");
-			const logs = fsx.logEnd("isFile").map(normalizeLogEntry);
+			hfs.logStart("isFile");
+			await hfs.isFile("/path/to/file.txt");
+			const logs = hfs.logEnd("isFile").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "isFile",
@@ -573,7 +573,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isFile() {
 						return true;
@@ -582,13 +582,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.isFile(123),
+				hfs.isFile(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isFile() {
 						return true;
@@ -597,7 +597,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.isFile(""),
+				hfs.isFile(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -605,7 +605,7 @@ describe("Fsx", () => {
 
 	describe("isDirectory()", () => {
 		it("should return true when the directory exists", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isDirectory() {
 						return true;
@@ -613,12 +613,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.isDirectory("/path/to/dir");
+			const result = await hfs.isDirectory("/path/to/dir");
 			assert.strictEqual(result, true);
 		});
 
 		it("should return false when the directory does not exist", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isDirectory() {
 						return false;
@@ -626,12 +626,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.isDirectory("/path/to/dir");
+			const result = await hfs.isDirectory("/path/to/dir");
 			assert.strictEqual(result, false);
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isDirectory() {
 						return true;
@@ -639,9 +639,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("isDirectory");
-			await fsx.isDirectory("/path/to/dir");
-			const logs = fsx.logEnd("isDirectory").map(normalizeLogEntry);
+			hfs.logStart("isDirectory");
+			await hfs.isDirectory("/path/to/dir");
+			const logs = hfs.logEnd("isDirectory").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "isDirectory",
@@ -651,7 +651,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the directory path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isDirectory() {
 						return true;
@@ -660,13 +660,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.isDirectory(123),
+				hfs.isDirectory(123),
 				/Path must be a non-empty string./,
 			);
 		});
 
 		it("should reject a promise when the directory path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					isDirectory() {
 						return true;
@@ -675,7 +675,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.isDirectory(""),
+				hfs.isDirectory(""),
 				/Path must be a non-empty string./,
 			);
 		});
@@ -683,7 +683,7 @@ describe("Fsx", () => {
 
 	describe("createDirectory()", () => {
 		it("should not reject a promise when the directory path is a string", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					createDirectory() {
 						return undefined;
@@ -691,11 +691,11 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.createDirectory("/path/to/dir");
+			await hfs.createDirectory("/path/to/dir");
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					createDirectory() {
 						return undefined;
@@ -703,9 +703,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("createDirectory");
-			await fsx.createDirectory("/path/to/dir");
-			const logs = fsx.logEnd("createDirectory").map(normalizeLogEntry);
+			hfs.logStart("createDirectory");
+			await hfs.createDirectory("/path/to/dir");
+			const logs = hfs.logEnd("createDirectory").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "createDirectory",
@@ -715,7 +715,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the directory path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					createDirectory() {
 						return undefined;
@@ -724,13 +724,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.createDirectory(123),
+				hfs.createDirectory(123),
 				/Path must be a non-empty string./,
 			);
 		});
 
 		it("should reject a promise when the directory path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					createDirectory() {
 						return undefined;
@@ -739,7 +739,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.createDirectory(""),
+				hfs.createDirectory(""),
 				/Path must be a non-empty string./,
 			);
 		});
@@ -747,7 +747,7 @@ describe("Fsx", () => {
 
 	describe("delete()", () => {
 		it("should not reject a promise when the file path is a string", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					delete() {
 						return undefined;
@@ -755,11 +755,11 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.delete("/path/to/file.txt");
+			await hfs.delete("/path/to/file.txt");
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					delete() {
 						return undefined;
@@ -767,9 +767,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("delete");
-			await fsx.delete("/path/to/file.txt");
-			const logs = fsx.logEnd("delete").map(normalizeLogEntry);
+			hfs.logStart("delete");
+			await hfs.delete("/path/to/file.txt");
+			const logs = hfs.logEnd("delete").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "delete",
@@ -779,7 +779,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					delete() {
 						return undefined;
@@ -788,13 +788,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.delete(123),
+				hfs.delete(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					delete() {
 						return undefined;
@@ -803,7 +803,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.delete(""),
+				hfs.delete(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
@@ -811,7 +811,7 @@ describe("Fsx", () => {
 
 	describe("deleteAll()", () => {
 		it("should not reject a promise when the file path is a string", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					delete() {
 						return undefined;
@@ -819,11 +819,11 @@ describe("Fsx", () => {
 				},
 			});
 
-			await fsx.delete("/path/to/directory");
+			await hfs.delete("/path/to/directory");
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					deleteAll() {
 						return undefined;
@@ -831,9 +831,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("delete");
-			await fsx.deleteAll("/path/to/directory");
-			const logs = fsx.logEnd("delete").map(normalizeLogEntry);
+			hfs.logStart("delete");
+			await hfs.deleteAll("/path/to/directory");
+			const logs = hfs.logEnd("delete").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "deleteAll",
@@ -843,7 +843,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					deleteAll() {
 						return undefined;
@@ -852,13 +852,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.deleteAll(123),
+				hfs.deleteAll(123),
 				/Path must be a non-empty string./,
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					deleteAll() {
 						return undefined;
@@ -867,7 +867,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.deleteAll(""),
+				hfs.deleteAll(""),
 				/Path must be a non-empty string./,
 			);
 		});
@@ -902,7 +902,7 @@ describe("Fsx", () => {
 				},
 			];
 
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					list() {
 						return data;
@@ -910,7 +910,7 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.list("/path/to/dir");
+			const result = await hfs.list("/path/to/dir");
 			assert.ok(
 				result[Symbol.asyncIterator],
 				"list() should return an AsyncIterable.",
@@ -936,7 +936,7 @@ describe("Fsx", () => {
 
 	describe("size()", () => {
 		it("should return the size of the file", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					size() {
 						return 123;
@@ -944,12 +944,12 @@ describe("Fsx", () => {
 				},
 			});
 
-			const result = await fsx.size("/path/to/file.txt");
+			const result = await hfs.size("/path/to/file.txt");
 			assert.strictEqual(result, 123);
 		});
 
 		it("should log the method call", async () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					size() {
 						return 123;
@@ -957,9 +957,9 @@ describe("Fsx", () => {
 				},
 			});
 
-			fsx.logStart("size");
-			await fsx.size("/path/to/file.txt");
-			const logs = fsx.logEnd("size").map(normalizeLogEntry);
+			hfs.logStart("size");
+			await hfs.size("/path/to/file.txt");
+			const logs = hfs.logEnd("size").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					methodName: "size",
@@ -969,7 +969,7 @@ describe("Fsx", () => {
 		});
 
 		it("should reject a promise when the file path is not a string", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					size() {
 						return 123;
@@ -978,13 +978,13 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.size(123),
+				hfs.size(123),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});
 
 		it("should reject a promise when the file path is empty", () => {
-			const fsx = new Fsx({
+			const hfs = new Hfs({
 				impl: {
 					size() {
 						return 123;
@@ -993,7 +993,7 @@ describe("Fsx", () => {
 			});
 
 			assert.rejects(
-				fsx.size(""),
+				hfs.size(""),
 				new TypeError("File path must be a non-empty string."),
 			);
 		});

@@ -1,5 +1,5 @@
 {
-  "files": ["src/web-fsx.js"],
+  "files": ["src/web-hfs.js"],
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,

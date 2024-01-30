@@ -1,4 +1,4 @@
-# `fsx-web`
+# `@humanfs/web`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `fsx` bindings for the [Origin Private File System (OPFS)](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) in web browsers.
+The `hfs` bindings for the [Origin Private File System (OPFS)](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) in web browsers.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
@@ -16,21 +16,21 @@ The `fsx` bindings for the [Origin Private File System (OPFS)](https://developer
 It's recommended to import the minified version to save bandwidth:
 
 ```js
-import { fsx } from "https://cdn.skypack.dev/fsx-web?min";
+import { hfs } from "https://cdn.skypack.dev/@humanfs/web?min";
 ```
 
 However, you can also import the unminified version for debugging purposes:
 
 ```js
-import { fsx } from "https://cdn.skypack.dev/fsx-web";
+import { hfs } from "https://cdn.skypack.dev/@humanfs/web";
 ```
 
 ## Usage
 
-The easiest way to use fsx in your project is to import the `fsx` object:
+The easiest way to use hfs in your project is to import the `hfs` object:
 
 ```js
-import { fsx } from "fsx-web";
+import { hfs } from "@humanfs/web";
 ```
 
 Then, you can use the API methods:
@@ -39,63 +39,63 @@ Then, you can use the API methods:
 // 1. Files
 
 // read from a text file
-const text = await fsx.text("file.txt");
+const text = await hfs.text("file.txt");
 
 // read from a JSON file
-const json = await fsx.json("file.json");
+const json = await hfs.json("file.json");
 
 // read raw bytes from a text file
-const bytes = await fsx.bytes("file.txt");
+const bytes = await hfs.bytes("file.txt");
 
 // write text to a file
-await fsx.write("file.txt", "Hello world!");
+await hfs.write("file.txt", "Hello world!");
 
 // write bytes to a file
-await fsx.write("file.txt", new TextEncoder().encode("Hello world!"));
+await hfs.write("file.txt", new TextEncoder().encode("Hello world!"));
 
 // does the file exist?
-const found = await fsx.isFile("file.txt");
+const found = await hfs.isFile("file.txt");
 
 // how big is the file?
-const size = await fsx.size("file.txt");
+const size = await hfs.size("file.txt");
 
 // delete a file
-await fsx.delete("file.txt");
+await hfs.delete("file.txt");
 
 // 2. Directories
 
 // create a directory
-await fsx.createDirectory("dir");
+await hfs.createDirectory("dir");
 
 // create a directory recursively
-await fsx.createDirectory("dir/subdir");
+await hfs.createDirectory("dir/subdir");
 
 // does the directory exist?
-const dirFound = await fsx.isDirectory("dir");
+const dirFound = await hfs.isDirectory("dir");
 
 // delete a directory
-await fsx.delete("dir");
+await hfs.delete("dir");
 
 // delete a non-empty directory
-await fsx.deleteAll("dir");
+await hfs.deleteAll("dir");
 ```
 
-If you'd like to create your own instance, import the `WebFsx` constructor:
+If you'd like to create your own instance, import the `WebHfs` constructor:
 
 ```js
-import { WebFsx } from "fsx-web";
+import { WebHfs } from "@humanfs/web";
 
-const fsx = new WebFsx({
+const hfs = new WebHfs({
 	root: await navigator.storage.getDirectory()
 });
 ```
 
-If you'd like to use just the impl, import the `WebFsxImpl` constructor:
+If you'd like to use just the impl, import the `WebHfsImpl` constructor:
 
 ```js
-import { WebFsxImpl } from "fsx-web";
+import { WebHfsImpl } from "@humanfs/web";
 
-const fsx = new WebFsxImpl({
+const hfs = new WebHfsImpl({
 	root: await navigator.storage.getDirectory()
 });
 ```

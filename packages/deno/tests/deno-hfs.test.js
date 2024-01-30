@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tests for the Fsx class.
+ * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
 
@@ -15,8 +15,8 @@ import {
 	beforeEach,
 	afterEach,
 } from "https://deno.land/std/testing/bdd.ts";
-import { DenoFsxImpl } from "../src/deno-fsx.js";
-import { FsxImplTester } from "../../test/src/index.js";
+import { DenoHfsImpl } from "../src/deno-hfs.js";
+import { HfsImplTester } from "../../test/src/index.js";
 import {
 	assert,
 	assertEquals,
@@ -37,7 +37,7 @@ const fixturesDir = path.resolve(__dirname, "fixtures");
 // Tests
 //------------------------------------------------------------------------------
 
-const tester = new FsxImplTester({
+const tester = new HfsImplTester({
 	outputDir: fixturesDir,
 	assert: {
 		strictEqual: assertEquals,
@@ -54,20 +54,20 @@ const tester = new FsxImplTester({
 });
 
 await tester.test({
-	name: "DenoFsxImpl",
-	impl: new DenoFsxImpl(),
+	name: "DenoHfsImpl",
+	impl: new DenoHfsImpl(),
 });
 
-describe("DenoFsxImpl Customizations", () => {
+describe("DenoHfsImpl Customizations", () => {
 	describe("isFile()", () => {
 		it("should return false when a file isn't present", async () => {
-			const impl = new DenoFsxImpl();
+			const impl = new DenoHfsImpl();
 			const result = await impl.isFile("foo.txt");
 			assertEquals(result, false);
 		});
 
 		it("should rethrow an error that isn't ENOENT", async () => {
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async stat() {
 						throw new Error("Boom!");
@@ -80,27 +80,27 @@ describe("DenoFsxImpl Customizations", () => {
 
 	describe("isDirectory()", () => {
 		it("should return false when a file isn't present", async () => {
-			const impl = new DenoFsxImpl();
-			const result = await impl.isDirectory(".fsx/foo");
+			const impl = new DenoHfsImpl();
+			const result = await impl.isDirectory(".hfs/foo");
 			assertEquals(result, false);
 		});
 
 		it("should rethrow an error that isn't ENOENT", async () => {
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async stat() {
 						throw new Error("Boom!");
 					},
 				},
 			});
-			await assertRejects(() => impl.isDirectory(".fsx/foo"), /Boom!/);
+			await assertRejects(() => impl.isDirectory(".hfs/foo"), /Boom!/);
 		});
 	});
 
 	describe("text()", () => {
 		it("should return text contents when ENFILE error occurs", async () => {
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readTextFile() {
 						if (callCount === 0) {
@@ -117,13 +117,13 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.text(".fsx/foo");
+			const result = await impl.text(".hfs/foo");
 			assertEquals(result, "Hello world!");
 		});
 
 		it("should return text contents when EMFILE error occurs", async () => {
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readTextFile() {
 						if (callCount === 0) {
@@ -140,13 +140,13 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.text(".fsx/foo");
+			const result = await impl.text(".hfs/foo");
 			assertEquals(result, "Hello world!");
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readTextFile() {
 						if (callCount < 3) {
@@ -163,24 +163,24 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.text(".fsx/foo");
+			const result = await impl.text(".hfs/foo");
 			assertEquals(result, "Hello world!");
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readTextFile() {
 						throw new Error("Boom!");
 					},
 				},
 			});
-			await assertRejects(() => impl.text(".fsx/foo"), /Boom!/);
+			await assertRejects(() => impl.text(".hfs/foo"), /Boom!/);
 		});
 
 		it("should rethrow an error that isn't ENFILE after ENFILE occurs", async () => {
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readTextFile() {
 						if (callCount < 3) {
@@ -196,7 +196,7 @@ describe("DenoFsxImpl Customizations", () => {
 					},
 				},
 			});
-			await assertRejects(() => impl.text(".fsx/foo"), /Boom!/);
+			await assertRejects(() => impl.text(".hfs/foo"), /Boom!/);
 		});
 	});
 
@@ -204,7 +204,7 @@ describe("DenoFsxImpl Customizations", () => {
 		it("should return contents when ENFILE error occurs", async () => {
 			const contents = new TextEncoder().encode("Hello world!").buffer;
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readFile() {
 						if (callCount === 0) {
@@ -221,14 +221,14 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".fsx/foo");
+			const result = await impl.arrayBuffer(".hfs/foo");
 			assertEquals(result, contents);
 		});
 
 		it("should return contents when EMFILE error occurs", async () => {
 			const contents = new TextEncoder().encode("Hello world!").buffer;
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readFile() {
 						if (callCount === 0) {
@@ -245,14 +245,14 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".fsx/foo");
+			const result = await impl.arrayBuffer(".hfs/foo");
 			assertEquals(result, contents);
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			const contents = new TextEncoder().encode("Hello world!").buffer;
 			let callCount = 0;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readFile() {
 						if (callCount < 3) {
@@ -269,19 +269,19 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".fsx/foo");
+			const result = await impl.arrayBuffer(".hfs/foo");
 			assertEquals(result, contents);
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async readFile() {
 						throw new Error("Boom!");
 					},
 				},
 			});
-			await assertRejects(() => impl.arrayBuffer(".fsx/foo"), /Boom!/);
+			await assertRejects(() => impl.arrayBuffer(".hfs/foo"), /Boom!/);
 		});
 	});
 
@@ -289,7 +289,7 @@ describe("DenoFsxImpl Customizations", () => {
 		it("should return contents when ENFILE error occurs", async () => {
 			let callCount = 0;
 			let success = false;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async writeTextFile() {
 						if (callCount === 0) {
@@ -306,14 +306,14 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".fsx/foo", "Hello world!");
+			await impl.write(".hfs/foo", "Hello world!");
 			assert(success);
 		});
 
 		it("should return contents when EMFILE error occurs", async () => {
 			let callCount = 0;
 			let success = false;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async writeTextFile() {
 						if (callCount === 0) {
@@ -330,14 +330,14 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".fsx/foo", "Hello world!");
+			await impl.write(".hfs/foo", "Hello world!");
 			assert(success);
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			let callCount = 0;
 			let success = false;
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async writeTextFile() {
 						if (callCount < 3) {
@@ -354,12 +354,12 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".fsx/foo", "Hello world!");
+			await impl.write(".hfs/foo", "Hello world!");
 			assert(success);
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new DenoFsxImpl({
+			const impl = new DenoHfsImpl({
 				deno: {
 					async writeTextFile() {
 						throw new Error("Boom!");
@@ -367,7 +367,7 @@ describe("DenoFsxImpl Customizations", () => {
 				},
 			});
 			await assertRejects(
-				() => impl.write(".fsx/foo", "Hello world!"),
+				() => impl.write(".hfs/foo", "Hello world!"),
 				/Boom!/,
 			);
 		});

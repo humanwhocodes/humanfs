@@ -1,4 +1,4 @@
-# `fsx-memory`
+# `@humanfs/memory`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `fsx` bindings for using memory instead of writing to disk.
+The `hfs` bindings for using memory instead of writing to disk.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
@@ -18,25 +18,25 @@ The `fsx` bindings for using memory instead of writing to disk.
 Install using your favorite package manager for Node.js:
 
 ```shell
-npm install fsx-memory
+npm install @humanfs/memory
 
 # or
 
-pnpm install fsx-memory
+pnpm install @humanfs/memory
 
 # or
 
-yarn add fsx-memory
+yarn add @humanfs/memory
 
 # or
 
-bun install fsx-memory
+bun install @humanfs/memory
 ```
 
-Then you can import the `Fsx` class like this:
+Then you can import the `Hfs` class like this:
 
 ```js
-import { fsx } from "fsx-memory";
+import { hfs } from "@humanfs/memory";
 ```
 
 ### Deno
@@ -46,15 +46,15 @@ For Deno, set up a `deno.json` file like this:
 ```json
 {
 	"imports": {
-		"fsx-memory": "npm:fsx-memory@latest"
+		"@humanfs/memory": "npm:@humanfs/memory@latest"
 	}
 }
 ```
 
-Then you can import the `Fsx` class like this:
+Then you can import the `Hfs` class like this:
 
 ```js
-import { fsx } from "fsx-memory";
+import { hfs } from "@humanfs/memory";
 ```
 
 ### Browser
@@ -62,21 +62,21 @@ import { fsx } from "fsx-memory";
 It's recommended to import the minified version to save bandwidth:
 
 ```js
-import { fsx } from "https://cdn.skypack.dev/fsx-memory?min";
+import { hfs } from "https://cdn.skypack.dev/@humanfs/memory?min";
 ```
 
 However, you can also import the unminified version for debugging purposes:
 
 ```js
-import { fsx } from "https://cdn.skypack.dev/fsx-memory";
+import { hfs } from "https://cdn.skypack.dev/@humanfs/memory";
 ```
 
 ## Usage
 
-The easiest way to use fsx in your project is to import the `fsx` object:
+The easiest way to use hfs in your project is to import the `hfs` object:
 
 ```js
-import { fsx } from "fsx-memory";
+import { hfs } from "@humanfs/memory";
 ```
 
 Then, you can use the API methods:
@@ -85,69 +85,69 @@ Then, you can use the API methods:
 // 1. Files
 
 // read from a text file
-const text = await fsx.text("file.txt");
+const text = await hfs.text("file.txt");
 
 // read from a JSON file
-const json = await fsx.json("file.json");
+const json = await hfs.json("file.json");
 
 // read raw bytes from a text file
-const arrayBuffer = await fsx.arrayBuffer("file.txt");
+const arrayBuffer = await hfs.arrayBuffer("file.txt");
 
 // write text to a file
-await fsx.write("file.txt", "Hello world!");
+await hfs.write("file.txt", "Hello world!");
 
 // write bytes to a file
-await fsx.write("file.txt", new TextEncoder().encode("Hello world!"));
+await hfs.write("file.txt", new TextEncoder().encode("Hello world!"));
 
 // does the file exist?
-const found = await fsx.isFile("file.txt");
+const found = await hfs.isFile("file.txt");
 
 // how big is the file?
-const size = await fsx.size("file.txt");
+const size = await hfs.size("file.txt");
 
 // delete a file
-await fsx.delete("file.txt");
+await hfs.delete("file.txt");
 
 // 2. Directories
 
 // create a directory
-await fsx.createDirectory("dir");
+await hfs.createDirectory("dir");
 
 // create a directory recursively
-await fsx.createDirectory("dir/subdir");
+await hfs.createDirectory("dir/subdir");
 
 // does the directory exist?
-const dirFound = await fsx.isDirectory("dir");
+const dirFound = await hfs.isDirectory("dir");
 
 // delete a directory
-await fsx.delete("dir");
+await hfs.delete("dir");
 
 // delete a non-empty directory
-await fsx.deleteAll("dir");
+await hfs.deleteAll("dir");
 ```
 
-If you'd like to create your own instance, import the `MemoryFsx` constructor:
+If you'd like to create your own instance, import the `MemoryHfs` constructor:
 
 ```js
-import { MemoryFsx } from "fsx-memory";
+import { MemoryHfs } from "@humanfs/memory";
 
-const fsx = new MemoryFsx();
+const hfs = new MemoryHfs();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new MemoryFsx({ volume });
+const hfs = new MemoryHfs({ volume });
 ```
 
-If you'd like to use just the impl, import the `MemoryFsxImpl` constructor:
+If you'd like to use just the impl, import the `MemoryHfsImpl` constructor:
 
 ```js
-import { MemoryFsxImpl } from "fsx-memory";
+import { MemoryHfsImpl } from "@humanfs/memory";
 
-const fsx = new MemoryFsxImpl();
+const hfs = new MemoryHfsImpl();
 
 // optionally specify the object to use when storing data
 const volume = {};
-const fsx = new MemoryFsxImpl({ volume });
+const hfs = new MemoryHfsImpl({ volume });
 ```
 
 ## License

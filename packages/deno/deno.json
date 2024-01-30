@@ -1,7 +1,7 @@
 {
   "imports": {
-    "fsx-core": "../core/src/fsx.js",
-    "fsx-types": "../types/src/fsx-types.ts",
+    "@humanfs/core": "../core/src/hfs.js",
+    "@humanfs/types": "../types/src/hfs-types.ts",
     "@humanwhocodes/retry": "npm:@humanwhocodes/retry@latest"
   }
 }

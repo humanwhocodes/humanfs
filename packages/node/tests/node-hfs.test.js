@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tests for the Fsx class.
+ * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
 
@@ -9,12 +9,12 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { NodeFsxImpl } from "../src/node-fsx.js";
+import { NodeHfsImpl } from "../src/node-hfs.js";
 import assert from "node:assert";
 import fsp from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { FsxImplTester } from "fsx-test";
+import { HfsImplTester } from "@humanfs/test";
 
 //------------------------------------------------------------------------------
 // Helpers
@@ -28,32 +28,32 @@ const fixturesDir = path.resolve(__dirname, "fixtures/tmp");
 // Tests
 //------------------------------------------------------------------------------
 
-const tester = new FsxImplTester({
+const tester = new HfsImplTester({
 	outputDir: fixturesDir,
 	assert,
 	test: globalThis,
 });
 
 await tester.test({
-	name: "NodeFsxImpl (with fsp)",
-	impl: new NodeFsxImpl({ fsp }),
+	name: "NodeHfsImpl (with fsp)",
+	impl: new NodeHfsImpl({ fsp }),
 });
 
 await tester.test({
-	name: "NodeFsxImpl (without fsp)",
-	impl: new NodeFsxImpl(),
+	name: "NodeHfsImpl (without fsp)",
+	impl: new NodeHfsImpl(),
 });
 
-describe("NodeFsxImpl Customizations", () => {
+describe("NodeHfsImpl Customizations", () => {
 	describe("isFile()", () => {
 		it("should return false when a file isn't present", async () => {
-			const impl = new NodeFsxImpl({ fsp });
+			const impl = new NodeHfsImpl({ fsp });
 			const result = await impl.isFile("foo.txt");
 			assert.strictEqual(result, false);
 		});
 
 		it("should rethrow an error that isn't ENOENT", async () => {
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async stat() {
 						throw new Error("Boom!");
@@ -66,27 +66,27 @@ describe("NodeFsxImpl Customizations", () => {
 
 	describe("isDirectory()", () => {
 		it("should return false when a file isn't present", async () => {
-			const impl = new NodeFsxImpl({ fsp });
-			const result = await impl.isDirectory(".fsx/foo");
+			const impl = new NodeHfsImpl({ fsp });
+			const result = await impl.isDirectory(".hfs/foo");
 			assert.strictEqual(result, false);
 		});
 
 		it("should rethrow an error that isn't ENOENT", async () => {
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async stat() {
 						throw new Error("Boom!");
 					},
 				},
 			});
-			await assert.rejects(() => impl.isDirectory(".fsx/foo"), /Boom!/);
+			await assert.rejects(() => impl.isDirectory(".hfs/foo"), /Boom!/);
 		});
 	});
 
 	describe("text()", () => {
 		it("should return text contents when ENFILE error occurs", async () => {
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount === 0) {
@@ -103,13 +103,13 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.text(".fsx/foo");
+			const result = await impl.text(".hfs/foo");
 			assert.strictEqual(result, "Hello world!");
 		});
 
 		it("should return text contents when EMFILE error occurs", async () => {
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount === 0) {
@@ -126,13 +126,13 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.text(".fsx/foo");
+			const result = await impl.text(".hfs/foo");
 			assert.strictEqual(result, "Hello world!");
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount < 3) {
@@ -149,24 +149,24 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.text(".fsx/foo");
+			const result = await impl.text(".hfs/foo");
 			assert.strictEqual(result, "Hello world!");
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						throw new Error("Boom!");
 					},
 				},
 			});
-			await assert.rejects(() => impl.text(".fsx/foo"), /Boom!/);
+			await assert.rejects(() => impl.text(".hfs/foo"), /Boom!/);
 		});
 
 		it("should rethrow an error that isn't ENFILE after ENFILE occurs", async () => {
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount < 3) {
@@ -182,7 +182,7 @@ describe("NodeFsxImpl Customizations", () => {
 					},
 				},
 			});
-			await assert.rejects(() => impl.text(".fsx/foo"), /Boom!/);
+			await assert.rejects(() => impl.text(".hfs/foo"), /Boom!/);
 		});
 	});
 
@@ -190,7 +190,7 @@ describe("NodeFsxImpl Customizations", () => {
 		it("should return contents when ENFILE error occurs", async () => {
 			const contents = new TextEncoder().encode("Hello world!").buffer;
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount === 0) {
@@ -207,14 +207,14 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".fsx/foo");
+			const result = await impl.arrayBuffer(".hfs/foo");
 			assert.strictEqual(result, contents);
 		});
 
 		it("should return contents when EMFILE error occurs", async () => {
 			const contents = new TextEncoder().encode("Hello world!").buffer;
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount === 0) {
@@ -231,14 +231,14 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".fsx/foo");
+			const result = await impl.arrayBuffer(".hfs/foo");
 			assert.strictEqual(result, contents);
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			const contents = new TextEncoder().encode("Hello world!").buffer;
 			let callCount = 0;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						if (callCount < 3) {
@@ -255,19 +255,19 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".fsx/foo");
+			const result = await impl.arrayBuffer(".hfs/foo");
 			assert.strictEqual(result, contents);
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async readFile() {
 						throw new Error("Boom!");
 					},
 				},
 			});
-			await assert.rejects(() => impl.arrayBuffer(".fsx/foo"), /Boom!/);
+			await assert.rejects(() => impl.arrayBuffer(".hfs/foo"), /Boom!/);
 		});
 	});
 
@@ -275,7 +275,7 @@ describe("NodeFsxImpl Customizations", () => {
 		it("should return contents when ENFILE error occurs", async () => {
 			let callCount = 0;
 			let success = false;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async writeFile() {
 						if (callCount === 0) {
@@ -292,14 +292,14 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".fsx/foo", "Hello world!");
+			await impl.write(".hfs/foo", "Hello world!");
 			assert.ok(success);
 		});
 
 		it("should return contents when EMFILE error occurs", async () => {
 			let callCount = 0;
 			let success = false;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async writeFile() {
 						if (callCount === 0) {
@@ -316,14 +316,14 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".fsx/foo", "Hello world!");
+			await impl.write(".hfs/foo", "Hello world!");
 			assert.ok(success);
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
 			let callCount = 0;
 			let success = false;
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async writeFile() {
 						if (callCount < 3) {
@@ -340,12 +340,12 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".fsx/foo", "Hello world!");
+			await impl.write(".hfs/foo", "Hello world!");
 			assert.ok(success);
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new NodeFsxImpl({
+			const impl = new NodeHfsImpl({
 				fsp: {
 					async writeFile() {
 						throw new Error("Boom!");
@@ -353,7 +353,7 @@ describe("NodeFsxImpl Customizations", () => {
 				},
 			});
 			await assert.rejects(
-				() => impl.write(".fsx/foo", "Hello world!"),
+				() => impl.write(".hfs/foo", "Hello world!"),
 				/Boom!/,
 			);
 		});

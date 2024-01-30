@@ -1,13 +1,13 @@
 /**
- * @fileoverview The types file for the fsx package.
+ * @fileoverview The types file for the hfs package.
  * @author Nicholas C. Zakas
  */
 
 //------------------------------------------------------------------------------
-// FsxImpl
+// HfsImpl
 //------------------------------------------------------------------------------
 
-export interface FsxImpl {
+export interface HfsImpl {
 	/**
 	 * Reads the given file and returns the contents as text. Assumes the file is UTF-8 encoded.
 	 * @param filePath The file to read.
@@ -94,7 +94,7 @@ export interface FsxImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 * @throws {Error} If the directory cannot be read.
 	 */
-	list?(dirPath:string): AsyncIterable<FsxDirectoryEntry>;
+	list?(dirPath:string): AsyncIterable<HfsDirectoryEntry>;
 
 	/**
 	 * Returns the size of the given file.
@@ -107,10 +107,10 @@ export interface FsxImpl {
 }
 
 //------------------------------------------------------------------------------
-// FsxDirEnt
+// HfsDirEnt
 //------------------------------------------------------------------------------
 
-export interface FsxDirectoryEntry {
+export interface HfsDirectoryEntry {
 
 	/**
 	 * The name of the file or directory.

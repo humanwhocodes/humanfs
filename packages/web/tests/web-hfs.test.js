@@ -1,5 +1,5 @@
 /**
- * @fileoverview Tests for the Fsx class.
+ * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
 
@@ -9,8 +9,8 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { WebFsxImpl } from "../src/web-fsx.js";
-import { FsxImplTester } from "fsx-test";
+import { WebHfsImpl } from "../src/web-hfs.js";
+import { HfsImplTester } from "@humanfs/test";
 import assert from "node:assert";
 
 //------------------------------------------------------------------------------
@@ -23,13 +23,13 @@ const fixturesDir = "fixtures";
 // Tests
 //------------------------------------------------------------------------------
 
-const tester = new FsxImplTester({
+const tester = new HfsImplTester({
 	outputDir: fixturesDir,
 	assert,
 	test: globalThis,
 });
 
 await tester.test({
-	name: "MemoryFsxImpl",
-	impl: new WebFsxImpl({ root: await navigator.storage.getDirectory() }),
+	name: "MemoryHfsImpl",
+	impl: new WebHfsImpl({ root: await navigator.storage.getDirectory() }),
 });

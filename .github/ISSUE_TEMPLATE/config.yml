@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
     - name: 🗣 Ask a Question, Discuss
-      url: https://github.com/humanwhocodes/fsx/discussions
-      about: Get help using fsx
+      url: https://github.com/humanwhocodes/humanfs/discussions
+      about: Get help using humanfs

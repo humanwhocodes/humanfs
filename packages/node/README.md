@@ -1,4 +1,4 @@
-# `fsx-node`
+# `@humanfs/node`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `fsx` bindings for use in Node.js and Node.js-compatible runtimes.
+The `hfs` bindings for use in Node.js and Node.js-compatible runtimes.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
@@ -16,27 +16,27 @@ The `fsx` bindings for use in Node.js and Node.js-compatible runtimes.
 Install using your favorite package manager:
 
 ```shell
-npm install fsx-node
+npm install @humanfs/node
 
 # or
 
-pnpm install fsx-node
+pnpm install @humanfs/node
 
 # or
 
-yarn add fsx-node
+yarn add @humanfs/node
 
 # or
 
-bun install fsx-node
+bun install @humanfs/node
 ```
 
 ## Usage
 
-The easiest way to use fsx in your project is to import the `fsx` object:
+The easiest way to use hfs in your project is to import the `hfs` object:
 
 ```js
-import { fsx } from "fsx-node";
+import { hfs } from "@humanfs/node";
 ```
 
 Then, you can use the API methods:
@@ -45,69 +45,69 @@ Then, you can use the API methods:
 // 1. Files
 
 // read from a text file
-const text = await fsx.text("file.txt");
+const text = await hfs.text("file.txt");
 
 // read from a JSON file
-const json = await fsx.json("file.json");
+const json = await hfs.json("file.json");
 
 // read raw bytes from a text file
-const arrayBuffer = await fsx.arrayBuffer("file.txt");
+const arrayBuffer = await hfs.arrayBuffer("file.txt");
 
 // write text to a file
-await fsx.write("file.txt", "Hello world!");
+await hfs.write("file.txt", "Hello world!");
 
 // write bytes to a file
-await fsx.write("file.txt", new TextEncoder().encode("Hello world!"));
+await hfs.write("file.txt", new TextEncoder().encode("Hello world!"));
 
 // does the file exist?
-const found = await fsx.isFile("file.txt");
+const found = await hfs.isFile("file.txt");
 
 // how big is the file?
-const size = await fsx.size("file.txt");
+const size = await hfs.size("file.txt");
 
 // delete a file
-await fsx.delete("file.txt");
+await hfs.delete("file.txt");
 
 // 2. Directories
 
 // create a directory
-await fsx.createDirectory("dir");
+await hfs.createDirectory("dir");
 
 // create a directory recursively
-await fsx.createDirectory("dir/subdir");
+await hfs.createDirectory("dir/subdir");
 
 // does the directory exist?
-const dirFound = await fsx.isDirectory("dir");
+const dirFound = await hfs.isDirectory("dir");
 
 // delete a directory
-await fsx.delete("dir");
+await hfs.delete("dir");
 
 // delete a non-empty directory
-await fsx.deleteAll("dir");
+await hfs.deleteAll("dir");
 ```
 
-If you'd like to create your own instance, import the `NodeFsx` constructor:
+If you'd like to create your own instance, import the `NodeHfs` constructor:
 
 ```js
-import { NodeFsx } from "fsx-node";
+import { NodeHfs } from "@humanfs/node";
 import fsp from "fs/promises";
 
-const fsx = new NodeFsx();
+const hfs = new NodeHfs();
 
 // optionally specify the fs/promises object to use
-const fsx = new NodeFsx({ fsp });
+const hfs = new NodeHfs({ fsp });
 ```
 
-If you'd like to use just the impl, import the `NodeFsxImpl` constructor:
+If you'd like to use just the impl, import the `NodeHfsImpl` constructor:
 
 ```js
-import { NodeFsxImpl } from "fsx-node";
+import { NodeHfsImpl } from "@humanfs/node";
 import fsp from "fs/promises";
 
-const fsx = new NodeFsxImpl();
+const hfs = new NodeHfsImpl();
 
 // optionally specify the fs/promises object to use
-const fsx = new NodeFsxImpl({ fsp });
+const hfs = new NodeHfsImpl({ fsp });
 ```
 
 ## Errors Handled

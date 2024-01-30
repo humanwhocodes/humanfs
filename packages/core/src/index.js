@@ -1,6 +1,6 @@
 /**
- * @fileoverview API entrypoint for fsx/core
+ * @fileoverview API entrypoint for hfs/core
  * @author Nicholas C. Zakas
  */
 
-export { Fsx } from "./fsx.js";
+export { Hfs } from "./hfs.js";

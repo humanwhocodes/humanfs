@@ -1,5 +1,5 @@
 {
-  "files": ["src/fsx-types.ts"],
+  "files": ["src/hfs-types.ts"],
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,

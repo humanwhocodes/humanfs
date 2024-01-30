@@ -1,5 +1,5 @@
 {
-  "files": ["src/deno.d.ts", "src/deno-fsx.js"],
+  "files": ["src/deno.d.ts", "src/deno-hfs.js"],
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
