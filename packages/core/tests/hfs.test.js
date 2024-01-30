@@ -289,6 +289,71 @@ describe("Hfs", () => {
 		});
 	});
 
+	describe("arrayBuffer", () => {
+		it("should return the bytes from the file", async () => {
+			const hfs = new Hfs({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			const result = await hfs.arrayBuffer("/path/to/file.txt");
+			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			hfs.logStart("arrayBuffer");
+			await hfs.arrayBuffer("/path/to/file.txt");
+			const logs = hfs.logEnd("arrayBuffer").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					methodName: "arrayBuffer",
+					args: ["/path/to/file.txt"],
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			assert.rejects(
+				hfs.arrayBuffer(123),
+				/File path must be a non-empty string/,
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			assert.rejects(
+				hfs.arrayBuffer(""),
+				/File path must be a non-empty string/,
+			);
+		});
+	});
+
 	describe("bytes", () => {
 		it("should return the bytes from the file", async () => {
 			const hfs = new Hfs({
