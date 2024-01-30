@@ -15,45 +15,11 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Hfs } from "@humanfs/core";
+import { Hfs, Path } from "@humanfs/core";
 
 //-----------------------------------------------------------------------------
 // Helpers
 //-----------------------------------------------------------------------------
-
-/**
- * Normalizes a path to use forward slashes.
- * @param {string} filePath The path to normalize.
- * @returns {string} The normalized path.
- */
-function normalizePath(filePath) {
-	let startIndex = 0;
-	let endIndex = filePath.length;
-
-	// strip off any leading ./ or / characters
-	if (filePath.startsWith("./")) {
-		startIndex = 2;
-	}
-
-	if (filePath.startsWith("/")) {
-		startIndex = 1;
-	}
-
-	if (filePath.endsWith("/")) {
-		endIndex = filePath.length - 1;
-	}
-
-	return filePath.slice(startIndex, endIndex).replace(/\\/g, "/");
-}
-
-/**
- * Gets the steps in a path.
- * @param {string} filePath The path to get steps for.
- * @returns {string[]} The steps in the path.
- */
-function getPathSteps(filePath) {
-	return normalizePath(filePath).split("/");
-}
 
 /**
  * Finds a file or directory in the OPFS root.
@@ -71,7 +37,7 @@ async function findPath(
 	fileOrDirPath,
 	{ returnParent = false, create = false } = {},
 ) {
-	const steps = getPathSteps(fileOrDirPath);
+	const steps = [...Path.fromString(fileOrDirPath)];
 
 	if (returnParent) {
 		steps.pop();
@@ -252,7 +218,7 @@ export class WebHfsImpl {
 		);
 
 		if (!handle) {
-			const name = getPathSteps(filePath).pop();
+			const name = Path.fromString(filePath).name;
 			const parentHandle =
 				/** @type {FileSystemDirectoryHandle} */ (
 					await findPath(this.#root, filePath, {
@@ -299,13 +265,10 @@ export class WebHfsImpl {
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
-		const steps = getPathSteps(dirPath);
 		let handle = this.#root;
-		let name = steps.shift();
 
-		while (name) {
+		for (const name of Path.fromString(dirPath)) {
 			handle = await handle.getDirectoryHandle(name, { create: true });
-			name = steps.shift();
 		}
 	}
 

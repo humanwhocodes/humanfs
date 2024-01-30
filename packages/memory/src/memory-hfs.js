@@ -15,7 +15,7 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Hfs } from "@humanfs/core";
+import { Hfs, Path } from "@humanfs/core";
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -40,38 +40,13 @@ function isDirectory(value) {
 }
 
 /**
- * Normalizes a path to use forward slashes.
- * @param {string} filePath The path to normalize.
- * @returns {string} The normalized path.
- */
-function normalizePath(filePath) {
-	let startIndex = 0;
-	let endIndex = filePath.length;
-
-	// strip off any leading ./ or / characters
-	if (filePath.startsWith("./")) {
-		startIndex = 2;
-	}
-
-	if (filePath.startsWith("/")) {
-		startIndex = 1;
-	}
-
-	if (filePath.endsWith("/")) {
-		endIndex = filePath.length - 1;
-	}
-
-	return filePath.slice(startIndex, endIndex).replace(/\\/g, "/");
-}
-
-/**
  * Finds a file or directory in the volume.
  * @param {object} volume The volume to search.
  * @param {string} fileOrDirPath The path to the file or directory to find.
  * @returns {{object:object,key:string}|undefined} The file or directory found.
  */
 function findPath(volume, fileOrDirPath) {
-	const parts = normalizePath(fileOrDirPath).split("/");
+	const parts = [...Path.fromString(fileOrDirPath)];
 
 	let object = volume;
 	let key = parts.shift();
@@ -113,7 +88,7 @@ function readPath(volume, fileOrDirPath) {
  * @returns {void}
  */
 function writePath(volume, fileOrDirPath, value) {
-	const parts = normalizePath(fileOrDirPath).split("/");
+	const parts = [...Path.fromString(fileOrDirPath)];
 	let part = parts.shift();
 	let object = volume;
 
