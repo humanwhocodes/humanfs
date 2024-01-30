@@ -3,6 +3,8 @@
  * @author Nicholas C. Zakas
  */
 
+/* global URL */
+
 //-----------------------------------------------------------------------------
 // Types
 //-----------------------------------------------------------------------------
@@ -41,13 +43,16 @@ export class ImplAlreadySetError extends Error {
 
 /**
  * Asserts that the given path is a valid file path.
- * @param {string} fileOrDirPath The path to check.
+ * @param {any} fileOrDirPath The path to check.
  * @returns {void}
  * @throws {TypeError} When the path is not a non-empty string.
  */
 function assertValidFileOrDirPath(fileOrDirPath) {
-	if (!fileOrDirPath || typeof fileOrDirPath !== "string") {
-		throw new TypeError("Path must be a non-empty string.");
+	if (
+		!fileOrDirPath ||
+		(!(fileOrDirPath instanceof URL) && typeof fileOrDirPath !== "string")
+	) {
+		throw new TypeError("Path must be a non-empty string or URL.");
 	}
 }
 
@@ -245,7 +250,7 @@ export class Hfs {
 
 	/**
 	 * Reads the given file and returns the contents as text. Assumes UTF-8 encoding.
-	 * @param {string} filePath The file to read.
+	 * @param {string|URL} filePath The file to read.
 	 * @returns {Promise<string|undefined>} The contents of the file.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -257,7 +262,7 @@ export class Hfs {
 
 	/**
 	 * Reads the given file and returns the contents as JSON. Assumes UTF-8 encoding.
-	 * @param {string} filePath The file to read.
+	 * @param {string|URL} filePath The file to read.
 	 * @returns {Promise<any|undefined>} The contents of the file as JSON.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {SyntaxError} When the file contents are not valid JSON.
@@ -270,7 +275,7 @@ export class Hfs {
 
 	/**
 	 * Reads the given file and returns the contents as an ArrayBuffer.
-	 * @param {string} filePath The file to read.
+	 * @param {string|URL} filePath The file to read.
 	 * @returns {Promise<ArrayBuffer|undefined>} The contents of the file as an ArrayBuffer.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -283,7 +288,7 @@ export class Hfs {
 
 	/**
 	 * Reads the given file and returns the contents as an Uint8Array.
-	 * @param {string} filePath The file to read.
+	 * @param {string|URL} filePath The file to read.
 	 * @returns {Promise<Uint8Array|undefined>} The contents of the file as an Uint8Array.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -296,7 +301,7 @@ export class Hfs {
 	/**
 	 * Writes the given data to the given file. Creates any necessary directories along the way.
 	 * If the data is a string, UTF-8 encoding is used.
-	 * @param {string} filePath The file to write.
+	 * @param {string|URL} filePath The file to write.
 	 * @param {any} contents The data to write.
 	 * @returns {Promise<void>} A promise that resolves when the file is written.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
@@ -310,7 +315,7 @@ export class Hfs {
 
 	/**
 	 * Determines if the given file exists.
-	 * @param {string} filePath The file to check.
+	 * @param {string|URL} filePath The file to check.
 	 * @returns {Promise<boolean>} True if the file exists.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -322,7 +327,7 @@ export class Hfs {
 
 	/**
 	 * Determines if the given directory exists.
-	 * @param {string} dirPath The directory to check.
+	 * @param {string|URL} dirPath The directory to check.
 	 * @returns {Promise<boolean>} True if the directory exists.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the directory path is not a non-empty string.
@@ -334,7 +339,7 @@ export class Hfs {
 
 	/**
 	 * Creates the given directory.
-	 * @param {string} dirPath The directory to create.
+	 * @param {string|URL} dirPath The directory to create.
 	 * @returns {Promise<void>} A promise that resolves when the directory is created.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the directory path is not a non-empty string.
@@ -346,7 +351,7 @@ export class Hfs {
 
 	/**
 	 * Deletes the given file.
-	 * @param {string} filePath The file to delete.
+	 * @param {string|URL} filePath The file to delete.
 	 * @returns {Promise<void>} A promise that resolves when the file is deleted.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -358,7 +363,7 @@ export class Hfs {
 
 	/**
 	 * Deletes the given directory.
-	 * @param {string} dirPath The directory to delete.
+	 * @param {string|URL} dirPath The directory to delete.
 	 * @returns {Promise<void>} A promise that resolves when the directory is deleted.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the directory path is not a non-empty string.
@@ -370,7 +375,7 @@ export class Hfs {
 
 	/**
 	 * Returns a list of directory entries for the given path.
-	 * @param {string} dirPath The path to the directory to read.
+	 * @param {string|URL} dirPath The path to the directory to read.
 	 * @returns {AsyncIterable<HfsDirectoryEntry>} A promise that resolves with the
 	 *   directory entries.
 	 * @throws {TypeError} If the directory path is not a string.
@@ -383,7 +388,7 @@ export class Hfs {
 
 	/**
 	 * Returns the size of the given file.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number>} A promise that resolves with the size of the file.
 	 * @throws {TypeError} If the file path is not a string.
 	 * @throws {Error} If the file cannot be read.

@@ -13,14 +13,14 @@ export interface HfsImpl {
 	 * @param filePath The file to read.
 	 * @returns The contents of the file or undefined if the file is empty.
 	 */
-	text?(filePath: string): Promise<string|undefined>;
+	text?(filePath: string|URL): Promise<string|undefined>;
 
 	/**
 	 * Reads the given file and returns the contents as JSON. Assumes the file is UTF-8 encoded.
 	 * @param filePath The file to read.
 	 * @returns The contents of the file as JSON or undefined if the file is empty.
 	 */
-	json?(filePath: string): Promise<any|undefined>;
+	json?(filePath: string|URL): Promise<any|undefined>;
 
 	/**
 	 * Reads the given file and returns the contents as an ArrayBuffer.
@@ -28,14 +28,14 @@ export interface HfsImpl {
 	 * @returns The contents of the file as an ArrayBuffer or undefined if the file is empty.
 	 * @deprecated Use bytes() instead.
 	 */
-	arrayBuffer?(filePath: string): Promise<ArrayBuffer|undefined>;
+	arrayBuffer?(filePath: string|URL): Promise<ArrayBuffer|undefined>;
 
 	/**
 	 * Reads the given file and returns the contents as an Uint8Array.
 	 * @param filePath The file to read.
 	 * @returns The contents of the file as a Uint8Array or undefined if the file is empty.
 	 */
-	bytes?(filePath: string): Promise<Uint8Array|undefined>;
+	bytes?(filePath: string|URL): Promise<Uint8Array|undefined>;
 
 	/**
 	 * Writes the given data to the given file. For text, assumes UTF-8 encoding.
@@ -44,7 +44,7 @@ export interface HfsImpl {
 	 * @returns A promise that resolves when the file is written.
 	 * @throws {Error} If the file cannot be written.
 	 */
-	write?(filePath: string, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
+	write?(filePath: string|URL, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
 
 	/**
 	 * Checks if the given file exists.
@@ -52,7 +52,7 @@ export interface HfsImpl {
 	 * @returns True if the file exists, false if not.
 	 * @throws {Error} If the operation fails with a code other than ENOENT.
 	 */
-	isFile?(filePath: string): Promise<boolean>;
+	isFile?(filePath: string|URL): Promise<boolean>;
 
 	/**
 	 * Checks if the given directory exists.
@@ -60,7 +60,7 @@ export interface HfsImpl {
 	 * @returns True if the directory exists, false if not.
 	 * @throws {Error} If the operation fails with a code other than ENOENT.
 	 */
-	isDirectory?(dirPath: string): Promise<boolean>;
+	isDirectory?(dirPath: string|URL): Promise<boolean>;
 
 	/**
 	 * Creates the given directory, including any necessary parents.
@@ -68,7 +68,7 @@ export interface HfsImpl {
 	 * @returns A promise that resolves when the directory is created.
 	 * @throws {Error} If the directory cannot be created.
 	 */
-	createDirectory?(dirPath: string): Promise<void>;
+	createDirectory?(dirPath: string|URL): Promise<void>;
 
 	/**
 	 * Deletes the given file or empty directory.
@@ -76,7 +76,7 @@ export interface HfsImpl {
 	 * @returns A promise that resolves when the file or directory is deleted.
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
-	delete?(fileOrDirPath: string): Promise<void>;
+	delete?(fileOrDirPath: string|URL): Promise<void>;
 
 	/**
 	 * Deletes the given file or directory recursively.
@@ -84,7 +84,7 @@ export interface HfsImpl {
 	 * @returns A promise that resolves when the file or directory is deleted.
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
-	deleteAll?(fileOrDirPath: string): Promise<void>;
+	deleteAll?(fileOrDirPath: string|URL): Promise<void>;
 
 	/**
 	 * Returns a list of directory entries for the given path.
@@ -94,7 +94,7 @@ export interface HfsImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 * @throws {Error} If the directory cannot be read.
 	 */
-	list?(dirPath:string): AsyncIterable<HfsDirectoryEntry>;
+	list?(dirPath: string|URL): AsyncIterable<HfsDirectoryEntry>;
 
 	/**
 	 * Returns the size of the given file.
@@ -103,7 +103,7 @@ export interface HfsImpl {
 	 * 		undefined if the file does not exist.
 	 * @throws {Error} If the file cannot be read.
 	 */
-	size?(filePath: string): Promise<number|undefined>;
+	size?(filePath: string|URL): Promise<number|undefined>;
 }
 
 //------------------------------------------------------------------------------

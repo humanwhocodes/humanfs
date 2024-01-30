@@ -353,4 +353,42 @@ describe("Path", () => {
 			assert.deepStrictEqual([...path], ["foo", "bar"]);
 		});
 	});
+
+	describe("static fromUrl()", () => {
+		it("should create a new Path instance from a valid URL", () => {
+			const url = new URL("file:///c:/foo/bar");
+			const path = Path.fromURL(url);
+			assert.deepStrictEqual([...path], ["foo", "bar"]);
+		});
+
+		it("should throw a TypeError when the URL is not a URL instance", () => {
+			const invalidUrl = "file:///c:/foo/bar";
+			assert.throws(
+				() => {
+					Path.fromURL(invalidUrl);
+				},
+				new TypeError("url must be a URL instance")
+			);
+		});
+
+		it("should throw a TypeError when the URL pathname is empty", () => {
+			const url = new URL("file:///");
+			assert.throws(
+				() => {
+					Path.fromURL(url);
+				},
+				new TypeError("url.pathname cannot be empty")
+			);
+		});
+
+		it("should throw a TypeError when the URL protocol is not 'file:'", () => {
+			const url = new URL("http://example.com/foo/bar");
+			assert.throws(
+				() => {
+					Path.fromURL(url);
+				},
+				new TypeError("url.protocol must be \"file:\"")
+			);
+		});
+	});
 });

@@ -2,7 +2,7 @@
  * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
-/* global it, describe */
+/* global it, describe, URL */
 
 //------------------------------------------------------------------------------
 // Imports
@@ -169,7 +169,7 @@ describe("Hfs", () => {
 	});
 
 	describe("text", () => {
-		it("should return the text from the file", async () => {
+		it("should return the text from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
 					text() {
@@ -179,6 +179,21 @@ describe("Hfs", () => {
 			});
 
 			const result = await hfs.text("/path/to/file.txt");
+			assert.strictEqual(result, "Hello, world!");
+		});
+
+		it("should return the text from the file with a URL filePath", async () => {
+			const hfs = new Hfs({
+				impl: {
+					text() {
+						return "Hello, world!";
+					},
+				},
+			});
+
+			const result = await hfs.text(
+				new URL("http://example.com/file.txt"),
+			);
 			assert.strictEqual(result, "Hello, world!");
 		});
 
@@ -205,7 +220,7 @@ describe("Hfs", () => {
 			]);
 		});
 
-		it("should reject a promise when the file path is not a string", () => {
+		it("should reject a promise when the file path is not a string or URL", () => {
 			const hfs = new Hfs({
 				impl: {
 					text() {
@@ -216,7 +231,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.text(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -231,13 +246,13 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.text(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
 
 	describe("json", () => {
-		it("should return the JSON from the file", async () => {
+		it("should return the JSON from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
 					json() {
@@ -247,6 +262,21 @@ describe("Hfs", () => {
 			});
 
 			const result = await hfs.json("/path/to/file.txt");
+			assert.deepStrictEqual(result, { foo: "bar" });
+		});
+
+		it("should return the JSON from the file with a URL filePath", async () => {
+			const hfs = new Hfs({
+				impl: {
+					json() {
+						return { foo: "bar" };
+					},
+				},
+			});
+
+			const result = await hfs.json(
+				new URL("http://example.com/file.txt"),
+			);
 			assert.deepStrictEqual(result, { foo: "bar" });
 		});
 
@@ -284,7 +314,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.json(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -299,13 +329,13 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.json(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
 
 	describe("arrayBuffer", () => {
-		it("should return the bytes from the file", async () => {
+		it("should return the bytes from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
 					arrayBuffer() {
@@ -315,6 +345,21 @@ describe("Hfs", () => {
 			});
 
 			const result = await hfs.arrayBuffer("/path/to/file.txt");
+			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
+		});
+
+		it("should return the bytes from the file with a URL filePath", async () => {
+			const hfs = new Hfs({
+				impl: {
+					arrayBuffer() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			const result = await hfs.arrayBuffer(
+				new URL("http://example.com/file.txt"),
+			);
 			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
 		});
 
@@ -373,7 +418,7 @@ describe("Hfs", () => {
 	});
 
 	describe("bytes", () => {
-		it("should return the bytes from the file", async () => {
+		it("should return the bytes from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
 					bytes() {
@@ -383,6 +428,21 @@ describe("Hfs", () => {
 			});
 
 			const result = await hfs.bytes("/path/to/file.txt");
+			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
+		});
+
+		it("should return the bytes from the file with a URL filePath", async () => {
+			const hfs = new Hfs({
+				impl: {
+					bytes() {
+						return new Uint8Array([1, 2, 3]).buffer;
+					},
+				},
+			});
+
+			const result = await hfs.bytes(
+				new URL("http://example.com/file.txt"),
+			);
 			assert.deepStrictEqual(result, new Uint8Array([1, 2, 3]).buffer);
 		});
 
@@ -420,7 +480,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.bytes(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -435,7 +495,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.bytes(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -488,7 +548,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.bytes(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -503,7 +563,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.bytes(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -582,7 +642,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.write(123, "Hello, world!"),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -597,7 +657,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.write("", "Hello, world!"),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -678,7 +738,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.isFile(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -693,7 +753,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.isFile(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -893,7 +953,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.delete(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -908,7 +968,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.delete(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -1089,7 +1149,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.size(123),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 
@@ -1104,7 +1164,7 @@ describe("Hfs", () => {
 
 			assert.rejects(
 				hfs.size(""),
-				new TypeError("File path must be a non-empty string."),
+				new TypeError("File path must be a non-empty string or URL."),
 			);
 		});
 	});
