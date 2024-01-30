@@ -1,5 +1,5 @@
 /**
- * @fileoverview The main file for the humanfs/path package.
+ * @fileoverview The Path class.
  * @author Nicholas C. Zakas
  */
 
