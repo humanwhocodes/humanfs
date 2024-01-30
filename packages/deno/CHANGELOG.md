@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.6.0...deno-v0.7.0) (2024-01-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rename fsx -> humanfs ([#56](https://github.com/humanwhocodes/humanfs/issues/56))
+
+### Features
+
+* Rename fsx -&gt; humanfs ([#56](https://github.com/humanwhocodes/humanfs/issues/56)) ([f5dc533](https://github.com/humanwhocodes/humanfs/commit/f5dc533c8a46d45afd7aad602af39a6074f8a07b))
+
 ## [0.6.0](https://github.com/humanwhocodes/fsx/compare/fsx-deno-v0.5.0...fsx-deno-v0.6.0) (2024-01-27)
 
 

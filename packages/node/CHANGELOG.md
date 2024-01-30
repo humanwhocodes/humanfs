@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.6.1...node-v0.7.0) (2024-01-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rename fsx -> humanfs ([#56](https://github.com/humanwhocodes/humanfs/issues/56))
+
+### Features
+
+* Rename fsx -&gt; humanfs ([#56](https://github.com/humanwhocodes/humanfs/issues/56)) ([f5dc533](https://github.com/humanwhocodes/humanfs/commit/f5dc533c8a46d45afd7aad602af39a6074f8a07b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.5.0 to ^0.6.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.5.0 to ^0.6.0
+    * @humanfs/types bumped from ^0.4.0 to ^0.5.0
+
 ## [0.6.1](https://github.com/humanwhocodes/fsx/compare/fsx-node-v0.6.0...fsx-node-v0.6.1) (2024-01-29)
 
 
