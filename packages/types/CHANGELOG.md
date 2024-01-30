@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.5.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.4.0...types-v0.5.0) (2024-01-30)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rename fsx -> humanfs ([#56](https://github.com/humanwhocodes/humanfs/issues/56))
+
+### Features
+
+* Rename fsx -&gt; humanfs ([#56](https://github.com/humanwhocodes/humanfs/issues/56)) ([f5dc533](https://github.com/humanwhocodes/humanfs/commit/f5dc533c8a46d45afd7aad602af39a6074f8a07b))
+
 ## [0.4.0](https://github.com/humanwhocodes/fsx/compare/fsx-types-v0.3.0...fsx-types-v0.4.0) (2024-01-27)
 
 
