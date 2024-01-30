@@ -1,5 +1,5 @@
 /**
- * @fileoverview The main file for the deno-fsx package.
+ * @fileoverview The main file for the deno-hfs package.
  * @author Nicholas C. Zakas
  */
 /* global Deno:readonly */
@@ -8,14 +8,14 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef {import("fsx-types").FsxImpl} FsxImpl */
-/** @typedef {import("fsx-types").FsxDirectoryEntry} FsxDirectoryEntry */
+/** @typedef {import("@humanfs/types").HfsImpl} HfsImpl */
+/** @typedef {import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Fsx } from "fsx-core";
+import { Hfs } from "@humanfs/core";
 import { Retrier } from "@humanwhocodes/retry";
 import path from "node:path";
 
@@ -30,10 +30,10 @@ const RETRY_ERROR_CODES = new Set(["ENFILE", "EMFILE"]);
 //-----------------------------------------------------------------------------
 
 /**
- * A class representing the Node.js implementation of Fsx.
- * @implements {FsxImpl}
+ * A class representing the Node.js implementation of Hfs.
+ * @implements {HfsImpl}
  */
-export class DenoFsxImpl {
+export class DenoHfsImpl {
 	/**
 	 * The file system module to use.
 	 * @type {object}
@@ -258,7 +258,7 @@ export class DenoFsxImpl {
 	/**
 	 * Lists the files and directories in a directory.
 	 * @param {string} dirPath The path to the directory to list.
-	 * @returns {AsyncIterable<FsxDirectoryEntry>} An async iterator
+	 * @returns {AsyncIterable<HfsDirectoryEntry>} An async iterator
 	 *  that yields the files and directories in the directory.
 	 */
 	async *list(dirPath) {
@@ -287,17 +287,17 @@ export class DenoFsxImpl {
 
 /**
  * A class representing a file system utility library.
- * @implements {FsxImpl}
+ * @implements {HfsImpl}
  */
-export class DenoFsx extends Fsx {
+export class DenoHfs extends Hfs {
 	/**
 	 * Creates a new instance.
 	 * @param {object} [options] The options for the instance.
 	 * @param {Deno} [options.deno] The Deno module to use.
 	 */
 	constructor({ deno } = {}) {
-		super({ impl: new DenoFsxImpl({ deno }) });
+		super({ impl: new DenoHfsImpl({ deno }) });
 	}
 }
 
-export const fsx = new DenoFsx();
+export const hfs = new DenoHfs();

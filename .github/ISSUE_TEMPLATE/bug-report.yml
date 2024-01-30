@@ -1,5 +1,5 @@
 name: "\U0001F41E Report a problem"
-description: "Report a problem with fsx"
+description: "Report a problem with humanfs"
 title: "Bug: (fill in)"
 labels:
     - bug
@@ -9,19 +9,19 @@ body:
       attributes:
           label: Which packages are affected?
           options:
-              - label: "`fsx-core`"
+              - label: "`@humanfs/core`"
                 required: false
-              - label: "`fsx-node`"
+              - label: "`@humanfs/node`"
                 required: false
-              - label: "`fsx-deno`"
+              - label: "`@humanfs/deno`"
                 required: false
-              - label: "`fsx-memory`"
+              - label: "`@humanfs/memory`"
                 required: false
-              - label: "`fsx-web`"
+              - label: "`@humanfs/web`"
                 required: false
-              - label: "`fsx-test`"
+              - label: "`@humanfs/test`"
                 required: false
-              - label: "`fsx-types`"
+              - label: "`@humanfs/types`"
                 required: false
     - type: textarea
       attributes:

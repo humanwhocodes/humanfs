@@ -1,13 +1,13 @@
 {
-  "name": "fsx-deno",
+  "name": "@humanfs/deno",
   "version": "0.6.0",
-  "description": "The Deno bindings of the fsx library.",
+  "description": "The Deno bindings of the humanfs library.",
   "type": "module",
-  "types": "dist/deno-fsx.d.ts",
+  "types": "dist/deno-hfs.d.ts",
   "exports": {
     "import": {
-      "default": "./src/deno-fsx.js",
-      "types": "./dist/deno-fsx.d.ts"
+      "default": "./src/deno-hfs.js",
+      "types": "./dist/deno-hfs.d.ts"
     }
   },
   "files": [
@@ -22,20 +22,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/humanwhocodes/fsx.git"
+    "url": "git+https://github.com/humanwhocodes/humanfs.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "filesystem",
     "fs",
-    "fsx",
+    "hfs",
     "files"
   ],
   "author": "Nicholas C. Zakas",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/humanwhocodes/fsx/issues"
+    "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
-  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "homepage": "https://github.com/humanwhocodes/humanfs#readme",
   "devDependencies": {
     "@types/node": "^20.9.4",
     "typescript": "^5.2.2"

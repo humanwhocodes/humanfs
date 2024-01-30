@@ -1,6 +1,6 @@
 /**
- * @fileoverview Tester for FsxImpl classes. This is used to ensure that all
- *  FsxImpl classes have the same API and behavior.
+ * @fileoverview Tester for HfsImpl classes. This is used to ensure that all
+ *  HfsImpl classes have the same API and behavior.
  */
 
 /* global TextEncoder, TextDecoder */
@@ -9,7 +9,7 @@
 // Types
 //------------------------------------------------------------------------------
 
-/** @typedef {import("fsx-types").FsxImpl} FsxImpl*/
+/** @typedef {import("@humanfs/types").HfsImpl} HfsImpl*/
 
 /**
  * @typedef {Object} Assert
@@ -32,7 +32,7 @@
 // Public Interface
 //------------------------------------------------------------------------------
 
-export class FsxImplTester {
+export class HfsImplTester {
 	/**
 	 * The assert object to use.
 	 * @type {Assert}
@@ -72,7 +72,7 @@ export class FsxImplTester {
 	 * Runs the tests.
 	 * @param {object} options Options for the test.
 	 * @param {string} options.name The name of the test.
-	 * @param {FsxImpl} options.impl The FsxImpl instance to test.
+	 * @param {HfsImpl} options.impl The HfsImpl instance to test.
 	 * @returns {Promise<void>}
 	 */
 	async test({ name, impl }) {

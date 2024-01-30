@@ -1,13 +1,13 @@
 {
-  "name": "fsx-node",
+  "name": "@humanfs/node",
   "version": "0.6.1",
-  "description": "The Node.js bindings of the fsx library.",
+  "description": "The Node.js bindings of the humanfs library.",
   "type": "module",
-  "types": "dist/node-fsx.d.ts",
+  "types": "dist/node-hfs.d.ts",
   "exports": {
     "import": {
-      "default": "./src/node-fsx.js",
-      "types": "./dist/node-fsx.d.ts"
+      "default": "./src/node-hfs.js",
+      "types": "./dist/node-hfs.d.ts"
     }
   },
   "files": [
@@ -22,29 +22,32 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/humanwhocodes/fsx.git"
+    "url": "git+https://github.com/humanwhocodes/humanfs.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "keywords": [
     "filesystem",
     "fs",
-    "fsx",
+    "hfs",
     "files"
   ],
   "author": "Nicholas C. Zakas",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/humanwhocodes/fsx/issues"
+    "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
-  "homepage": "https://github.com/humanwhocodes/fsx#readme",
+  "homepage": "https://github.com/humanwhocodes/humanfs#readme",
   "devDependencies": {
     "@types/node": "^20.9.4",
-    "fsx-test": "^0.5.0",
-    "fsx-types": "^0.4.0",
+    "@humanfs/test": "^0.5.0",
+    "@humanfs/types": "^0.4.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
     "@humanwhocodes/retry": "^0.1.2",
-    "fsx-core": "^0.5.0"
+    "@humanfs/core": "^0.5.0"
   }
 }

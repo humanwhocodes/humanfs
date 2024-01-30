@@ -38,43 +38,43 @@ jobs:
             - run: npm ci
               if: ${{ steps.release.outputs.releases_created }}
 
-            - name: Publish fsx-core package to npm
+            - name: Publish @humanfs/core package to npm
               run: npm publish -w packages/core
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-            - name: Publish fsx-node package to npm
+            - name: Publish @humanfs/node package to npm
               run: npm publish -w packages/node
               if: ${{ steps.release.outputs['packages/node--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-            - name: Publish fsx-deno package to npm
+            - name: Publish @humanfs/deno package to npm
               run: npm publish -w packages/deno
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-            - name: Publish fsx-memory package to npm
+            - name: Publish @humanfs/memory package to npm
               run: npm publish -w packages/memory
               if: ${{ steps.release.outputs['packages/memory--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-            - name: Publish fsx-web package to npm
+            - name: Publish @humanfs/web package to npm
               run: npm publish -w packages/web
               if: ${{ steps.release.outputs['packages/web--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-            - name: Publish fsx-types package to npm
+            - name: Publish @humanfs/types package to npm
               run: npm publish -w packages/types
               if: ${{ steps.release.outputs['packages/types--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-            - name: Publish fsx-test package to npm
+            - name: Publish @humanfs/test package to npm
               run: npm publish -w packages/test
               if: ${{ steps.release.outputs['packages/test--release_created'] }}
               env:

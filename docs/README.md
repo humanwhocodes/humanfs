@@ -2,48 +2,48 @@
 
 ## Introduction
 
-fsx is a modern filesystem library for JavaScript runtimes. The overall goal is to create an enjoyable, flexible, observable library for filesystem operations that adheres more to modern API design than Linux utility design.
+humanfs is a modern filesystem library for JavaScript runtimes. The overall goal is to create an enjoyable, flexible, observable library for filesystem operations that adheres more to modern API design than Linux utility design.
 
 ## Choosing a Runtime Package
 
 To get started, choose which runtime package you'd like to use:
 
--   `fsx-node` - fsx implementation that runs on top of the Node.js `fs/promises` module
--   `fsx-deno` - fsx implementation that runs on top of the `Deno` global
--   `fsx-web` - fsx implementation that runs on top of the Origin Private File System in browsers
--   `fsx-memory` - fsx implementation that runs in memory and is suitable for any JavaScript runtime
+-   `@humanfs/node` - humanfs implementation that runs on top of the Node.js `fs/promises` module
+-   `@humanfs/deno` - humanfs implementation that runs on top of the `Deno` global
+-   `@humanfs/web` - humanfs implementation that runs on top of the Origin Private File System in browsers
+-   `@humanfs/memory` - humanfs implementation that runs in memory and is suitable for any JavaScript runtime
 
-This document uses `fsx-node` as an example, but the API for each runtime package is effectively the same.
+This document uses `@humanfs/node` as an example, but the API for each runtime package is effectively the same.
 
 ## Installation
 
-Install the `fsx-node` package using your favorite npm CLI tool:
+Install the `@humanfs/node` package using your favorite npm CLI tool:
 
 ```shell
-npm install fsx-node
+npm install @humanfs/node
 # or
-yarn add fsx-node
+yarn add @humanfs/node
 # or
-pnpm install fsx-node
+pnpm install @humanfs/node
 # or
-bun install fsx-node
+bun install @humanfs/node
 ```
 
-> [!IMPORTANT] > `fsx-node` requires Node.js v18.18.0 or later.
+> [!IMPORTANT] > `@humanfs/node` requires Node.js v18.18.0 or later.
 
 ## Importing the Library
 
-To get started using the API, import the `fsx` singleton from the runtime package, like this:
+To get started using the API, import the `hfs` singleton from the runtime package, like this:
 
 ```js
-import { fsx } from "fsx-node";
+import { hfs } from "@humanfs/node";
 ```
 
-You can then use `fsx` in most places where you would use the runtime's filesystem API, such as `fs` for Node.js.
+You can then use `hfs` in most places where you would use the runtime's filesystem API, such as `fs` for Node.js.
 
 ## Using the Library
 
-For information about using the `fsx` object, please see the following:
+For information about using the `hfs` object, please see the following:
 
 -   [File Operations](./file-operations.md)
 -   [Directory Operations](./directory-operations.md)

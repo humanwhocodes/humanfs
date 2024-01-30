@@ -1,17 +1,17 @@
 # Logging
 
-Logging is useful when you want to know what an `fsx` instance is doing but don't want to interfere with it. For example, you may want to verify that certain methods were called during a test but don't want to go through the trouble of setting up spies for each method.
+Logging is useful when you want to know what an `hfs` instance is doing but don't want to interfere with it. For example, you may want to verify that certain methods were called during a test but don't want to go through the trouble of setting up spies for each method.
 
 ## Enable Logging
 
-To enable logging on an `fsx` instance, call the `logStart()` method and pass in a log name. When you're done logging, call `logEnd()` and pass in the same name to retrieve an array of log entries. Here's an example:
+To enable logging on an `hfs` instance, call the `logStart()` method and pass in a log name. When you're done logging, call `logEnd()` and pass in the same name to retrieve an array of log entries. Here's an example:
 
 ```js
-fsx.logStart("test1");
+hfs.logStart("test1");
 
-const fileFound = await fsx.isFile("/path/to/file.txt");
+const fileFound = await hfs.isFile("/path/to/file.txt");
 
-const logs = fsx.logEnd("test1");
+const logs = hfs.logEnd("test1");
 ```
 
 Each log entry is an object containing the following properties:
@@ -45,16 +45,16 @@ For the previous example, `logs` would contain a single entry:
 You can have multiple logs collected by calling `logStart()` and passing in different log names. Each log is kept separate and contains its own log entries (as opposed to each log sharing the same objects). You can start and stop logs at any time. For example:
 
 ```js
-fsx.logStart("test1");
+hfs.logStart("test1");
 
-const fileFound = await fsx.isFile("/path/to/file.txt");
+const fileFound = await hfs.isFile("/path/to/file.txt");
 
-fsx.logStart("test2");
+hfs.logStart("test2");
 
-const dirFound = await fsx.isDirectory("/path/to/dir");
+const dirFound = await hfs.isDirectory("/path/to/dir");
 
-const logs1 = fsx.logEnd("test1");
-const logs2 = fsx.logEnd("test2");
+const logs1 = hfs.logEnd("test1");
+const logs2 = hfs.logEnd("test2");
 ```
 
 Here, two logs are created: `"test1"` and `"test2"`. The `"test1"` log has two entries: one for the call to `isFile()` and one for the call to `isDirectory()`; the `"test2"` log has one entry for the `isDirectory()` call.

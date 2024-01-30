@@ -1,4 +1,4 @@
-# `fsx-test`
+# `@humanfs/test`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-Testing utilities for `fsx`.
+Testing utilities for humanfs.
 
 ## License
 

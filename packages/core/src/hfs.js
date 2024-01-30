@@ -1,5 +1,5 @@
 /**
- * @fileoverview The main file for the fsx package.
+ * @fileoverview The main file for the humanfs package.
  * @author Nicholas C. Zakas
  */
 
@@ -7,8 +7,8 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef{import("fsx-types").FsxImpl} FsxImpl */
-/** @typedef{import("fsx-types").FsxDirectoryEntry} FsxDirectoryEntry */
+/** @typedef{import("@humanfs/types").HfsImpl} HfsImpl */
+/** @typedef{import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -108,18 +108,18 @@ export class LogEntry {
 
 /**
  * A class representing a file system utility library.
- * @implements {FsxImpl}
+ * @implements {HfsImpl}
  */
-export class Fsx {
+export class Hfs {
 	/**
 	 * The base implementation for this instance.
-	 * @type {FsxImpl}
+	 * @type {HfsImpl}
 	 */
 	#baseImpl;
 
 	/**
 	 * The current implementation for this instance.
-	 * @type {FsxImpl}
+	 * @type {HfsImpl}
 	 */
 	#impl;
 
@@ -132,7 +132,7 @@ export class Fsx {
 	/**
 	 * Creates a new instance.
 	 * @param {object} options The options for the instance.
-	 * @param {FsxImpl} options.impl The implementation to use.
+	 * @param {HfsImpl} options.impl The implementation to use.
 	 */
 	constructor({ impl }) {
 		this.#baseImpl = impl;
@@ -371,7 +371,7 @@ export class Fsx {
 	/**
 	 * Returns a list of directory entries for the given path.
 	 * @param {string} dirPath The path to the directory to read.
-	 * @returns {AsyncIterable<FsxDirectoryEntry>} A promise that resolves with the
+	 * @returns {AsyncIterable<HfsDirectoryEntry>} A promise that resolves with the
 	 *   directory entries.
 	 * @throws {TypeError} If the directory path is not a string.
 	 * @throws {Error} If the directory cannot be read.

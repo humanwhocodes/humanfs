@@ -1,4 +1,4 @@
-# `fsx-deno`
+# `@humanfs/deno`
 
 by [Nicholas C. Zakas](https://humanwhocodes.com)
 
@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `fsx` bindings for use in Node.js and Node.js-compatible runtimes.
+The humanfs bindings for use in Node.js and Node.js-compatible runtimes.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
@@ -18,17 +18,17 @@ Set up a `deno.json` file like this:
 ```json
 {
 	"imports": {
-		"fsx-deno": "npm:fsx-deno@latest"
+		"@humanfs/deno": "npm:@humanfs/deno@latest"
 	}
 }
 ```
 
 ## Usage
 
-The easiest way to use fsx in your project is to import the `fsx` object:
+The easiest way to use humanfs in your project is to import the `hfs` object:
 
 ```js
-import { fsx } from "fsx-deno";
+import { hfs } from "@humanfs/deno";
 ```
 
 Then, you can use the API methods:
@@ -37,69 +37,69 @@ Then, you can use the API methods:
 // 1. Files
 
 // read from a text file
-const text = await fsx.text("file.txt");
+const text = await hfs.text("file.txt");
 
 // read from a JSON file
-const json = await fsx.json("file.json");
+const json = await hfs.json("file.json");
 
 // read raw bytes from a text file
-const arrayBuffer = await fsx.arrayBuffer("file.txt");
+const arrayBuffer = await hfs.arrayBuffer("file.txt");
 
 // write text to a file
-await fsx.write("file.txt", "Hello world!");
+await hfs.write("file.txt", "Hello world!");
 
 // write bytes to a file
-await fsx.write("file.txt", new TextEncoder().encode("Hello world!"));
+await hfs.write("file.txt", new TextEncoder().encode("Hello world!"));
 
 // does the file exist?
-const found = await fsx.isFile("file.txt");
+const found = await hfs.isFile("file.txt");
 
 // how big is the file?
-const size = await fsx.size("file.txt");
+const size = await hfs.size("file.txt");
 
 // delete a file
-await fsx.delete("file.txt");
+await hfs.delete("file.txt");
 
 // 2. Directories
 
 // create a directory
-await fsx.createDirectory("dir");
+await hfs.createDirectory("dir");
 
 // create a directory recursively
-await fsx.createDirectory("dir/subdir");
+await hfs.createDirectory("dir/subdir");
 
 // does the directory exist?
-const dirFound = await fsx.isDirectory("dir");
+const dirFound = await hfs.isDirectory("dir");
 
 // delete an empty directory
-await fsx.delete("dir");
+await hfs.delete("dir");
 
 // delete a non-empty directory
-await fsx.deleteAll("dir");
+await hfs.deleteAll("dir");
 ```
 
-If you'd like to create your own instance, import the `DenoFsx` constructor:
+If you'd like to create your own instance, import the `DenoHfs` constructor:
 
 ```js
-import { DenoFsx } from "fsx-deno";
+import { DenoHfs } from "@humanfs/deno";
 
-const fsx = new DenoFsx();
+const hfs = new DenoHfs();
 
 // optionally specify the Deno object to use
 const volume = {};
-const fsx = new DenoFsx({ deno: Deno });
+const hfs = new DenoHfs({ deno: Deno });
 ```
 
-If you'd like to use just the impl, import the `DenoFsxImpl` constructor:
+If you'd like to use just the impl, import the `DenoHfsImpl` constructor:
 
 ```js
-import { DenoFsxImpl } from "fsx-deno";
+import { DenoHfsImpl } from "@humanfs/deno";
 
-const fsx = new DenoFsxImpl();
+const hfs = new DenoHfsImpl();
 
 // optionally specify the Deno object to use
 const volume = {};
-const fsx = new DenoFsxImpl({ deno: Deno });
+const hfs = new DenoHfsImpl({ deno: Deno });
 ```
 
 ## License
