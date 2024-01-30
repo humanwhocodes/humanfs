@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-Additional type definitions for `hfs`. These are used primarily to share type definitions across packages because there is no easy way to export imported type definitions using JavaScript and JSDoc.
+Additional type definitions for humanfs. These are used primarily to share type definitions across packages because there is no easy way to export imported type definitions using JavaScript and JSDoc.
 
 ## License
 

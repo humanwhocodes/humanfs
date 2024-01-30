@@ -1,5 +1,5 @@
 /**
- * @fileoverview The main file for the hfs package.
+ * @fileoverview The main file for the humanfs package.
  * @author Nicholas C. Zakas
  */
 

@@ -1,5 +1,5 @@
 name: "\U0001F41E Report a problem"
-description: "Report a problem with hfs"
+description: "Report a problem with humanfs"
 title: "Bug: (fill in)"
 labels:
     - bug

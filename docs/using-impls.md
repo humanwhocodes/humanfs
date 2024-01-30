@@ -4,7 +4,7 @@
 
 An _impl_ contains the implementation for an humanfs runtime package. All of the filesystem calls are contained within an impl, and then that impl is wrapped by the `Hfs` class to create an `hfs` singleton for the runtime package.
 
-This separation of concerns, where the impl handles all the filesystem operations and the `Hfs` class handles everything else, allows you to swap impls at runtime. This ability makes hfs easy to test, as you can swap out the actual operations without needing to mock out entire JavaScript modules.
+This separation of concerns, where the impl handles all the filesystem operations and the `Hfs` class handles everything else, allows you to swap impls at runtime. This ability makes humanfs easy to test, as you can swap out the actual operations without needing to mock out entire JavaScript modules.
 
 ## The Basics
 
@@ -62,7 +62,7 @@ console.log(hfs.isBaseImpl()); // true
 
 ## Swapping Impls in Practice
 
-The design of hfs is such that it makes testing filesystem operations easy, both through [logging](./logging.md) and through impl swapping. For example, you might use the `hfs` object throughout your application to perform filesystem operations and then need to test those operations elsewhere. You don't want to go through the trouble of mocking an entire package, so you can swap the impl in your tests.
+The design of humanfs is such that it makes testing filesystem operations easy, both through [logging](./logging.md) and through impl swapping. For example, you might use the `hfs` object throughout your application to perform filesystem operations and then need to test those operations elsewhere. You don't want to go through the trouble of mocking an entire package, so you can swap the impl in your tests.
 
 Consider the following function:
 

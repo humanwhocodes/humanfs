@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `hfs` bindings for the [Origin Private File System (OPFS)](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) in web browsers.
+The humanfs bindings for the [Origin Private File System (OPFS)](https://developer.mozilla.org/en-US/docs/Web/API/File_System_API/Origin_private_file_system) in web browsers.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!

@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `hfs` bindings for use in Node.js and Node.js-compatible runtimes.
+The humanfs bindings for use in Node.js and Node.js-compatible runtimes.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
@@ -25,7 +25,7 @@ Set up a `deno.json` file like this:
 
 ## Usage
 
-The easiest way to use hfs in your project is to import the `hfs` object:
+The easiest way to use humanfs in your project is to import the `hfs` object:
 
 ```js
 import { hfs } from "@humanfs/deno";

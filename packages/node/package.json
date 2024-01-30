@@ -1,7 +1,7 @@
 {
   "name": "@humanfs/node",
   "version": "0.6.1",
-  "description": "The Node.js bindings of the hfs library.",
+  "description": "The Node.js bindings of the humanfs library.",
   "type": "module",
   "types": "dist/node-hfs.d.ts",
   "exports": {

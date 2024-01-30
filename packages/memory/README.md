@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-The `hfs` bindings for using memory instead of writing to disk.
+The humanfs bindings for using memory instead of writing to disk.
 
 > [!WARNING]
 > This project is **experimental** and may change significantly before v1.0.0. Use at your own caution and definitely not in production!
@@ -73,7 +73,7 @@ import { hfs } from "https://cdn.skypack.dev/@humanfs/memory";
 
 ## Usage
 
-The easiest way to use hfs in your project is to import the `hfs` object:
+The easiest way to use humanfs in your project is to import the `hfs` object:
 
 ```js
 import { hfs } from "@humanfs/memory";

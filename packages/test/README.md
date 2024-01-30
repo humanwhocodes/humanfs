@@ -6,7 +6,7 @@ If you find this useful, please consider supporting my work with a [donation](ht
 
 ## Description
 
-Testing utilities for `hfs`.
+Testing utilities for humanfs.
 
 ## License
 
