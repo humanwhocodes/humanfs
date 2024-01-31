@@ -81,13 +81,13 @@ export class LogEntry {
 	 * The type of log entry.
 	 * @type {string}
 	 */
-	#type;
+	type;
 
 	/**
 	 * The data associated with the log entry.
 	 * @type {any}
 	 */
-	#data;
+	data;
 
 	/**
 	 * The time at which the log entry was created.
@@ -101,7 +101,7 @@ export class LogEntry {
 	 * @param {any} [data] The data associated with the log entry.
 	 */
 	constructor(type, data) {
-		this.methodName = type;
+		this.type = type;
 		this.data = data;
 	}
 }

@@ -20,8 +20,8 @@ import assert from "node:assert";
  * @param {LogEntry} logEntry The log entry to strip.
  * @returns {object} The log entry without the timestamp.
  */
-function normalizeLogEntry(logEntry) {
-	return logEntry.data;
+function normalizeLogEntry({ timestamp, ...rest }) {
+	return rest;
 }
 
 //------------------------------------------------------------------------------
@@ -123,8 +123,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("test").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "text",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "text",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -146,14 +149,20 @@ describe("Hfs", () => {
 
 			assert.deepStrictEqual(logs1, [
 				{
-					methodName: "text",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "text",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 			assert.deepStrictEqual(logs2, [
 				{
-					methodName: "text",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "text",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -187,8 +196,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("text").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "text",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "text",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -252,8 +264,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("json").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "json",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "json",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -317,8 +332,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("arrayBuffer").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "arrayBuffer",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "arrayBuffer",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -382,8 +400,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("bytes").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "bytes",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "bytes",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -447,8 +468,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("bytes").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "bytes",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "bytes",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -538,8 +562,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("write").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "write",
-					args: ["/path/to/file.txt", "Hello, world!"],
+					type: "call",
+					data: {
+						methodName: "write",
+						args: ["/path/to/file.txt", "Hello, world!"],
+					},
 				},
 			]);
 		});
@@ -631,8 +658,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("isFile").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "isFile",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "isFile",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -709,8 +739,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("isDirectory").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "isDirectory",
-					args: ["/path/to/dir"],
+					type: "call",
+					data: {
+						methodName: "isDirectory",
+						args: ["/path/to/dir"],
+					},
 				},
 			]);
 		});
@@ -773,8 +806,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("createDirectory").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "createDirectory",
-					args: ["/path/to/dir"],
+					type: "call",
+					data: {
+						methodName: "createDirectory",
+						args: ["/path/to/dir"],
+					},
 				},
 			]);
 		});
@@ -837,8 +873,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("delete").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "delete",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "delete",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
@@ -901,8 +940,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("delete").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "deleteAll",
-					args: ["/path/to/directory"],
+					type: "call",
+					data: {
+						methodName: "deleteAll",
+						args: ["/path/to/directory"],
+					},
 				},
 			]);
 		});
@@ -1027,8 +1069,11 @@ describe("Hfs", () => {
 			const logs = hfs.logEnd("size").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
-					methodName: "size",
-					args: ["/path/to/file.txt"],
+					type: "call",
+					data: {
+						methodName: "size",
+						args: ["/path/to/file.txt"],
+					},
 				},
 			]);
 		});
