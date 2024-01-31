@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "exports": {
     "import": {
-      "default": "./src/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [
@@ -37,6 +37,9 @@
     "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "devDependencies": {
     "typescript": "^5.2.2"
   }

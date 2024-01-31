@@ -6,8 +6,8 @@
   "types": "dist/memory-hfs.d.ts",
   "exports": {
     "import": {
-      "default": "./src/memory-hfs.js",
-      "types": "./dist/memory-hfs.d.ts"
+      "types": "./dist/memory-hfs.d.ts",
+      "default": "./src/memory-hfs.js"
     }
   },
   "files": [
@@ -39,6 +39,9 @@
     "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "devDependencies": {
     "@types/node": "^20.9.4",
     "mocha": "^10.2.0",

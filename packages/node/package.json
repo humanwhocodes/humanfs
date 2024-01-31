@@ -6,8 +6,8 @@
   "types": "dist/node-hfs.d.ts",
   "exports": {
     "import": {
-      "default": "./src/node-hfs.js",
-      "types": "./dist/node-hfs.d.ts"
+      "types": "./dist/node-hfs.d.ts",
+      "default": "./src/node-hfs.js"
     }
   },
   "files": [
@@ -39,6 +39,9 @@
     "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "devDependencies": {
     "@types/node": "^20.9.4",
     "@humanfs/test": "^0.6.0",

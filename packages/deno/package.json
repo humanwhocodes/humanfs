@@ -6,8 +6,8 @@
   "types": "dist/deno-hfs.d.ts",
   "exports": {
     "import": {
-      "default": "./src/deno-hfs.js",
-      "types": "./dist/deno-hfs.d.ts"
+      "types": "./dist/deno-hfs.d.ts",
+      "default": "./src/deno-hfs.js"
     }
   },
   "files": [
@@ -39,6 +39,9 @@
     "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "devDependencies": {
     "@types/node": "^20.9.4",
     "typescript": "^5.2.2"

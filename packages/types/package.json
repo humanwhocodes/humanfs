@@ -33,6 +33,9 @@
     "url": "https://github.com/humanwhocodes/humanfs/issues"
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "devDependencies": {
     "typescript": "^5.2.2"
   }
