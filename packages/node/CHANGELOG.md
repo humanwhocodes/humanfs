@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.1](https://github.com/humanwhocodes/humanfs/compare/node-v0.7.0...node-v0.7.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* Order of exports and engines in package.json ([66204c2](https://github.com/humanwhocodes/humanfs/commit/66204c24bc2dd02380aa2fb3c5769ca2cf5238a7)), closes [#61](https://github.com/humanwhocodes/humanfs/issues/61)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.6.0 to ^0.7.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.6.0 to ^0.6.1
+    * @humanfs/types bumped from ^0.5.0 to ^0.5.1
+
 ## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.6.1...node-v0.7.0) (2024-01-30)
 
 

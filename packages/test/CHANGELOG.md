@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/humanwhocodes/humanfs/compare/test-v0.6.0...test-v0.6.1) (2024-01-31)
+
+
+### Bug Fixes
+
+* Order of exports and engines in package.json ([66204c2](https://github.com/humanwhocodes/humanfs/commit/66204c24bc2dd02380aa2fb3c5769ca2cf5238a7)), closes [#61](https://github.com/humanwhocodes/humanfs/issues/61)
+
 ## [0.6.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.5.0...test-v0.6.0) (2024-01-30)
 
 

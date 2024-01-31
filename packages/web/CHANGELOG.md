@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.2.0...web-v0.3.0) (2024-01-31)
+
+
+### Features
+
+* New Path class and refactors ([#58](https://github.com/humanwhocodes/humanfs/issues/58)) ([4ec3242](https://github.com/humanwhocodes/humanfs/commit/4ec3242024a52360a2314a1ffb286882ea1c18c1))
+
+
+### Bug Fixes
+
+* Order of exports and engines in package.json ([66204c2](https://github.com/humanwhocodes/humanfs/commit/66204c24bc2dd02380aa2fb3c5769ca2cf5238a7)), closes [#61](https://github.com/humanwhocodes/humanfs/issues/61)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.6.0 to ^0.7.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.6.0 to ^0.6.1
+    * @humanfs/types bumped from ^0.5.0 to ^0.5.1
+
 ## [0.2.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.1.0...web-v0.2.0) (2024-01-30)
 
 

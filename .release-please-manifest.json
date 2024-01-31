@@ -1,9 +1,9 @@
 {
-  "packages/types": "0.5.0",
-  "packages/test": "0.6.0",
-  "packages/core": "0.6.0",
-  "packages/node": "0.7.0",
-  "packages/deno": "0.7.0",
-  "packages/memory": "0.6.0",
-  "packages/web": "0.2.0"
+  "packages/types": "0.5.1",
+  "packages/test": "0.6.1",
+  "packages/core": "0.7.0",
+  "packages/node": "0.7.1",
+  "packages/deno": "0.7.1",
+  "packages/memory": "0.7.0",
+  "packages/web": "0.3.0"
 }
