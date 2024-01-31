@@ -6,6 +6,26 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.6.0...core-v0.7.0) (2024-01-31)
+
+
+### Features
+
+* New Path class and refactors ([#58](https://github.com/humanwhocodes/humanfs/issues/58)) ([4ec3242](https://github.com/humanwhocodes/humanfs/commit/4ec3242024a52360a2314a1ffb286882ea1c18c1))
+
+
+### Bug Fixes
+
+* log entry format ([096aa00](https://github.com/humanwhocodes/humanfs/commit/096aa00c6315e201f7ceaaf829098ebd7b6fae3d))
+* Order of exports and engines in package.json ([66204c2](https://github.com/humanwhocodes/humanfs/commit/66204c24bc2dd02380aa2fb3c5769ca2cf5238a7)), closes [#61](https://github.com/humanwhocodes/humanfs/issues/61)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.5.0 to ^0.5.1
+
 ## [0.6.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.5.0...core-v0.6.0) (2024-01-30)
 
 
