@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global navigator */
+/* global navigator, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -24,7 +24,7 @@ import { Hfs, Path } from "@humanfs/core";
 /**
  * Finds a file or directory in the OPFS root.
  * @param {FileSystemDirectoryHandle} root The root directory to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
+ * @param {string|URL} fileOrDirPath The path to the file or directory to find.
  * @param {object} [options] The options for finding.
  * @param {boolean} [options.returnParent] True if the parent directory should be
  *  returned instead of the file or directory.
@@ -37,7 +37,11 @@ async function findPath(
 	fileOrDirPath,
 	{ returnParent = false, create = false } = {},
 ) {
-	const steps = [...Path.fromString(fileOrDirPath)];
+	const path =
+		fileOrDirPath instanceof URL
+			? Path.fromURL(fileOrDirPath)
+			: Path.fromString(fileOrDirPath);
+	const steps = [...path];
 
 	if (returnParent) {
 		steps.pop();
@@ -75,7 +79,7 @@ async function findPath(
 /**
  * Reads a file from the specified root.
  * @param {FileSystemDirectoryHandle} root The root directory to search.
- * @param {string} filePath The path to the file to read.
+ * @param {string|URL} filePath The path to the file to read.
  * @param {"text"|"arrayBuffer"} dataType The type of data to read.
  * @returns {Promise<string|ArrayBuffer|undefined>} The contents of the file or
  *   undefined if the file does not exist.
@@ -128,7 +132,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
 	 *     the file or undefined if the file does not exist.
 	 * @throws {TypeError} If the file path is not a string.
@@ -145,7 +149,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<object|null>} A promise that resolves with the contents of
 	 *    the file or undefined if the file does not exist.
 	 * @throws {SyntaxError} If the file contents are not valid JSON.
@@ -160,7 +164,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
 	 *    of the file or undefined if the file does not exist.
 	 * @throws {Error} If the file cannot be read.
@@ -176,7 +180,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an Uint8Array.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
 	 *    of the file or undefined if the file does not exist.
 	 * @throws {Error} If the file cannot be read.
@@ -191,7 +195,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
-	 * @param {string} filePath The path to the file to write.
+	 * @param {string|URL} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
@@ -218,7 +222,11 @@ export class WebHfsImpl {
 		);
 
 		if (!handle) {
-			const name = Path.fromString(filePath).name;
+			const path =
+				filePath instanceof URL
+					? Path.fromURL(filePath)
+					: Path.fromString(filePath);
+			const name = path.name;
 			const parentHandle =
 				/** @type {FileSystemDirectoryHandle} */ (
 					await findPath(this.#root, filePath, {
@@ -236,7 +244,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Checks if a file exists.
-	 * @param {string} filePath The path to the file to check.
+	 * @param {string|URL} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    file exists or false if it does not.
 	 * @throws {TypeError} If the file path is not a string.
@@ -248,7 +256,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Checks if a directory exists.
-	 * @param {string} dirPath The path to the directory to check.
+	 * @param {string|URL} dirPath The path to the directory to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    directory exists or false if it does not.
 	 * @throws {TypeError} If the directory path is not a string.
@@ -260,21 +268,25 @@ export class WebHfsImpl {
 
 	/**
 	 * Creates a directory recursively.
-	 * @param {string} dirPath The path to the directory to create.
+	 * @param {string|URL} dirPath The path to the directory to create.
 	 * @returns {Promise<void>} A promise that resolves when the directory is
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
 		let handle = this.#root;
+		const path =
+			dirPath instanceof URL
+				? Path.fromURL(dirPath)
+				: Path.fromString(dirPath);
 
-		for (const name of Path.fromString(dirPath)) {
+		for (const name of path) {
 			handle = await handle.getDirectoryHandle(name, { create: true });
 		}
 	}
 
 	/**
 	 * Deletes a file or empty directory.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -297,12 +309,24 @@ export class WebHfsImpl {
 			);
 		}
 
+		// nonempty directories must not be deleted
+		if (handle.kind === "directory") {
+			// @ts-ignore -- TS doesn't know about this yet
+			const entries = handle.values();
+			const next = await entries.next();
+			if (!next.done) {
+				throw new Error(
+					`ENOTEMPTY: directory not empty, rmdir '${fileOrDirPath}'`,
+				);
+			}
+		}
+
 		parentHandle.removeEntry(handle.name);
 	}
 
 	/**
 	 * Deletes a file or directory recursively.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -313,10 +337,17 @@ export class WebHfsImpl {
 	async deleteAll(fileOrDirPath) {
 		const handle = await findPath(this.#root, fileOrDirPath);
 
+		if (!handle) {
+			throw new Error(
+				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
+			);
+		}
+
 		/*
-		 * Note: This is a workaround for Chrome not supporting the
-		 * `recursive` option on `FileSystemDirectoryHandle.removeEntry()`. This will be
-		 * removed when Chrome supports it.
+		 * Note: For some reason, Chromium is not respecting the
+		 * `recursive` option on `FileSystemDirectoryHandle.removeEntry()`.
+		 * I've been unable to come up with a minimal repro case to demonstrate.
+		 * Need to investigate further.
 		 * https://bugs.chromium.org/p/chromium/issues/detail?id=1521975
 		 */
 
@@ -344,7 +375,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Returns a list of directory entries for the given path.
-	 * @param {string} dirPath The path to the directory to read.
+	 * @param {string|URL} dirPath The path to the directory to read.
 	 * @returns {AsyncIterable<HfsDirectoryEntry>} A promise that resolves with the
 	 *   directory entries.
 	 */
@@ -373,7 +404,7 @@ export class WebHfsImpl {
 
 	/**
 	 * Returns the size of a file.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */

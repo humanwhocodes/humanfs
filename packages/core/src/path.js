@@ -165,4 +165,29 @@ export class Path {
 	static fromString(fileOrDirPath) {
 		return new Path(normalizePath(fileOrDirPath).split("/"));
 	}
+
+	/**
+	 * Creates a new Path instance from a URL.
+	 * @param {URL} url The URL to convert.
+	 * @returns {Path} A new Path instance.
+	 * @throws {TypeError} When url is not a URL instance.
+	 * @throws {TypeError} When url.pathname is empty.
+	 * @throws {TypeError} When url.protocol is not "file:".
+	 */
+	static fromURL(url) {
+		if (!(url instanceof URL)) {
+			throw new TypeError("url must be a URL instance");
+		}
+
+		if (!url.pathname || url.pathname === "/") {
+			throw new TypeError("url.pathname cannot be empty");
+		}
+
+		if (url.protocol !== "file:") {
+			throw new TypeError(`url.protocol must be "file:"`);
+		}
+
+		// Remove leading slash in pathname
+		return new Path(normalizePath(url.pathname.slice(1)).split("/"));
+	}
 }

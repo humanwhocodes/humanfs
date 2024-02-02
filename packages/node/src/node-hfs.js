@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global Buffer:readonly */
+/* global Buffer:readonly, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -21,6 +21,7 @@ import { Hfs } from "@humanfs/core";
 import path from "node:path";
 import { Retrier } from "@humanwhocodes/retry";
 import nativeFsp from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 
 //-----------------------------------------------------------------------------
 // Constants
@@ -106,7 +107,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
 	 *     the file or undefined if the file doesn't exist.
 	 * @throws {TypeError} If the file path is not a string.
@@ -129,7 +130,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<object|undefined>} A promise that resolves with the contents of
 	 *    the file or undefined if the file doesn't exist.
 	 * @throws {SyntaxError} If the file contents are not valid JSON.
@@ -144,7 +145,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
 	 *    of the file or undefined if the file doesn't exist.
 	 * @throws {Error} If the file cannot be read.
@@ -159,7 +160,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an Uint8Array.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
 	 *    of the file or undefined if the file doesn't exist.
 	 * @throws {Error} If the file cannot be read.
@@ -180,7 +181,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
-	 * @param {string} filePath The path to the file to write.
+	 * @param {string|URL} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
@@ -208,8 +209,14 @@ export class NodeHfsImpl {
 			.catch(error => {
 				// the directory may not exist, so create it
 				if (error.code === "ENOENT") {
+					const dirPath = path.dirname(
+						filePath instanceof URL
+							? fileURLToPath(filePath)
+							: filePath,
+					);
+
 					return this.#fsp
-						.mkdir(path.dirname(filePath), { recursive: true })
+						.mkdir(dirPath, { recursive: true })
 						.then(() => this.#fsp.writeFile(filePath, value));
 				}
 
@@ -219,7 +226,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Checks if a file exists.
-	 * @param {string} filePath The path to the file to check.
+	 * @param {string|URL} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    file exists or false if it does not.
 	 * @throws {Error} If the operation fails with a code other than ENOENT.
@@ -239,7 +246,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Checks if a directory exists.
-	 * @param {string} dirPath The path to the directory to check.
+	 * @param {string|URL} dirPath The path to the directory to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    directory exists or false if it does not.
 	 * @throws {Error} If the operation fails with a code other than ENOENT.
@@ -259,7 +266,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Creates a directory recursively.
-	 * @param {string} dirPath The path to the directory to create.
+	 * @param {string|URL} dirPath The path to the directory to create.
 	 * @returns {Promise<void>} A promise that resolves when the directory is
 	 *   created.
 	 */
@@ -269,7 +276,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Deletes a file or empty directory.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -289,7 +296,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Deletes a file or directory recursively.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -303,7 +310,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Returns a list of directory entries for the given path.
-	 * @param {string} dirPath The path to the directory to read.
+	 * @param {string|URL} dirPath The path to the directory to read.
 	 * @returns {AsyncIterable<HfsDirectoryEntry>} A promise that resolves with the
 	 *   directory entries.
 	 * @throws {TypeError} If the directory path is not a string.
@@ -321,7 +328,7 @@ export class NodeHfsImpl {
 
 	/**
 	 * Returns the size of a file.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */

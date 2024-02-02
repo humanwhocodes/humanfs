@@ -2,7 +2,7 @@
  * @fileoverview The main file for the deno-hfs package.
  * @author Nicholas C. Zakas
  */
-/* global Deno:readonly */
+/* global Deno:readonly, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -18,6 +18,7 @@
 import { Hfs } from "@humanfs/core";
 import { Retrier } from "@humanwhocodes/retry";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 //-----------------------------------------------------------------------------
 // Constants
@@ -58,7 +59,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<string>} A promise that resolves with the contents of
 	 *     the file.
 	 * @throws {TypeError} If the file path is not a string.
@@ -81,7 +82,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<object>} A promise that resolves with the contents of
 	 *    the file.
 	 * @throws {SyntaxError} If the file contents are not valid JSON.
@@ -96,7 +97,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
 	 *    of the file.
 	 * @throws {Error} If the file cannot be read.
@@ -109,7 +110,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an Uint8Array.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
 	 *    of the file.
 	 * @throws {Error} If the file cannot be read.
@@ -130,7 +131,7 @@ export class DenoHfsImpl {
 	/**
 	 * Writes a value to a file, creating any necessary directories along the way.
 	 * If the value is a string, UTF-8 encoding is used.
-	 * @param {string} filePath The path to the file to write.
+	 * @param {string|URL} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
@@ -168,9 +169,13 @@ export class DenoHfsImpl {
 
 		return this.#retrier.retry(op).catch(error => {
 			if (error.code === "ENOENT") {
-				return this.#deno
-					.mkdir(path.dirname(filePath), { recursive: true })
-					.then(op);
+				const dirPath = path.dirname(
+					filePath instanceof URL
+						? fileURLToPath(filePath)
+						: filePath,
+				);
+
+				return this.#deno.mkdir(dirPath, { recursive: true }).then(op);
 			}
 
 			throw error;
@@ -179,7 +184,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Checks if a file exists.
-	 * @param {string} filePath The path to the file to check.
+	 * @param {string|URL} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    file exists or false if it does not.
 	 * @throws {Error} If the operation fails with a code other than ENOENT.
@@ -199,7 +204,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Checks if a directory exists.
-	 * @param {string} dirPath The path to the directory to check.
+	 * @param {string|URL} dirPath The path to the directory to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    directory exists or false if it does not.
 	 * @throws {Error} If the operation fails with a code other than ENOENT.
@@ -219,7 +224,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Creates a directory recursively.
-	 * @param {string} dirPath The path to the directory to create.
+	 * @param {string|URL} dirPath The path to the directory to create.
 	 * @returns {Promise<void>} A promise that resolves when the directory is
 	 *   created.
 	 */
@@ -229,7 +234,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Deletes a file or empty directory.
-	 * @param {string} filePath The path to the file or directory to
+	 * @param {string|URL} filePath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -243,7 +248,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Deletes a file or directory recursively.
-	 * @param {string} filePath The path to the file or directory to
+	 * @param {string|URL} filePath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -257,7 +262,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Lists the files and directories in a directory.
-	 * @param {string} dirPath The path to the directory to list.
+	 * @param {string|URL} dirPath The path to the directory to list.
 	 * @returns {AsyncIterable<HfsDirectoryEntry>} An async iterator
 	 *  that yields the files and directories in the directory.
 	 */
@@ -267,7 +272,7 @@ export class DenoHfsImpl {
 
 	/**
 	 * Returns the size of a file.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */

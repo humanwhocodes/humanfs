@@ -3,7 +3,7 @@
  *  HfsImpl classes have the same API and behavior.
  */
 
-/* global TextEncoder, TextDecoder */
+/* global TextEncoder, TextDecoder, URL */
 
 //------------------------------------------------------------------------------
 // Types
@@ -27,6 +27,22 @@
  * @property {Function} beforeEach A function to run before each test.
  * @property {Function} afterEach A function to run after each test.
  */
+
+//-----------------------------------------------------------------------------
+// Helpers
+//-----------------------------------------------------------------------------
+
+/**
+ * Converts a file path into a URL with a file protocol. This first normalizes
+ * the file path to use forward slashes and then creates a URL with the file
+ * protocol.
+ * @param {string} filePath The file path to convert.
+ * @returns {URL} The URL representing the file path.
+ */
+function filePathToUrl(filePath) {
+	const normalizedPath = filePath.replace(/\\/g, "/");
+	return new URL("file:///" + normalizedPath);
+}
 
 //------------------------------------------------------------------------------
 // Public Interface
@@ -99,15 +115,33 @@ export class HfsImplTester {
 			});
 
 			describe("text()", () => {
-				it("should read a file and return the contents as a string", async () => {
+				it("should read a file with a filename and return the contents as a string", async () => {
 					const filePath = this.#outputDir + "/hello.txt";
 					const result = await impl.text(filePath);
 					assert.strictEqual(result, "Hello world!\n");
 				});
 
-				it("should return undefined when a file doesn't exist", async () => {
+				it("should read a file with a file URL and return the contents as a string", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.text(fileUrl);
+					assert.strictEqual(result, "Hello world!\n");
+				});
+
+				it("should return undefined when a file with the given filename doesn't exist", async () => {
 					const result = await impl.text(
 						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+
+				it("should return undefined when a file with the given file URL doesn't exist", async () => {
+					const result = await impl.text(
+						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
 					);
 					assert.strictEqual(
 						result,
@@ -124,9 +158,27 @@ export class HfsImplTester {
 					assert.deepStrictEqual(result, { message: "Hello world!" });
 				});
 
+				it("should read a file and return the contents as a JSON object when using a file URL", async () => {
+					const filePath = this.#outputDir + "/message.json";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.json(fileUrl);
+					assert.deepStrictEqual(result, { message: "Hello world!" });
+				});
+
 				it("should return undefined when a file doesn't exist", async () => {
 					const result = await impl.json(
 						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+
+				it("should return undefined when a file with the given file URL doesn't exist", async () => {
+					const result = await impl.json(
+						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
 					);
 					assert.strictEqual(
 						result,
@@ -148,9 +200,32 @@ export class HfsImplTester {
 					);
 				});
 
+				it("should read a file and return the contents as an ArrayBuffer when using a file URL", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.arrayBuffer(fileUrl);
+					assert.ok(result instanceof ArrayBuffer);
+					const decoder = new TextDecoder();
+					assert.strictEqual(
+						decoder.decode(result),
+						"Hello world!\n",
+					);
+				});
+
 				it("should return undefined when a file doesn't exist", async () => {
 					const result = await impl.arrayBuffer(
 						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+
+				it("should return undefined when a file with the given file URL doesn't exist", async () => {
+					const result = await impl.arrayBuffer(
+						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
 					);
 					assert.strictEqual(
 						result,
@@ -172,9 +247,32 @@ export class HfsImplTester {
 					);
 				});
 
+				it("should read a file and return the contents as an Uint8Array when using a file URL", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.bytes(fileUrl);
+					assert.ok(result instanceof Uint8Array);
+					const decoder = new TextDecoder();
+					assert.strictEqual(
+						decoder.decode(result),
+						"Hello world!\n",
+					);
+				});
+
 				it("should return undefined when a file doesn't exist", async () => {
 					const result = await impl.bytes(
 						this.#outputDir + "/nonexistent.txt",
+					);
+					assert.strictEqual(
+						result,
+						undefined,
+						"Expected undefined when reading a nonexistent file",
+					);
+				});
+
+				it("should return undefined when a file with the given file URL doesn't exist", async () => {
+					const result = await impl.bytes(
+						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
 					);
 					assert.strictEqual(
 						result,
@@ -203,12 +301,38 @@ export class HfsImplTester {
 					assert.strictEqual(result, "Hello, world!");
 				});
 
+				it("should write a string to a file URL", async () => {
+					const filePath =
+						this.#outputDir + "/tmp-write/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(fileUrl, "Hello, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
 				it("should write an ArrayBuffer to a file", async () => {
 					const filePath =
 						this.#outputDir +
 						"/tmp-write/test-generated-arraybuffer.txt";
 					await impl.write(
 						filePath,
+						new TextEncoder().encode("Hello, world!").buffer,
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
+				it("should write an ArrayBuffer to a file URL", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(
+						fileUrl,
 						new TextEncoder().encode("Hello, world!").buffer,
 					);
 
@@ -231,12 +355,42 @@ export class HfsImplTester {
 					assert.strictEqual(result, "Hello, world!");
 				});
 
+				it("should write a Uint8Array to a file URL", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(
+						fileUrl,
+						new TextEncoder().encode("Hello, world!"),
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
 				it("should write a Uint8Array to a file", async () => {
 					const filePath =
 						this.#outputDir +
 						"/tmp-write/test-generated-arraybuffer.txt";
 					await impl.write(
 						filePath,
+						new TextEncoder().encode("Hello, world!"),
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
+				it("should write a Uint8Array to a file URL", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(
+						fileUrl,
 						new TextEncoder().encode("Hello, world!"),
 					);
 
@@ -259,12 +413,40 @@ export class HfsImplTester {
 					assert.strictEqual(result, "o, ");
 				});
 
+				it("should write a Uint8Array subarray to a file URL", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const bytes = new TextEncoder()
+						.encode("Hello, world!")
+						.subarray(4, 7);
+					await impl.write(fileUrl, bytes);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "o, ");
+				});
+
 				it("should write to an already existing file", async () => {
 					const filePath =
 						this.#outputDir + "/tmp-write/test-generated-text.txt";
 					await impl.write(filePath, "Hello, world!");
 
 					await impl.write(filePath, "Goodbye, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Goodbye, world!");
+				});
+
+				it("should write to an already existing file URL", async () => {
+					const filePath =
+						this.#outputDir + "/tmp-write/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(fileUrl, "Hello, world!");
+
+					await impl.write(fileUrl, "Goodbye, world!");
 
 					// make sure the file was written
 					const result = await impl.text(filePath);
@@ -282,6 +464,19 @@ export class HfsImplTester {
 					const result = await impl.text(filePath);
 					assert.strictEqual(result, "Hello, world!");
 				});
+
+				it("should write a file URL when the directory doesn't exist", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-write/nonexistent/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+
+					await impl.write(fileUrl, "Hello, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
 			});
 
 			describe("isFile()", () => {
@@ -291,14 +486,34 @@ export class HfsImplTester {
 					assert.strictEqual(result, true);
 				});
 
+				it("should return true if a file URL exists", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.isFile(fileUrl);
+					assert.strictEqual(result, true);
+				});
+
 				it("should return false if a file doesn't exist", async () => {
 					const filePath = this.#outputDir + "/nonexistent.txt";
 					const result = await impl.isFile(filePath);
 					assert.strictEqual(result, false);
 				});
 
+				it("should return false if a file URL doesn't exist", async () => {
+					const filePath = this.#outputDir + "/nonexistent.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.isFile(fileUrl);
+					assert.strictEqual(result, false);
+				});
+
 				it("should return false if a directory exists", async () => {
 					const result = await impl.isFile(this.#outputDir);
+					assert.strictEqual(result, false);
+				});
+
+				it("should return false if a directory exists at the file URL", async () => {
+					const dirUrl = filePathToUrl(this.#outputDir);
+					const result = await impl.isFile(dirUrl);
 					assert.strictEqual(result, false);
 				});
 			});
@@ -309,15 +524,36 @@ export class HfsImplTester {
 					assert.strictEqual(result, true);
 				});
 
+				it("should return true if a directory exists at the file URL", async () => {
+					const dirUrl = filePathToUrl(this.#outputDir);
+					const result = await impl.isDirectory(dirUrl);
+					assert.strictEqual(result, true);
+				});
+
 				it("should return false if a directory doesn't exist", async () => {
 					const dirPath = this.#outputDir + "/nonexistent";
 					const result = await impl.isDirectory(dirPath);
 					assert.strictEqual(result, false);
 				});
 
+				it("should return false if a directory doesn't exist at the file URL", async () => {
+					const dirUrl = filePathToUrl(
+						this.#outputDir + "/nonexistent",
+					);
+					const result = await impl.isDirectory(dirUrl);
+					assert.strictEqual(result, false);
+				});
+
 				it("should return false if a file exists", async () => {
 					const filePath = this.#outputDir + "/hello.txt";
 					const result = await impl.isDirectory(filePath);
+					assert.strictEqual(result, false);
+				});
+
+				it("should return false if a file exists at the file URL", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.isDirectory(fileUrl);
 					assert.strictEqual(result, false);
 				});
 			});
@@ -335,9 +571,27 @@ export class HfsImplTester {
 					assert.ok(result, "Expected directory to exist");
 				});
 
+				it("should create a directory at the file URL", async () => {
+					const dirPath = this.#outputDir + "/tmp-create";
+					const dirUrl = filePathToUrl(dirPath);
+					await impl.createDirectory(dirUrl);
+
+					const result = await impl.isDirectory(dirPath);
+					assert.ok(result, "Expected directory to exist");
+				});
+
 				it("should create a directory recursively", async () => {
 					const dirPath = this.#outputDir + "/tmp-create/subdir";
 					await impl.createDirectory(dirPath);
+
+					const result = await impl.isDirectory(dirPath);
+					assert.ok(result, "Expected directory to exist");
+				});
+
+				it("should create a directory recursively at the file URL", async () => {
+					const dirPath = this.#outputDir + "/tmp-create/subdir";
+					const dirUrl = filePathToUrl(dirPath);
+					await impl.createDirectory(dirUrl);
 
 					const result = await impl.isDirectory(dirPath);
 					assert.ok(result, "Expected directory to exist");
@@ -348,6 +602,14 @@ export class HfsImplTester {
 					await impl.createDirectory(dirPath);
 
 					return impl.createDirectory(dirPath);
+				});
+
+				it("should not reject a promise when the directory already exists at the file URL", async () => {
+					const dirPath = this.#outputDir + "/tmp-create";
+					const dirUrl = filePathToUrl(dirPath);
+					await impl.createDirectory(dirUrl);
+
+					return impl.createDirectory(dirUrl);
 				});
 			});
 
@@ -376,6 +638,14 @@ export class HfsImplTester {
 					assert.strictEqual(await impl.isFile(filePath), false);
 				});
 
+				it("should delete a file at the file URL", async () => {
+					const filePath = dirPath + "/subdir/subsubdir/test.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.delete(fileUrl);
+
+					assert.strictEqual(await impl.isFile(filePath), false);
+				});
+
 				it("should delete an empty directory", async () => {
 					const emptySubdirPath = dirPath + "/empty-subdir";
 					await impl.delete(emptySubdirPath);
@@ -386,14 +656,43 @@ export class HfsImplTester {
 					);
 				});
 
+				it("should delete an empty directory at the file URL", async () => {
+					const emptySubdirPath = dirPath + "/empty-subdir";
+					const emptySubdirUrl = filePathToUrl(emptySubdirPath);
+					await impl.delete(emptySubdirUrl);
+
+					assert.strictEqual(
+						await impl.isDirectory(emptySubdirPath),
+						false,
+					);
+				});
+
 				it("should reject a promise when the file doesn't exist", async () => {
 					const filePath = dirPath + "/nonexistent.txt";
-					assert.rejects(() => impl.delete(filePath), /ENOENT/);
+					await assert.rejects(() => impl.delete(filePath), /ENOENT/);
+				});
+
+				it("should reject a promise when the file doesn't exist at the file URL", async () => {
+					const filePath = dirPath + "/nonexistent.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await assert.rejects(() => impl.delete(fileUrl), /ENOENT/);
 				});
 
 				it("should reject a promise when path is a nonempty directory", async () => {
 					const subdirPath = dirPath + "/subdir";
-					assert.rejects(() => impl.delete(subdirPath), /EPERM/);
+					await assert.rejects(
+						() => impl.delete(subdirPath),
+						/ENOTEMPTY/,
+					);
+				});
+
+				it("should reject a promise when path is a nonempty directory at the file URL", async () => {
+					const subdirPath = dirPath + "/subdir";
+					const subdirUrl = filePathToUrl(subdirPath);
+					await assert.rejects(
+						() => impl.delete(subdirUrl),
+						/ENOTEMPTY/,
+					);
 				});
 			});
 
@@ -422,9 +721,28 @@ export class HfsImplTester {
 					assert.strictEqual(await impl.isFile(filePath), false);
 				});
 
+				it("should delete a file at the file URL", async () => {
+					const filePath = dirPath + "/subdir/subsubdir/test.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.deleteAll(fileUrl);
+
+					assert.strictEqual(await impl.isFile(filePath), false);
+				});
+
 				it("should delete a directory", async () => {
 					const subsubdirPath = dirPath + "/subdir/subsubdir";
 					await impl.deleteAll(subsubdirPath);
+
+					assert.strictEqual(
+						await impl.isDirectory(subsubdirPath),
+						false,
+					);
+				});
+
+				it("should delete a directory at the file URL", async () => {
+					const subsubdirPath = dirPath + "/subdir/subsubdir";
+					const subsubdirUrl = filePathToUrl(subsubdirPath);
+					await impl.deleteAll(subsubdirUrl);
 
 					assert.strictEqual(
 						await impl.isDirectory(subsubdirPath),
@@ -442,10 +760,34 @@ export class HfsImplTester {
 					);
 				});
 
+				it("should delete a directory recursively at the file URL", async () => {
+					const subdirPath = dirPath + "/subdir";
+					const subdirUrl = filePathToUrl(subdirPath);
+					await impl.deleteAll(subdirUrl);
+
+					assert.strictEqual(
+						await impl.isDirectory(subdirPath),
+						false,
+					);
+				});
+
 				it("should reject a promise when the file doesn't exist", async () => {
 					const filePath = dirPath + "/nonexistent.txt";
 					assert.strictEqual(await impl.isFile(filePath), false);
-					assert.rejects(() => impl.deleteAll(filePath), /ENOENT/);
+					await assert.rejects(
+						() => impl.deleteAll(filePath),
+						/ENOENT/,
+					);
+				});
+
+				it("should reject a promise when the file doesn't exist at the file URL", async () => {
+					const filePath = dirPath + "/nonexistent.txt";
+					const fileUrl = filePathToUrl(filePath);
+					assert.strictEqual(await impl.isFile(filePath), false);
+					await assert.rejects(
+						() => impl.deleteAll(fileUrl),
+						/ENOENT/,
+					);
 				});
 			});
 
@@ -457,6 +799,17 @@ export class HfsImplTester {
 					await impl.write(dirPath + "/test2.txt", "Hello, world!");
 
 					const result = await impl.list(dirPath);
+					assert.ok(result[Symbol.asyncIterator]);
+				});
+
+				it("should return an async iterable when using a file URL", async () => {
+					const dirPath = this.#outputDir + "/tmp-list";
+					await impl.createDirectory(dirPath + "/subdir");
+					await impl.write(dirPath + "/test1.txt", "Hello, world!");
+					await impl.write(dirPath + "/test2.txt", "Hello, world!");
+
+					const dirUrl = filePathToUrl(dirPath);
+					const result = await impl.list(dirUrl);
 					assert.ok(result[Symbol.asyncIterator]);
 				});
 
@@ -503,6 +856,51 @@ export class HfsImplTester {
 						assert.strictEqual(item.isSymlink, entry.isSymlink);
 					}
 				});
+
+				it("should list the contents of a directory when using a file URL", async () => {
+					const dirPath = this.#outputDir + "/tmp-list";
+					await impl.createDirectory(dirPath + "/subdir");
+					await impl.write(dirPath + "/test1.txt", "Hello, world!");
+					await impl.write(dirPath + "/test2.txt", "Hello, world!");
+					const dirUrl = filePathToUrl(dirPath);
+					const result = [];
+
+					for await (const entry of impl.list(dirUrl)) {
+						result.push(entry);
+					}
+
+					const expected = [
+						{
+							name: "subdir",
+							isDirectory: true,
+							isFile: false,
+							isSymlink: false,
+						},
+						{
+							name: "test1.txt",
+							isDirectory: false,
+							isFile: true,
+							isSymlink: false,
+						},
+						{
+							name: "test2.txt",
+							isDirectory: false,
+							isFile: true,
+							isSymlink: false,
+						},
+					];
+
+					for (const entry of expected) {
+						const item = result.find(
+							item => item.name === entry.name,
+						);
+						assert.ok(item);
+
+						assert.strictEqual(item.isDirectory, entry.isDirectory);
+						assert.strictEqual(item.isFile, entry.isFile);
+						assert.strictEqual(item.isSymlink, entry.isSymlink);
+					}
+				});
 			});
 
 			describe("size()", () => {
@@ -512,9 +910,23 @@ export class HfsImplTester {
 					assert.strictEqual(result, 13);
 				});
 
+				it("should return the size of a file when using a file URL", async () => {
+					const filePath = this.#outputDir + "/hello.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.size(fileUrl);
+					assert.strictEqual(result, 13);
+				});
+
 				it("should return undefined if the file doesn't exist", async () => {
 					const filePath = this.#outputDir + "/nonexistent.txt";
 					const result = await impl.size(filePath);
+					assert.strictEqual(result, undefined);
+				});
+
+				it("should return undefined if the file doesn't exist at the file URL", async () => {
+					const filePath = this.#outputDir + "/nonexistent.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const result = await impl.size(fileUrl);
 					assert.strictEqual(result, undefined);
 				});
 			});

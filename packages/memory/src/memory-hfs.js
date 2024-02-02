@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global TextEncoder, TextDecoder */
+/* global TextEncoder, TextDecoder, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -42,11 +42,15 @@ function isDirectory(value) {
 /**
  * Finds a file or directory in the volume.
  * @param {object} volume The volume to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
+ * @param {string|URL} fileOrDirPath The path to the file or directory to find.
  * @returns {{object:object,key:string}|undefined} The file or directory found.
  */
 function findPath(volume, fileOrDirPath) {
-	const parts = [...Path.fromString(fileOrDirPath)];
+	const path =
+		fileOrDirPath instanceof URL
+			? Path.fromURL(fileOrDirPath)
+			: Path.fromString(fileOrDirPath);
+	const parts = [...path];
 
 	let object = volume;
 	let key = parts.shift();
@@ -66,7 +70,7 @@ function findPath(volume, fileOrDirPath) {
 /**
  * Finds a file or directory in the volume.
  * @param {object} volume The volume to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
+ * @param {string|URL} fileOrDirPath The path to the file or directory to find.
  * @returns {string|ArrayBuffer|object|undefined} The file or directory found.
  */
 function readPath(volume, fileOrDirPath) {
@@ -83,12 +87,16 @@ function readPath(volume, fileOrDirPath) {
 /**
  * Writes a file or directory to the volume.
  * @param {object} volume The volume to search.
- * @param {string} fileOrDirPath The path to the file or directory to find.
+ * @param {string|URL} fileOrDirPath The path to the file or directory to find.
  * @param {string|ArrayBuffer|object|undefined} value The value to write.
  * @returns {void}
  */
 function writePath(volume, fileOrDirPath, value) {
-	const parts = [...Path.fromString(fileOrDirPath)];
+	const path =
+		fileOrDirPath instanceof URL
+			? Path.fromURL(fileOrDirPath)
+			: Path.fromString(fileOrDirPath);
+	const parts = [...path];
 	let part = parts.shift();
 	let object = volume;
 
@@ -137,7 +145,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
 	 *     the file or undefined if the file does not exist.
 	 * @throws {TypeError} If the file path is not a string.
@@ -161,7 +169,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<object|null>} A promise that resolves with the contents of
 	 *    the file or undefined if the file does not exist.
 	 * @throws {SyntaxError} If the file contents are not valid JSON.
@@ -176,7 +184,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
 	 *    of the file or undefined if the file does not exist.
 	 * @throws {Error} If the file cannot be read.
@@ -199,7 +207,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Reads a file and returns the contents as an Uint8Array.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
 	 *    of the file or undefined if the file does not exist.
 	 * @throws {Error} If the file cannot be read.
@@ -221,7 +229,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
-	 * @param {string} filePath The path to the file to write.
+	 * @param {string|URL} filePath The path to the file to write.
 	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
@@ -248,7 +256,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Checks if a file exists.
-	 * @param {string} filePath The path to the file to check.
+	 * @param {string|URL} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    file exists or false if it does not.
 	 * @throws {TypeError} If the file path is not a string.
@@ -267,7 +275,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Checks if a directory exists.
-	 * @param {string} dirPath The path to the directory to check.
+	 * @param {string|URL} dirPath The path to the directory to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the
 	 *    directory exists or false if it does not.
 	 * @throws {TypeError} If the directory path is not a string.
@@ -285,7 +293,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Creates a directory recursively.
-	 * @param {string} dirPath The path to the directory to create.
+	 * @param {string|URL} dirPath The path to the directory to create.
 	 * @returns {Promise<void>} A promise that resolves when the directory is
 	 *   created.
 	 */
@@ -295,7 +303,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Deletes a file or empty directory.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -318,7 +326,7 @@ export class MemoryHfsImpl {
 
 		if (isDirectory(value) && Object.keys(value).length > 0) {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, unlink '${fileOrDirPath}'`,
+				`ENOTEMPTY: directory not empty, rmdir '${fileOrDirPath}'`,
 			);
 		}
 
@@ -327,7 +335,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Deletes a file or directory recursively.
-	 * @param {string} fileOrDirPath The path to the file or directory to
+	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
 	 * @returns {Promise<void>} A promise that resolves when the file or
 	 *   directory is deleted.
@@ -351,7 +359,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Returns a list of directory entries for the given path.
-	 * @param {string} dirPath The path to the directory to read.
+	 * @param {string|URL} dirPath The path to the directory to read.
 	 * @returns {AsyncIterable<HfsDirectoryEntry>} A promise that resolves with the
 	 *   directory entries.
 	 */
@@ -378,7 +386,7 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Returns the size of a file.
-	 * @param {string} filePath The path to the file to read.
+	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */
