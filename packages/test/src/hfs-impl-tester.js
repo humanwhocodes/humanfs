@@ -151,136 +151,146 @@ export class HfsImplTester {
 				});
 			});
 
-			describe("json()", () => {
-				it("should read a file and return the contents as a JSON object", async () => {
-					const filePath = this.#outputDir + "/message.json";
-					const result = await impl.json(filePath);
-					assert.deepStrictEqual(result, { message: "Hello world!" });
-				});
+			if (impl.json) {
+				describe("json()", () => {
+					it("should read a file and return the contents as a JSON object", async () => {
+						const filePath = this.#outputDir + "/message.json";
+						const result = await impl.json(filePath);
+						assert.deepStrictEqual(result, {
+							message: "Hello world!",
+						});
+					});
 
-				it("should read a file and return the contents as a JSON object when using a file URL", async () => {
-					const filePath = this.#outputDir + "/message.json";
-					const fileUrl = filePathToUrl(filePath);
-					const result = await impl.json(fileUrl);
-					assert.deepStrictEqual(result, { message: "Hello world!" });
-				});
+					it("should read a file and return the contents as a JSON object when using a file URL", async () => {
+						const filePath = this.#outputDir + "/message.json";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.json(fileUrl);
+						assert.deepStrictEqual(result, {
+							message: "Hello world!",
+						});
+					});
 
-				it("should return undefined when a file doesn't exist", async () => {
-					const result = await impl.json(
-						this.#outputDir + "/nonexistent.txt",
-					);
-					assert.strictEqual(
-						result,
-						undefined,
-						"Expected undefined when reading a nonexistent file",
-					);
-				});
+					it("should return undefined when a file doesn't exist", async () => {
+						const result = await impl.json(
+							this.#outputDir + "/nonexistent.txt",
+						);
+						assert.strictEqual(
+							result,
+							undefined,
+							"Expected undefined when reading a nonexistent file",
+						);
+					});
 
-				it("should return undefined when a file with the given file URL doesn't exist", async () => {
-					const result = await impl.json(
-						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
-					);
-					assert.strictEqual(
-						result,
-						undefined,
-						"Expected undefined when reading a nonexistent file",
-					);
+					it("should return undefined when a file with the given file URL doesn't exist", async () => {
+						const result = await impl.json(
+							filePathToUrl(this.#outputDir + "/nonexistent.txt"),
+						);
+						assert.strictEqual(
+							result,
+							undefined,
+							"Expected undefined when reading a nonexistent file",
+						);
+					});
 				});
-			});
+			}
 
-			describe("arrayBuffer()", () => {
-				it("should read a file and return the contents as an ArrayBuffer", async () => {
-					const filePath = this.#outputDir + "/hello.txt";
-					const result = await impl.arrayBuffer(filePath);
-					assert.ok(result instanceof ArrayBuffer);
-					const decoder = new TextDecoder();
-					assert.strictEqual(
-						decoder.decode(result),
-						"Hello world!\n",
-					);
-				});
+			if (impl.arrayBuffer) {
+				describe("arrayBuffer()", () => {
+					it("should read a file and return the contents as an ArrayBuffer", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const result = await impl.arrayBuffer(filePath);
+						assert.ok(result instanceof ArrayBuffer);
+						const decoder = new TextDecoder();
+						assert.strictEqual(
+							decoder.decode(result),
+							"Hello world!\n",
+						);
+					});
 
-				it("should read a file and return the contents as an ArrayBuffer when using a file URL", async () => {
-					const filePath = this.#outputDir + "/hello.txt";
-					const fileUrl = filePathToUrl(filePath);
-					const result = await impl.arrayBuffer(fileUrl);
-					assert.ok(result instanceof ArrayBuffer);
-					const decoder = new TextDecoder();
-					assert.strictEqual(
-						decoder.decode(result),
-						"Hello world!\n",
-					);
-				});
+					it("should read a file and return the contents as an ArrayBuffer when using a file URL", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.arrayBuffer(fileUrl);
+						assert.ok(result instanceof ArrayBuffer);
+						const decoder = new TextDecoder();
+						assert.strictEqual(
+							decoder.decode(result),
+							"Hello world!\n",
+						);
+					});
 
-				it("should return undefined when a file doesn't exist", async () => {
-					const result = await impl.arrayBuffer(
-						this.#outputDir + "/nonexistent.txt",
-					);
-					assert.strictEqual(
-						result,
-						undefined,
-						"Expected undefined when reading a nonexistent file",
-					);
-				});
+					it("should return undefined when a file doesn't exist", async () => {
+						const result = await impl.arrayBuffer(
+							this.#outputDir + "/nonexistent.txt",
+						);
+						assert.strictEqual(
+							result,
+							undefined,
+							"Expected undefined when reading a nonexistent file",
+						);
+					});
 
-				it("should return undefined when a file with the given file URL doesn't exist", async () => {
-					const result = await impl.arrayBuffer(
-						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
-					);
-					assert.strictEqual(
-						result,
-						undefined,
-						"Expected undefined when reading a nonexistent file",
-					);
+					it("should return undefined when a file with the given file URL doesn't exist", async () => {
+						const result = await impl.arrayBuffer(
+							filePathToUrl(this.#outputDir + "/nonexistent.txt"),
+						);
+						assert.strictEqual(
+							result,
+							undefined,
+							"Expected undefined when reading a nonexistent file",
+						);
+					});
 				});
-			});
+			}
 
-			describe("bytes()", () => {
-				it("should read a file and return the contents as an Uint8Array", async () => {
-					const filePath = this.#outputDir + "/hello.txt";
-					const result = await impl.bytes(filePath);
-					assert.ok(result instanceof Uint8Array);
-					const decoder = new TextDecoder();
-					assert.strictEqual(
-						decoder.decode(result),
-						"Hello world!\n",
-					);
-				});
+			if (impl.bytes) {
+				describe("bytes()", () => {
+					it("should read a file and return the contents as an Uint8Array", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const result = await impl.bytes(filePath);
+						assert.ok(result instanceof Uint8Array);
+						const decoder = new TextDecoder();
+						assert.strictEqual(
+							decoder.decode(result),
+							"Hello world!\n",
+						);
+					});
 
-				it("should read a file and return the contents as an Uint8Array when using a file URL", async () => {
-					const filePath = this.#outputDir + "/hello.txt";
-					const fileUrl = filePathToUrl(filePath);
-					const result = await impl.bytes(fileUrl);
-					assert.ok(result instanceof Uint8Array);
-					const decoder = new TextDecoder();
-					assert.strictEqual(
-						decoder.decode(result),
-						"Hello world!\n",
-					);
-				});
+					it("should read a file and return the contents as an Uint8Array when using a file URL", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.bytes(fileUrl);
+						assert.ok(result instanceof Uint8Array);
+						const decoder = new TextDecoder();
+						assert.strictEqual(
+							decoder.decode(result),
+							"Hello world!\n",
+						);
+					});
 
-				it("should return undefined when a file doesn't exist", async () => {
-					const result = await impl.bytes(
-						this.#outputDir + "/nonexistent.txt",
-					);
-					assert.strictEqual(
-						result,
-						undefined,
-						"Expected undefined when reading a nonexistent file",
-					);
-				});
+					it("should return undefined when a file doesn't exist", async () => {
+						const result = await impl.bytes(
+							this.#outputDir + "/nonexistent.txt",
+						);
+						assert.strictEqual(
+							result,
+							undefined,
+							"Expected undefined when reading a nonexistent file",
+						);
+					});
 
-				it("should return undefined when a file with the given file URL doesn't exist", async () => {
-					const result = await impl.bytes(
-						filePathToUrl(this.#outputDir + "/nonexistent.txt"),
-					);
-					assert.strictEqual(
-						result,
-						undefined,
-						"Expected undefined when reading a nonexistent file",
-					);
+					it("should return undefined when a file with the given file URL doesn't exist", async () => {
+						const result = await impl.bytes(
+							filePathToUrl(this.#outputDir + "/nonexistent.txt"),
+						);
+						assert.strictEqual(
+							result,
+							undefined,
+							"Expected undefined when reading a nonexistent file",
+						);
+					});
 				});
-			});
+			}
 
 			describe("write()", () => {
 				beforeEach(async () => {
@@ -613,88 +623,98 @@ export class HfsImplTester {
 				});
 			});
 
-			describe("delete()", () => {
-				let dirPath = this.#outputDir + "/tmp-delete";
+			if (impl.delete) {
+				describe("delete()", () => {
+					let dirPath = this.#outputDir + "/tmp-delete";
 
-				beforeEach(async () => {
-					await impl.createDirectory(dirPath);
-					await impl.createDirectory(dirPath + "/subdir");
-					await impl.createDirectory(dirPath + "/empty-subdir");
-					await impl.createDirectory(dirPath + "/subdir/subsubdir");
-					await impl.write(
-						dirPath + "/subdir/subsubdir/test.txt",
-						"Hello, world!",
-					);
+					beforeEach(async () => {
+						await impl.createDirectory(dirPath);
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.createDirectory(dirPath + "/empty-subdir");
+						await impl.createDirectory(
+							dirPath + "/subdir/subsubdir",
+						);
+						await impl.write(
+							dirPath + "/subdir/subsubdir/test.txt",
+							"Hello, world!",
+						);
+					});
+
+					afterEach(async () => {
+						await impl.deleteAll(dirPath);
+					});
+
+					it("should delete a file", async () => {
+						const filePath = dirPath + "/subdir/subsubdir/test.txt";
+						await impl.delete(filePath);
+
+						assert.strictEqual(await impl.isFile(filePath), false);
+					});
+
+					it("should delete a file at the file URL", async () => {
+						const filePath = dirPath + "/subdir/subsubdir/test.txt";
+						const fileUrl = filePathToUrl(filePath);
+						await impl.delete(fileUrl);
+
+						assert.strictEqual(await impl.isFile(filePath), false);
+					});
+
+					it("should delete an empty directory", async () => {
+						const emptySubdirPath = dirPath + "/empty-subdir";
+						await impl.delete(emptySubdirPath);
+
+						assert.strictEqual(
+							await impl.isDirectory(emptySubdirPath),
+							false,
+						);
+					});
+
+					it("should delete an empty directory at the file URL", async () => {
+						const emptySubdirPath = dirPath + "/empty-subdir";
+						const emptySubdirUrl = filePathToUrl(emptySubdirPath);
+						await impl.delete(emptySubdirUrl);
+
+						assert.strictEqual(
+							await impl.isDirectory(emptySubdirPath),
+							false,
+						);
+					});
+
+					it("should reject a promise when the file doesn't exist", async () => {
+						const filePath = dirPath + "/nonexistent.txt";
+						await assert.rejects(
+							() => impl.delete(filePath),
+							/ENOENT/,
+						);
+					});
+
+					it("should reject a promise when the file doesn't exist at the file URL", async () => {
+						const filePath = dirPath + "/nonexistent.txt";
+						const fileUrl = filePathToUrl(filePath);
+						await assert.rejects(
+							() => impl.delete(fileUrl),
+							/ENOENT/,
+						);
+					});
+
+					it("should reject a promise when path is a nonempty directory", async () => {
+						const subdirPath = dirPath + "/subdir";
+						await assert.rejects(
+							() => impl.delete(subdirPath),
+							/ENOTEMPTY/,
+						);
+					});
+
+					it("should reject a promise when path is a nonempty directory at the file URL", async () => {
+						const subdirPath = dirPath + "/subdir";
+						const subdirUrl = filePathToUrl(subdirPath);
+						await assert.rejects(
+							() => impl.delete(subdirUrl),
+							/ENOTEMPTY/,
+						);
+					});
 				});
-
-				afterEach(async () => {
-					await impl.deleteAll(dirPath);
-				});
-
-				it("should delete a file", async () => {
-					const filePath = dirPath + "/subdir/subsubdir/test.txt";
-					await impl.delete(filePath);
-
-					assert.strictEqual(await impl.isFile(filePath), false);
-				});
-
-				it("should delete a file at the file URL", async () => {
-					const filePath = dirPath + "/subdir/subsubdir/test.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await impl.delete(fileUrl);
-
-					assert.strictEqual(await impl.isFile(filePath), false);
-				});
-
-				it("should delete an empty directory", async () => {
-					const emptySubdirPath = dirPath + "/empty-subdir";
-					await impl.delete(emptySubdirPath);
-
-					assert.strictEqual(
-						await impl.isDirectory(emptySubdirPath),
-						false,
-					);
-				});
-
-				it("should delete an empty directory at the file URL", async () => {
-					const emptySubdirPath = dirPath + "/empty-subdir";
-					const emptySubdirUrl = filePathToUrl(emptySubdirPath);
-					await impl.delete(emptySubdirUrl);
-
-					assert.strictEqual(
-						await impl.isDirectory(emptySubdirPath),
-						false,
-					);
-				});
-
-				it("should reject a promise when the file doesn't exist", async () => {
-					const filePath = dirPath + "/nonexistent.txt";
-					await assert.rejects(() => impl.delete(filePath), /ENOENT/);
-				});
-
-				it("should reject a promise when the file doesn't exist at the file URL", async () => {
-					const filePath = dirPath + "/nonexistent.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await assert.rejects(() => impl.delete(fileUrl), /ENOENT/);
-				});
-
-				it("should reject a promise when path is a nonempty directory", async () => {
-					const subdirPath = dirPath + "/subdir";
-					await assert.rejects(
-						() => impl.delete(subdirPath),
-						/ENOTEMPTY/,
-					);
-				});
-
-				it("should reject a promise when path is a nonempty directory at the file URL", async () => {
-					const subdirPath = dirPath + "/subdir";
-					const subdirUrl = filePathToUrl(subdirPath);
-					await assert.rejects(
-						() => impl.delete(subdirUrl),
-						/ENOTEMPTY/,
-					);
-				});
-			});
+			}
 
 			describe("deleteAll()", () => {
 				let dirPath = this.#outputDir + "/tmp-delete";
@@ -791,145 +811,179 @@ export class HfsImplTester {
 				});
 			});
 
-			describe("list()", () => {
-				it("should return an async iterable", async () => {
-					const dirPath = this.#outputDir + "/tmp-list";
-					await impl.createDirectory(dirPath + "/subdir");
-					await impl.write(dirPath + "/test1.txt", "Hello, world!");
-					await impl.write(dirPath + "/test2.txt", "Hello, world!");
-
-					const result = await impl.list(dirPath);
-					assert.ok(result[Symbol.asyncIterator]);
-				});
-
-				it("should return an async iterable when using a file URL", async () => {
-					const dirPath = this.#outputDir + "/tmp-list";
-					await impl.createDirectory(dirPath + "/subdir");
-					await impl.write(dirPath + "/test1.txt", "Hello, world!");
-					await impl.write(dirPath + "/test2.txt", "Hello, world!");
-
-					const dirUrl = filePathToUrl(dirPath);
-					const result = await impl.list(dirUrl);
-					assert.ok(result[Symbol.asyncIterator]);
-				});
-
-				it("should list the contents of a directory", async () => {
-					const dirPath = this.#outputDir + "/tmp-list";
-					await impl.createDirectory(dirPath + "/subdir");
-					await impl.write(dirPath + "/test1.txt", "Hello, world!");
-					await impl.write(dirPath + "/test2.txt", "Hello, world!");
-					const result = [];
-
-					for await (const entry of impl.list(dirPath)) {
-						result.push(entry);
-					}
-
-					const expected = [
-						{
-							name: "subdir",
-							isDirectory: true,
-							isFile: false,
-							isSymlink: false,
-						},
-						{
-							name: "test1.txt",
-							isDirectory: false,
-							isFile: true,
-							isSymlink: false,
-						},
-						{
-							name: "test2.txt",
-							isDirectory: false,
-							isFile: true,
-							isSymlink: false,
-						},
-					];
-
-					for (const entry of expected) {
-						const item = result.find(
-							item => item.name === entry.name,
+			if (impl.list) {
+				describe("list()", () => {
+					it("should return an async iterable", async () => {
+						const dirPath = this.#outputDir + "/tmp-list";
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.write(
+							dirPath + "/test1.txt",
+							"Hello, world!",
 						);
-						assert.ok(item);
-
-						assert.strictEqual(item.isDirectory, entry.isDirectory);
-						assert.strictEqual(item.isFile, entry.isFile);
-						assert.strictEqual(item.isSymlink, entry.isSymlink);
-					}
-				});
-
-				it("should list the contents of a directory when using a file URL", async () => {
-					const dirPath = this.#outputDir + "/tmp-list";
-					await impl.createDirectory(dirPath + "/subdir");
-					await impl.write(dirPath + "/test1.txt", "Hello, world!");
-					await impl.write(dirPath + "/test2.txt", "Hello, world!");
-					const dirUrl = filePathToUrl(dirPath);
-					const result = [];
-
-					for await (const entry of impl.list(dirUrl)) {
-						result.push(entry);
-					}
-
-					const expected = [
-						{
-							name: "subdir",
-							isDirectory: true,
-							isFile: false,
-							isSymlink: false,
-						},
-						{
-							name: "test1.txt",
-							isDirectory: false,
-							isFile: true,
-							isSymlink: false,
-						},
-						{
-							name: "test2.txt",
-							isDirectory: false,
-							isFile: true,
-							isSymlink: false,
-						},
-					];
-
-					for (const entry of expected) {
-						const item = result.find(
-							item => item.name === entry.name,
+						await impl.write(
+							dirPath + "/test2.txt",
+							"Hello, world!",
 						);
-						assert.ok(item);
 
-						assert.strictEqual(item.isDirectory, entry.isDirectory);
-						assert.strictEqual(item.isFile, entry.isFile);
-						assert.strictEqual(item.isSymlink, entry.isSymlink);
-					}
-				});
-			});
+						const result = await impl.list(dirPath);
+						assert.ok(result[Symbol.asyncIterator]);
+					});
 
-			describe("size()", () => {
-				it("should return the size of a file", async () => {
-					const filePath = this.#outputDir + "/hello.txt";
-					const result = await impl.size(filePath);
-					assert.strictEqual(result, 13);
-				});
+					it("should return an async iterable when using a file URL", async () => {
+						const dirPath = this.#outputDir + "/tmp-list";
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.write(
+							dirPath + "/test1.txt",
+							"Hello, world!",
+						);
+						await impl.write(
+							dirPath + "/test2.txt",
+							"Hello, world!",
+						);
 
-				it("should return the size of a file when using a file URL", async () => {
-					const filePath = this.#outputDir + "/hello.txt";
-					const fileUrl = filePathToUrl(filePath);
-					const result = await impl.size(fileUrl);
-					assert.strictEqual(result, 13);
-				});
+						const dirUrl = filePathToUrl(dirPath);
+						const result = await impl.list(dirUrl);
+						assert.ok(result[Symbol.asyncIterator]);
+					});
 
-				it("should return undefined if the file doesn't exist", async () => {
-					const filePath = this.#outputDir + "/nonexistent.txt";
-					const result = await impl.size(filePath);
-					assert.strictEqual(result, undefined);
-				});
+					it("should list the contents of a directory", async () => {
+						const dirPath = this.#outputDir + "/tmp-list";
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.write(
+							dirPath + "/test1.txt",
+							"Hello, world!",
+						);
+						await impl.write(
+							dirPath + "/test2.txt",
+							"Hello, world!",
+						);
+						const result = [];
 
-				it("should return undefined if the file doesn't exist at the file URL", async () => {
-					const filePath = this.#outputDir + "/nonexistent.txt";
-					const fileUrl = filePathToUrl(filePath);
-					const result = await impl.size(fileUrl);
-					assert.strictEqual(result, undefined);
+						for await (const entry of impl.list(dirPath)) {
+							result.push(entry);
+						}
+
+						const expected = [
+							{
+								name: "subdir",
+								isDirectory: true,
+								isFile: false,
+								isSymlink: false,
+							},
+							{
+								name: "test1.txt",
+								isDirectory: false,
+								isFile: true,
+								isSymlink: false,
+							},
+							{
+								name: "test2.txt",
+								isDirectory: false,
+								isFile: true,
+								isSymlink: false,
+							},
+						];
+
+						for (const entry of expected) {
+							const item = result.find(
+								item => item.name === entry.name,
+							);
+							assert.ok(item);
+
+							assert.strictEqual(
+								item.isDirectory,
+								entry.isDirectory,
+							);
+							assert.strictEqual(item.isFile, entry.isFile);
+							assert.strictEqual(item.isSymlink, entry.isSymlink);
+						}
+					});
+
+					it("should list the contents of a directory when using a file URL", async () => {
+						const dirPath = this.#outputDir + "/tmp-list";
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.write(
+							dirPath + "/test1.txt",
+							"Hello, world!",
+						);
+						await impl.write(
+							dirPath + "/test2.txt",
+							"Hello, world!",
+						);
+						const dirUrl = filePathToUrl(dirPath);
+						const result = [];
+
+						for await (const entry of impl.list(dirUrl)) {
+							result.push(entry);
+						}
+
+						const expected = [
+							{
+								name: "subdir",
+								isDirectory: true,
+								isFile: false,
+								isSymlink: false,
+							},
+							{
+								name: "test1.txt",
+								isDirectory: false,
+								isFile: true,
+								isSymlink: false,
+							},
+							{
+								name: "test2.txt",
+								isDirectory: false,
+								isFile: true,
+								isSymlink: false,
+							},
+						];
+
+						for (const entry of expected) {
+							const item = result.find(
+								item => item.name === entry.name,
+							);
+							assert.ok(item);
+
+							assert.strictEqual(
+								item.isDirectory,
+								entry.isDirectory,
+							);
+							assert.strictEqual(item.isFile, entry.isFile);
+							assert.strictEqual(item.isSymlink, entry.isSymlink);
+						}
+					});
 				});
-			});
+			}
+
+			if (impl.size) {
+				describe("size()", () => {
+					it("should return the size of a file", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const result = await impl.size(filePath);
+						assert.strictEqual(result, 13);
+					});
+
+					it("should return the size of a file when using a file URL", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.size(fileUrl);
+						assert.strictEqual(result, 13);
+					});
+
+					it("should return undefined if the file doesn't exist", async () => {
+						const filePath = this.#outputDir + "/nonexistent.txt";
+						const result = await impl.size(filePath);
+						assert.strictEqual(result, undefined);
+					});
+
+					it("should return undefined if the file doesn't exist at the file URL", async () => {
+						const filePath = this.#outputDir + "/nonexistent.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.size(fileUrl);
+						assert.strictEqual(result, undefined);
+					});
+				});
+			}
 		});
 	}
 }
