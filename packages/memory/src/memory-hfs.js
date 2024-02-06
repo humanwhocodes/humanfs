@@ -364,17 +364,25 @@ export class MemoryHfsImpl {
 	 *   directory entries.
 	 */
 	async *list(dirPath) {
-		const location = findPath(this.#volume, dirPath);
+		let target;
 
-		if (!location) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${dirPath}'`,
-			);
+		// Special case: if the path is ".", then we're listing the root
+		if (dirPath === ".") {
+			target = this.#volume;
+		} else {
+			const location = findPath(this.#volume, dirPath);
+
+			if (!location) {
+				throw new Error(
+					`ENOENT: no such file or directory, list '${dirPath}'`,
+				);
+			}
+
+			const { object, key } = location;
+			target = object[key];
 		}
 
-		const { object, key } = location;
-
-		for (const [name, value] of Object.entries(object[key])) {
+		for (const [name, value] of Object.entries(target)) {
 			yield {
 				name,
 				isDirectory: isDirectory(value),

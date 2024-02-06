@@ -3,7 +3,7 @@
  * @author Nicholas C. Zakas
  */
 
-/* global TextEncoder */
+/* global TextEncoder, Deno */
 
 //------------------------------------------------------------------------------
 // Imports
@@ -51,6 +51,9 @@ const tester = new HfsImplTester({
 		beforeEach,
 		afterEach,
 	},
+	expectedEntries: (await Array.fromAsync(Deno.readDir("."))).map(
+		entry => entry.name,
+	),
 });
 
 await tester.test({
