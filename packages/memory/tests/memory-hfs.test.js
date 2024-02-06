@@ -26,6 +26,7 @@ const tester = new HfsImplTester({
 	outputDir: fixturesDir,
 	assert,
 	test: globalThis,
+	expectedEntries: [fixturesDir],
 });
 
 await tester.test({

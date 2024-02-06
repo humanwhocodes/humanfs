@@ -37,10 +37,16 @@ async function findPath(
 	fileOrDirPath,
 	{ returnParent = false, create = false } = {},
 ) {
+	// Special case: "." means the root directory
+	if (fileOrDirPath === ".") {
+		return root;
+	}
+
 	const path =
 		fileOrDirPath instanceof URL
 			? Path.fromURL(fileOrDirPath)
 			: Path.fromString(fileOrDirPath);
+
 	const steps = [...path];
 
 	if (returnParent) {

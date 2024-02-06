@@ -18,6 +18,7 @@ import assert from "node:assert";
 //------------------------------------------------------------------------------
 
 const fixturesDir = "fixtures";
+const root = await navigator.storage.getDirectory();
 
 //------------------------------------------------------------------------------
 // Tests
@@ -27,9 +28,10 @@ const tester = new HfsImplTester({
 	outputDir: fixturesDir,
 	assert,
 	test: globalThis,
+	expectedEntries: [fixturesDir],
 });
 
 await tester.test({
 	name: "MemoryHfsImpl",
-	impl: new WebHfsImpl({ root: await navigator.storage.getDirectory() }),
+	impl: new WebHfsImpl({ root }),
 });

@@ -68,13 +68,20 @@ export class HfsImplTester {
 	#outputDir;
 
 	/**
+	 * The expected entries in the output directory.
+	 * @type {string[]|undefined}
+	 */
+	#expectedEntries;
+
+	/**
 	 * Creates a new instance.
 	 * @param {object} options Options for the tester.
 	 * @param {Assert} options.assert The assert function to use.
 	 * @param {BddTest} options.test The test library to use.
 	 * @param {string} options.outputDir The directory where output files should be written.
+	 * @param {string[]} [options.expectedEntries] The expected entries in the output directory.
 	 */
-	constructor({ assert, test, outputDir }) {
+	constructor({ assert, test, outputDir, expectedEntries }) {
 		if (!outputDir) {
 			throw new Error("outputDir is required");
 		}
@@ -82,6 +89,7 @@ export class HfsImplTester {
 		this.#assert = assert;
 		this.#test = test;
 		this.#outputDir = outputDir;
+		this.#expectedEntries = expectedEntries;
 	}
 
 	/**
@@ -812,6 +820,12 @@ export class HfsImplTester {
 			});
 
 			if (impl.list) {
+				if (!this.#expectedEntries) {
+					throw new Error(
+						"expectedEntries is required for testing list()",
+					);
+				}
+
 				describe("list()", () => {
 					it("should return an async iterable", async () => {
 						const dirPath = this.#outputDir + "/tmp-list";
@@ -844,6 +858,16 @@ export class HfsImplTester {
 						const dirUrl = filePathToUrl(dirPath);
 						const result = await impl.list(dirUrl);
 						assert.ok(result[Symbol.asyncIterator]);
+					});
+
+					it("should list the contents of the top-level directory", async () => {
+						const result = [];
+
+						for await (const entry of impl.list(".")) {
+							result.push(entry.name);
+						}
+
+						assert.deepStrictEqual(result, this.#expectedEntries);
 					});
 
 					it("should list the contents of a directory", async () => {
