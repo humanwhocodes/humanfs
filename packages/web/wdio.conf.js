@@ -81,10 +81,15 @@ export const config = {
 	// - @wdio/sumologic-reporter
 	// - @wdio/cli, @wdio/config, @wdio/utils
 	// Level of logging verbosity: trace | debug | info | warn | error | silent
-	// logLevels: {
-	//     webdriver: 'info',
-	//     '@wdio/appium-service': 'info'
-	// },
+	logLevels: {
+	    webdriver: 'silent',
+	    '@wdio/appium-service': 'silent',
+		'@wdio/utils': 'silent',
+		'@wdio/utils:shim': 'silent',
+		'@wdio/local-runner': 'silent',
+		'@wdio/sync': 'silent',
+		'@wdio/mocha-framework': 'silent',
+	},
 	//
 	// If you only want to run your tests until a specific amount of tests have failed use
 	// bail (default is 0 - don't bail, run all tests).

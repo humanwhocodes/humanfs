@@ -539,6 +539,76 @@ export class WebHfsImpl {
 			sourcePath.pop();
 		}
 	}
+
+	/**
+	 * Moves a file from the source path to the destination path.
+	 * @param {string|URL} source The location of the file to move.
+	 * @param {string|URL} destination The destination of the file to move.
+	 * @returns {Promise<void>} A promise that resolves when the move is complete.
+	 * @throws {TypeError} If the file paths are not strings.
+	 * @throws {Error} If the file cannot be moved.
+	 */
+	async move(source, destination) {
+
+		
+		const handle = (await findPath(this.#root, source));
+		
+		if (!handle) {
+			throw new Error(
+				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
+				);
+			}
+
+		if (handle.kind !== "file") {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
+			);
+		}
+
+		const destinationPath = destination instanceof URL ? Path.fromURL(destination) : Path.fromString(destination);
+		const destinationName = destinationPath.pop();
+		const sourceParent = await findPath(this.#root, source, { returnParent: true });
+		const destinationParent = await findPath(this.#root, destinationPath.toString(), { create: true, kind: "directory" });
+
+		const handleChromeError = async (ex) => {
+			if (ex.name === "NotAllowedError") {
+				await this.copy(source, destination);
+				await this.delete(source);
+				return;
+			}
+
+			throw ex;
+		};
+
+		// Simple case -- just rename. Supported by both Chrome and Firefox.
+		if (sourceParent.isSameEntry(destinationParent)) {
+			// @ts-ignore -- TS doesn't know about this yet
+			return handle.move(destinationName)
+				.catch(handleChromeError);
+		}
+
+		// More complex case -- change directories. Supported by Firefox but not Chrome.
+
+		// @ts-ignore -- TS doesn't know about this yet
+		try {
+			await handle.move();
+		} catch (ex) {
+
+			/*
+			 * Chromium throws an error only in automation mode, not in the browser.
+			 * So for testing purposes, we need to check for this error and do the
+			 * brute force method instead.
+			 */
+			if (ex.name === "NotAllowedError") {				
+				await this.copy(source, destination);
+				await this.delete(source);
+				return;
+			}
+
+			throw ex;
+		}
+
+	}
 }
 
 /**

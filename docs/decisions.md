@@ -1,3 +1,21 @@
+# 2024-02-05 The `move()` method instead of the `rename()` method
+
+## Background
+
+When implementing a method that changes the location of a file or directory, both Node.js and Deno use the method name `rename()`. Another option would be `move()`.
+
+## Decision
+
+The method will be named `move()`.
+
+## Rationale
+
+The word "rename" is unclear in what it accomplishes. It could just be renaming a file in-place without being able to move the file to a different directory. Both Node.js and Deno will actually move the file if necessary, and the name "move" more clearly indicates that this is a possibility.
+
+## Related
+
+* https://github.com/humanwhocodes/humanfs/issues/20
+
 # 2024-01-22 The `delete()` method should only delete files and empty directories
 
 ## Background

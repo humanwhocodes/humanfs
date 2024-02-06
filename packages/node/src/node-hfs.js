@@ -327,7 +327,8 @@ export class NodeHfsImpl {
 	}
 
 	/**
-	 * Returns the size of a file.
+	 * Returns the size of a file. This method handles ENOENT errors
+	 * and returns undefined in that case.
 	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number|undefined>} A promise that resolves with the size of the
 	 *  file in bytes or undefined if the file doesn't exist.
@@ -394,6 +395,26 @@ export class NodeHfsImpl {
 				await this.copy(fromEntryPath, toEntryPath);
 			}
 		}
+	}
+
+	/**
+	 * Moves a file from the source path to the destination path.
+	 * @param {string|URL} source The location of the file to move.
+	 * @param {string|URL} destination The destination of the file to move.
+	 * @returns {Promise<void>} A promise that resolves when the move is complete.
+	 * @throws {TypeError} If the file paths are not strings.
+	 * @throws {Error} If the file cannot be moved.
+	 */
+	move(source, destination) {
+		return this.#fsp
+			.stat(source)
+			.then(stat => {
+				if (stat.isDirectory()) {
+					throw new Error(`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`);
+				}
+				
+				return this.#fsp.rename(source, destination);
+			});
 	}
 }
 

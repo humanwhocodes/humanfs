@@ -500,6 +500,36 @@ export class MemoryHfsImpl {
 			sourcePath.pop();
 		}
 	}
+
+	/**
+	/**
+	 * Moves a file from the source path to the destination path.
+	 * @param {string|URL} source The location of the file to move.
+	 * @param {string|URL} destination The destination of the file to move.
+	 * @returns {Promise<void>} A promise that resolves when the move is complete.
+	 * @throws {TypeError} If the file paths are not strings.
+	 * @throws {Error} If the file cannot be moved.
+	 */
+	async move(source, destination) {
+
+		const value = readPath(this.#volume, source);
+
+		if (!value) {
+			throw new Error(
+				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
+			);
+		}
+
+		if (!isFile(value)) {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
+			);
+		}
+
+		writePath(this.#volume, destination, value);
+
+		this.delete(source);
+	}
 }
 
 /**

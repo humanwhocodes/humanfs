@@ -1194,6 +1194,90 @@ export class HfsImplTester {
 					});
 				});
 			}
+
+			if (impl.move) {
+
+				describe.only("move()", () => {
+
+
+					let dirPath = this.#outputDir + "/tmp-move";
+
+					beforeEach(async () => {
+						await impl.createDirectory(dirPath);
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.write(
+							dirPath + "/test1.txt",
+							"Hello, world!",
+						);
+						await impl.write(
+							dirPath + "/test2.txt",
+							"Hello, world!",
+						);
+					});
+
+					afterEach(async () => {
+						await impl.deleteAll(dirPath);
+					});
+
+					it("should move a file", async () => {
+						const filePath = dirPath + "/test1.txt";
+						const newFilePath = dirPath + "/test1-moved.txt";
+						await impl.move(filePath, newFilePath);
+
+						assert.strictEqual(await impl.isFile(filePath), false);
+						assert.strictEqual(await impl.isFile(newFilePath), true);
+
+						const text = await impl.text(newFilePath);
+						assert.strictEqual(text, "Hello, world!");
+					});
+
+					it("should move a file at the file URL", async () => {
+						const filePath = dirPath + "/test1.txt";
+						const newFilePath = dirPath + "/test1-moved.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const newFileUrl = filePathToUrl(newFilePath);
+						await impl.move(fileUrl, newFileUrl);
+
+						assert.strictEqual(await impl.isFile(filePath), false);
+						assert.strictEqual(await impl.isFile(newFilePath), true);
+
+						const text = await impl.text(newFilePath);
+						assert.strictEqual(text, "Hello, world!");
+					});
+
+					it("should move a file to a new directory", async () => {
+						const filePath = dirPath + "/test1.txt";
+						const newFilePath = dirPath + "/subdir/test1-moved.txt";
+						await impl.move(filePath, newFilePath);
+
+						assert.strictEqual(await impl.isFile(filePath), false);
+						assert.strictEqual(await impl.isFile(newFilePath), true);
+
+						const text = await impl.text(newFilePath);
+						assert.strictEqual(text, "Hello, world!");
+					});
+
+					it("should reject a promise when the source file doesn't exist", async () => {
+						const filePath = dirPath + "/nonexistent.txt";
+						const newFilePath = dirPath + "/nonexistent-moved.txt";
+						await assert.rejects(
+							() => impl.move(filePath, newFilePath),
+							/ENOENT/,
+						);
+					});
+
+					it("should reject a promise when the source is a directory", async () => {
+
+						const subdirPath = dirPath + "/subdir";
+						const newFilePath = dirPath + "/subdir-moved";
+						await assert.rejects(
+							() => impl.move(subdirPath, newFilePath),
+							/EISDIR|EPERM|ENOTSUP/,
+						);
+					});
+
+				});
+			}
 		});
 	}
 }

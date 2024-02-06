@@ -672,9 +672,7 @@ describe("Hfs", () => {
 
 			return assert.rejects(
 				hfs.write("/path/to/file.txt", 123),
-				new TypeError(
-					"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
-				),
+				new TypeError("File contents must be a string, ArrayBuffer, or ArrayBuffer view."),
 			);
 		});
 	});
@@ -1348,5 +1346,104 @@ describe("Hfs", () => {
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
+	});
+
+	describe("move()", () => {
+
+		it("should call impl method", async () => {
+			const hfs = new Hfs({
+				impl: {
+					move() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.move("/path/to/file.txt", "/path/to/newfile.txt");
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					move() {
+						return undefined;
+					},
+				},
+			});
+
+			hfs.logStart("move");
+			await hfs.move("/path/to/file.txt", "/path/to/newfile.txt");
+			const logs = hfs.logEnd("move").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "move",
+						args: ["/path/to/file.txt", "/path/to/newfile.txt"],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					move() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.move(123, "/path/to/newfile.txt"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					move() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.move("", "/path/to/newfile.txt"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the new file path is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					move() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.move("/path/to/file.txt", 123),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the new file path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					move() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.move("/path/to/file.txt", ""),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
 	});
 });

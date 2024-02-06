@@ -339,6 +339,26 @@ export class DenoHfsImpl {
 			}
 		}
 	}
+
+	/**
+	 * Moves a file from the source path to the destination path.
+	 * @param {string|URL} source The location of the file to move.
+	 * @param {string|URL} destination The destination of the file to move.
+	 * @returns {Promise<void>} A promise that resolves when the move is complete.
+	 * @throws {TypeError} If the file paths are not strings.
+	 * @throws {Error} If the file cannot be moved.
+	 */
+	move(source, destination) {
+		return this.#deno
+			.stat(source)
+			.then(stat => {
+				if (stat.isDirectory) {
+					throw new Error(`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`);
+				}
+
+				return this.#deno.rename(source, destination);
+			});
+	}
 }
 
 /**
