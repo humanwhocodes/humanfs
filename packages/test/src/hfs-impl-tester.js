@@ -1053,10 +1053,19 @@ export class HfsImplTester {
 					});
 
 					/*
-					 * Some versions of Node.js return EISDIR and others return EPERM,
-					 * so we check for both in the next tests.
+					 * Different runtimes return different error codes
+					 * when a directory is used in place of a file.
 					 *
-					 * EISDIR is preferred but Deno throws EPERM.
+					 * Node.js on Windows: EPERM
+					 * Node.js on macOS: ENOTSUP
+					 * Node.js on Linux: EISDIR
+					 * Deno: EPERM
+					 *
+					 * Unfortunately, that means we need to accept any of
+					 * these errors for the following tests.
+					 *
+					 * Note: EISDIR is the most accurate error code but
+					 * others are accepted for compatibility.
 					 */
 
 					it("should reject a promise when attempting to copy a directory", async () => {
@@ -1064,7 +1073,7 @@ export class HfsImplTester {
 						const destPath = dirPath + "/subdir-copy";
 						await assert.rejects(
 							() => impl.copy(sourcePath, destPath),
-							/EISDIR|EPERM/,
+							/EISDIR|EPERM|ENOTSUP/,
 						);
 					});
 
@@ -1075,7 +1084,7 @@ export class HfsImplTester {
 						const destUrl = filePathToUrl(destPath);
 						await assert.rejects(
 							() => impl.copy(sourceUrl, destUrl),
-							/EISDIR|EPERM/,
+							/EISDIR|EPERM|ENOTSUP/,
 						);
 					});
 
@@ -1085,7 +1094,7 @@ export class HfsImplTester {
 						const destPath = dirPath + "/subdir";
 						await assert.rejects(
 							() => impl.copy(sourcePath, destPath),
-							/EISDIR|EPERM/,
+							/EISDIR|EPERM|ENOTSUP/,
 						);
 					});
 
