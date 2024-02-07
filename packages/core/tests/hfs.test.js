@@ -34,7 +34,7 @@ describe("Hfs", () => {
 			it(`should reject a promise when the ${methodName}() method is not present on the impl`, () => {
 				const hfs = new Hfs({ impl: {} });
 
-				assert.rejects(
+				return assert.rejects(
 					hfs[methodName]("/path/to/file.txt"),
 					new NoSuchMethodError(methodName),
 				);
@@ -72,7 +72,7 @@ describe("Hfs", () => {
 
 			hfs.resetImpl();
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.text("/path/to/file.txt"),
 				new NoSuchMethodError("text"),
 			);
@@ -229,9 +229,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.text(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -244,9 +244,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.text(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -312,9 +312,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.json(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -327,9 +327,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.json(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -395,9 +395,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.arrayBuffer(123),
-				/File path must be a non-empty string/,
+				/Path must be a non-empty string/,
 			);
 		});
 
@@ -410,9 +410,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.arrayBuffer(""),
-				/File path must be a non-empty string/,
+				/Path must be a non-empty string/,
 			);
 		});
 	});
@@ -478,9 +478,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.bytes(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -493,9 +493,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.bytes(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -546,9 +546,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.bytes(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -561,9 +561,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.bytes(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -640,9 +640,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.write(123, "Hello, world!"),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -655,9 +655,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.write("", "Hello, world!"),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -670,9 +670,11 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.write("/path/to/file.txt", 123),
-				new TypeError("File contents must be a string or bytes."),
+				new TypeError(
+					"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
+				),
 			);
 		});
 	});
@@ -736,9 +738,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.isFile(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -751,9 +753,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.isFile(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -817,7 +819,7 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.isDirectory(123),
 				/Path must be a non-empty string./,
 			);
@@ -832,7 +834,7 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.isDirectory(""),
 				/Path must be a non-empty string./,
 			);
@@ -884,7 +886,7 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.createDirectory(123),
 				/Path must be a non-empty string./,
 			);
@@ -899,7 +901,7 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.createDirectory(""),
 				/Path must be a non-empty string./,
 			);
@@ -951,9 +953,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.delete(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -966,9 +968,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.delete(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});
@@ -1018,7 +1020,7 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.deleteAll(123),
 				/Path must be a non-empty string./,
 			);
@@ -1033,7 +1035,7 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.deleteAll(""),
 				/Path must be a non-empty string./,
 			);
@@ -1147,9 +1149,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.size(123),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
@@ -1162,9 +1164,9 @@ describe("Hfs", () => {
 				},
 			});
 
-			assert.rejects(
+			return assert.rejects(
 				hfs.size(""),
-				new TypeError("File path must be a non-empty string or URL."),
+				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 	});

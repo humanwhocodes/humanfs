@@ -69,7 +69,7 @@ function assertValidFileContents(contents) {
 		!ArrayBuffer.isView(contents)
 	) {
 		throw new TypeError(
-			"Invalid contents type. Expected string, ArrayBuffer, or ArrayBuffer view.",
+			"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
 		);
 	}
 }
