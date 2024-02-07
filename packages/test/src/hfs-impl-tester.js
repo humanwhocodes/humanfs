@@ -1052,12 +1052,19 @@ export class HfsImplTester {
 						assert.strictEqual(await impl.isFile(destPath), true);
 					});
 
+					/*
+					 * Some versions of Node.js return EISDIR and others return EPERM,
+					 * so we check for both in the next tests.
+					 *
+					 * EISDIR is preferred but Deno throws EPERM.
+					 */
+
 					it("should reject a promise when attempting to copy a directory", async () => {
 						const sourcePath = dirPath + "/subdir";
 						const destPath = dirPath + "/subdir-copy";
 						await assert.rejects(
 							() => impl.copy(sourcePath, destPath),
-							/EPERM/,
+							/EISDIR|EPERM/,
 						);
 					});
 
@@ -1068,7 +1075,17 @@ export class HfsImplTester {
 						const destUrl = filePathToUrl(destPath);
 						await assert.rejects(
 							() => impl.copy(sourceUrl, destUrl),
-							/EPERM/,
+							/EISDIR|EPERM/,
+						);
+					});
+
+					it("should reject a promise when the destination is a directory", async () => {
+						const sourcePath =
+							dirPath + "/subdir/subsubdir/test.txt";
+						const destPath = dirPath + "/subdir";
+						await assert.rejects(
+							() => impl.copy(sourcePath, destPath),
+							/EISDIR|EPERM/,
 						);
 					});
 

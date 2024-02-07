@@ -465,7 +465,13 @@ export class WebHfsImpl {
 
 		if (fromHandle.kind !== "file") {
 			throw new Error(
-				`EPERM: Operation not permitted, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		if (await this.isDirectory(toPath)) {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
 			);
 		}
 

@@ -418,6 +418,9 @@ export class MemoryHfsImpl {
 	 * @param {string|URL} fromPath The path to the file to copy.
 	 * @param {string|URL} toPath The path to the destination file.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
+	 * @throws {Error} If the source file does not exist.
+	 * @throws {Error} If the source file is a directory.
+	 * @throws {Error} If the destination file is a directory.
 	 */
 	async copy(fromPath, toPath) {
 		const value = readPath(this.#volume, fromPath);
@@ -430,7 +433,13 @@ export class MemoryHfsImpl {
 
 		if (!isFile(value)) {
 			throw new Error(
-				`EPERM: operation not permitted, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		if (await this.isDirectory(toPath)) {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
 			);
 		}
 

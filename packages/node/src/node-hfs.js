@@ -350,6 +350,9 @@ export class NodeHfsImpl {
 	 * @param {string|URL} fromPath The path to the file to copy.
 	 * @param {string|URL} toPath The path to copy the file to.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
+	 * @throws {Error} If the source file does not exist.
+	 * @throws {Error} If the source file is a directory.
+	 * @throws {Error} If the destination file is a directory.
 	 */
 	copy(fromPath, toPath) {
 		return this.#fsp.copyFile(fromPath, toPath);
