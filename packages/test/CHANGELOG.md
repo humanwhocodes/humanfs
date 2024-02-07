@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.6.1...test-v0.7.0) (2024-02-07)
+
+
+### Features
+
+* Allow URL file and directory paths ([#62](https://github.com/humanwhocodes/humanfs/issues/62)) ([a767e37](https://github.com/humanwhocodes/humanfs/commit/a767e372287b1556c4c9e8bdb26c23ff81866f99))
+* HfsImplTester specify optional methods ([fb4098a](https://github.com/humanwhocodes/humanfs/commit/fb4098a993ff8ad186a956560599afc543260f6f))
+
+
+### Bug Fixes
+
+* Ensure list(".") works ([#68](https://github.com/humanwhocodes/humanfs/issues/68)) ([6245ea4](https://github.com/humanwhocodes/humanfs/commit/6245ea469cdc0a9aea29f980d277ac65aedc5085))
+
 ## [0.6.1](https://github.com/humanwhocodes/humanfs/compare/test-v0.6.0...test-v0.6.1) (2024-01-31)
 
 

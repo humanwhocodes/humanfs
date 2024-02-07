@@ -6,6 +6,20 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.8.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.7.0...core-v0.8.0) (2024-02-07)
+
+
+### Features
+
+* Allow URL file and directory paths ([#62](https://github.com/humanwhocodes/humanfs/issues/62)) ([a767e37](https://github.com/humanwhocodes/humanfs/commit/a767e372287b1556c4c9e8bdb26c23ff81866f99))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.5.1 to ^0.6.0
+
 ## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.6.0...core-v0.7.0) (2024-01-31)
 
 

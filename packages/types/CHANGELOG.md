@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.5.1...types-v0.6.0) (2024-02-07)
+
+
+### Features
+
+* Allow URL file and directory paths ([#62](https://github.com/humanwhocodes/humanfs/issues/62)) ([a767e37](https://github.com/humanwhocodes/humanfs/commit/a767e372287b1556c4c9e8bdb26c23ff81866f99))
+
 ## [0.5.1](https://github.com/humanwhocodes/humanfs/compare/types-v0.5.0...types-v0.5.1) (2024-01-31)
 
 
