@@ -1008,6 +1008,80 @@ export class HfsImplTester {
 					});
 				});
 			}
+
+			if (impl.copy) {
+				describe("copy()", () => {
+					let dirPath = this.#outputDir + "/tmp-copy";
+
+					beforeEach(async () => {
+						await impl.createDirectory(dirPath);
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.createDirectory(dirPath + "/empty-subdir");
+						await impl.createDirectory(
+							dirPath + "/subdir/subsubdir",
+						);
+						await impl.write(
+							dirPath + "/subdir/subsubdir/test.txt",
+							"Hello, world!",
+						);
+					});
+
+					afterEach(async () => {
+						await impl.deleteAll(dirPath);
+					});
+
+					it("should copy a file", async () => {
+						const sourcePath =
+							dirPath + "/subdir/subsubdir/test.txt";
+						const destPath =
+							dirPath + "/subdir/subsubdir/test-copy.txt";
+						await impl.copy(sourcePath, destPath);
+
+						assert.strictEqual(await impl.isFile(destPath), true);
+					});
+
+					it("should copy a file at the file URL", async () => {
+						const sourcePath =
+							dirPath + "/subdir/subsubdir/test.txt";
+						const destPath =
+							dirPath + "/subdir/subsubdir/test-copy.txt";
+						const sourceUrl = filePathToUrl(sourcePath);
+						const destUrl = filePathToUrl(destPath);
+						await impl.copy(sourceUrl, destUrl);
+
+						assert.strictEqual(await impl.isFile(destPath), true);
+					});
+
+					it("should reject a promise when attempting to copy a directory", async () => {
+						const sourcePath = dirPath + "/subdir";
+						const destPath = dirPath + "/subdir-copy";
+						await assert.rejects(
+							() => impl.copy(sourcePath, destPath),
+							/EPERM/,
+						);
+					});
+
+					it("should reject a promise when attempting to copy a directory at the file URL", async () => {
+						const sourcePath = dirPath + "/subdir";
+						const destPath = dirPath + "/subdir-copy";
+						const sourceUrl = filePathToUrl(sourcePath);
+						const destUrl = filePathToUrl(destPath);
+						await assert.rejects(
+							() => impl.copy(sourceUrl, destUrl),
+							/EPERM/,
+						);
+					});
+
+					it("should reject a promise when the source file doesn't exist", async () => {
+						const sourcePath = dirPath + "/nonexistent.txt";
+						const destPath = dirPath + "/nonexistent-copy.txt";
+						await assert.rejects(
+							() => impl.copy(sourcePath, destPath),
+							/ENOENT/,
+						);
+					});
+				});
+			}
 		});
 	}
 }

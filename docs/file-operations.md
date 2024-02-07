@@ -99,3 +99,11 @@ To get the size of a file in bytes, call the `hfs.size(filePath)` method. This m
 ```js
 const size = await hfs.size("/path/to/file.txt");
 ```
+
+## Copying Files
+
+To copy a file from one location to another, call the `hfs.copy(fromPath, toPath)` method. This method only works on files and will throw an error when attempting to copy a directory. Here's an example:
+
+```js
+await hfs.copy("/path/to/file.txt", "/path/to/other-file.txt");
+```

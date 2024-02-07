@@ -65,6 +65,9 @@ const found = await hfs.isFile("file.txt");
 // how big is the file?
 const size = await hfs.size("file.txt");
 
+// copy a file from one location to another
+await hfs.copy("file.txt", "file-copy.txt");
+
 // delete a file
 await hfs.delete("file.txt");
 

@@ -30,12 +30,13 @@ import { Hfs, Path } from "@humanfs/core";
  *  returned instead of the file or directory.
  * @param {boolean} [options.create] True if the file or directory should be
  *  created if it doesn't exist.
+ * @param {"file"|"directory"} [options.kind] The kind of file or directory to find.
  * @returns {Promise<FileSystemHandle|undefined>} The file or directory found.
  */
 async function findPath(
 	root,
 	fileOrDirPath,
-	{ returnParent = false, create = false } = {},
+	{ returnParent = false, create = false, kind } = {},
 ) {
 	// Special case: "." means the root directory
 	if (fileOrDirPath === ".") {
@@ -65,9 +66,27 @@ async function findPath(
 				return undefined;
 			}
 		} else {
-			try {
-				return await handle.getDirectoryHandle(name, { create });
-			} catch {
+			if (!kind) {
+				try {
+					return await handle.getDirectoryHandle(name, { create });
+				} catch {
+					try {
+						return await handle.getFileHandle(name, { create });
+					} catch {
+						return undefined;
+					}
+				}
+			}
+
+			if (kind === "directory") {
+				try {
+					return await handle.getDirectoryHandle(name, { create });
+				} catch {
+					return undefined;
+				}
+			}
+
+			if (kind === "file") {
 				try {
 					return await handle.getFileHandle(name, { create });
 				} catch {
@@ -237,6 +256,7 @@ export class WebHfsImpl {
 				/** @type {FileSystemDirectoryHandle} */ (
 					await findPath(this.#root, filePath, {
 						create: true,
+						kind: "directory",
 						returnParent: true,
 					})
 				) ?? this.#root;
@@ -424,6 +444,38 @@ export class WebHfsImpl {
 		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
 		const file = await fileHandle.getFile();
 		return file.size;
+	}
+
+	/**
+	 * Copies a file from one location to another.
+	 * @param {string|URL} fromPath The path to the file to copy.
+	 * @param {string|URL} toPath The path to the destination file.
+	 * @returns {Promise<void>} A promise that resolves when the file is copied.
+	 */
+	async copy(fromPath, toPath) {
+		const fromHandle = /** @type {FileSystemFileHandle } */ (
+			await findPath(this.#root, fromPath)
+		);
+
+		if (!fromHandle) {
+			throw new Error(
+				`ENOENT: no such file, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		if (fromHandle.kind !== "file") {
+			throw new Error(
+				`EPERM: Operation not permitted, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		const toHandle = /** @type {FileSystemFileHandle } */ (
+			await findPath(this.#root, toPath, { create: true, kind: "file" })
+		);
+		const file = await fromHandle.getFile();
+		const writable = await toHandle.createWritable();
+		await writable.write(file);
+		await writable.close();
 	}
 }
 
