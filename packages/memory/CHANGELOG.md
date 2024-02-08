@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.8.0...memory-v0.9.0) (2024-02-08)
+
+
+### Features
+
+* Add copy() method ([#69](https://github.com/humanwhocodes/humanfs/issues/69)) ([f252bac](https://github.com/humanwhocodes/humanfs/commit/f252bac6692a5b5c973ee3c696f5190caa5f12c7))
+
+
+### Bug Fixes
+
+* MemoryHfsImpl without args should work ([b338a69](https://github.com/humanwhocodes/humanfs/commit/b338a69ef84f66e9a066b7a0e42c15049dc40fb3)), closes [#71](https://github.com/humanwhocodes/humanfs/issues/71)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.8.0 to ^0.9.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.7.0 to ^0.8.0
+    * @humanfs/types bumped from ^0.6.0 to ^0.7.0
+
 ## [0.8.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.7.0...memory-v0.8.0) (2024-02-07)
 
 
