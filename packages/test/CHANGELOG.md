@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.7.0...test-v0.8.0) (2024-02-08)
+
+
+### Features
+
+* Add copy() method ([#69](https://github.com/humanwhocodes/humanfs/issues/69)) ([f252bac](https://github.com/humanwhocodes/humanfs/commit/f252bac6692a5b5c973ee3c696f5190caa5f12c7))
+
 ## [0.7.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.6.1...test-v0.7.0) (2024-02-07)
 
 
