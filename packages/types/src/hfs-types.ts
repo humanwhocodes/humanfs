@@ -104,6 +104,15 @@ export interface HfsImpl {
 	 * @throws {Error} If the file cannot be read.
 	 */
 	size?(filePath: string|URL): Promise<number|undefined>;
+
+	/**
+	 * Copies the file from the source path to the destination path.
+	 * @param fromPath The source file to copy.
+	 * @param toPath The destination file to copy to.
+	 * @returns A promise that resolves when the file is copied.
+	 * @throws {Error} If the file cannot be copied.
+	 */
+	copy?(fromPath: string|URL, toPath: string|URL): Promise<void>;
 }
 
 //------------------------------------------------------------------------------

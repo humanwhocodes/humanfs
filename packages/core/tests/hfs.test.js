@@ -1170,4 +1170,101 @@ describe("Hfs", () => {
 			);
 		});
 	});
+
+	describe("copy()", () => {
+		it("should not reject a promise when the source and destination are strings", async () => {
+			const hfs = new Hfs({
+				impl: {
+					copy() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.copy("/path/to/file.txt", "/path/to/other/file.txt");
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					copy() {
+						return undefined;
+					},
+				},
+			});
+
+			hfs.logStart("copy");
+			await hfs.copy("/path/to/file.txt", "/path/to/other/file.txt");
+			const logs = hfs.logEnd("copy").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "copy",
+						args: ["/path/to/file.txt", "/path/to/other/file.txt"],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the source path is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					copy() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copy(123, "/path/to/other/file.txt"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the source path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					copy() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copy("", "/path/to/other/file.txt"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the destination path is not a string or URL", () => {
+			const hfs = new Hfs({
+				impl: {
+					copy() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copy("/path/to/file.txt", 123),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the destination path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					copy() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copy("/path/to/file.txt", ""),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+	});
 });

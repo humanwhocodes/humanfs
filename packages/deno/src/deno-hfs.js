@@ -288,6 +288,19 @@ export class DenoHfsImpl {
 				throw error;
 			});
 	}
+
+	/**
+	 * Copies a file from one location to another.
+	 * @param {string|URL} fromPath The path to the file to copy.
+	 * @param {string|URL} toPath The path to the destination file.
+	 * @returns {Promise<void>} A promise that resolves when the file is copied.
+	 * @throws {Error} If the source file does not exist.
+	 * @throws {Error} If the source file is a directory.
+	 * @throws {Error} If the destination file is a directory.
+	 */
+	copy(fromPath, toPath) {
+		return this.#deno.copyFile(fromPath, toPath);
+	}
 }
 
 /**

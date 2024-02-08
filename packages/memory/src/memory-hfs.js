@@ -412,6 +412,39 @@ export class MemoryHfsImpl {
 		// use byteLength for strings for accuracy
 		return new TextEncoder().encode(value).byteLength;
 	}
+
+	/**
+	 * Copies a file from one location to another.
+	 * @param {string|URL} fromPath The path to the file to copy.
+	 * @param {string|URL} toPath The path to the destination file.
+	 * @returns {Promise<void>} A promise that resolves when the file is copied.
+	 * @throws {Error} If the source file does not exist.
+	 * @throws {Error} If the source file is a directory.
+	 * @throws {Error} If the destination file is a directory.
+	 */
+	async copy(fromPath, toPath) {
+		const value = readPath(this.#volume, fromPath);
+
+		if (!value) {
+			throw new Error(
+				`ENOENT: no such file, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		if (!isFile(value)) {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		if (await this.isDirectory(toPath)) {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+			);
+		}
+
+		writePath(this.#volume, toPath, value);
+	}
 }
 
 /**

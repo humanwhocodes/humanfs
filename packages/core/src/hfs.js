@@ -378,7 +378,7 @@ export class Hfs {
 	 * @param {string|URL} dirPath The path to the directory to read.
 	 * @returns {AsyncIterable<HfsDirectoryEntry>} A promise that resolves with the
 	 *   directory entries.
-	 * @throws {TypeError} If the directory path is not a string.
+	 * @throws {TypeError} If the directory path is not a string or URL.
 	 * @throws {Error} If the directory cannot be read.
 	 */
 	async *list(dirPath) {
@@ -390,11 +390,25 @@ export class Hfs {
 	 * Returns the size of the given file.
 	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<number>} A promise that resolves with the size of the file.
-	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {TypeError} If the file path is not a string or URL.
 	 * @throws {Error} If the file cannot be read.
 	 */
 	async size(filePath) {
 		assertValidFileOrDirPath(filePath);
 		return this.#callImplMethod("size", filePath);
+	}
+
+	/**
+	 * Copys a file from one location to another.
+	 * @param {string|URL} fromPath The path to the file to copy.
+	 * @param {string|URL} toPath The path to the new file.
+	 * @returns {Promise<void>} A promise that resolves when the file is copied.
+	 * @throws {TypeError} If the file path is not a string or URL.
+	 * @throws {Error} If the file cannot be copied.
+	 */
+	async copy(fromPath, toPath) {
+		assertValidFileOrDirPath(fromPath);
+		assertValidFileOrDirPath(toPath);
+		return this.#callImplMethod("copy", fromPath, toPath);
 	}
 }
