@@ -139,7 +139,7 @@ export class MemoryHfsImpl {
 	 * @param {object} [options={}] The options for the instance.
 	 * @param {object} [options.volume] The in-memory file system volume to use.
 	 */
-	constructor({ volume } = {}) {
+	constructor({ volume = {} } = {}) {
 		this.#volume = volume;
 	}
 

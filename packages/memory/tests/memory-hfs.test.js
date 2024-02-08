@@ -30,6 +30,11 @@ const tester = new HfsImplTester({
 });
 
 await tester.test({
-	name: "MemoryHfsImpl",
+	name: "MemoryHfsImpl (with volume)",
 	impl: new MemoryHfsImpl({ volume }),
+});
+
+await tester.test({
+	name: "MemoryHfsImpl (without volume)",
+	impl: new MemoryHfsImpl(),
 });
