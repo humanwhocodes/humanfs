@@ -357,6 +357,44 @@ export class NodeHfsImpl {
 	copy(fromPath, toPath) {
 		return this.#fsp.copyFile(fromPath, toPath);
 	}
+
+	/**
+	 * Copies a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to copy.
+	 * @param {string|URL} destination The path to copy the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * copied.
+	 * @throws {Error} If the source file or directory does not exist.
+	 * @throws {Error} If the destination file or directory is a directory.
+	 */
+	async copyAll(source, destination) {
+		// for files use copy() and exit
+		if (await this.isFile(source)) {
+			return this.copy(source, destination);
+		}
+
+		const sourceStr =
+			source instanceof URL ? fileURLToPath(source) : source;
+
+		const destinationStr =
+			destination instanceof URL
+				? fileURLToPath(destination)
+				: destination;
+
+		// for directories, create the destination directory and copy each entry
+		await this.createDirectory(destination);
+
+		for await (const entry of this.list(source)) {
+			const fromEntryPath = path.join(sourceStr, entry.name);
+			const toEntryPath = path.join(destinationStr, entry.name);
+
+			if (entry.isDirectory) {
+				await this.copyAll(fromEntryPath, toEntryPath);
+			} else {
+				await this.copy(fromEntryPath, toEntryPath);
+			}
+		}
+	}
 }
 
 /**

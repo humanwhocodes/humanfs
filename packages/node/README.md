@@ -82,6 +82,9 @@ await hfs.createDirectory("dir/subdir");
 // does the directory exist?
 const dirFound = await hfs.isDirectory("dir");
 
+// copy the entire directory
+hfs.copyAll("from-dir", "to-dir");
+
 // delete a directory
 await hfs.delete("dir");
 

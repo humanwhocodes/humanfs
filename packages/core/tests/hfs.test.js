@@ -1267,4 +1267,86 @@ describe("Hfs", () => {
 			);
 		});
 	});
+
+	describe("copyAll()", () => {
+		it("should not reject a promise when the source and destination are strings", async () => {
+			const hfs = new Hfs({
+				impl: {
+					copyAll() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.copyAll("/path/to/dir", "/path/to/other/dir");
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					copyAll() {
+						return undefined;
+					},
+				},
+			});
+
+			hfs.logStart("copyAll");
+			await hfs.copyAll("/path/to/dir", "/path/to/other/dir");
+			const logs = hfs.logEnd("copyAll").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "copyAll",
+						args: ["/path/to/dir", "/path/to/other/dir"],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the source path is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					copyAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copyAll(123, "/path/to/other/dir"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the source path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					copyAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copyAll("", "/path/to/other/dir"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the destination path is not a string or URL", () => {
+			const hfs = new Hfs({
+				impl: {
+					copyAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.copyAll("/path/to/dir", 123),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+	});
 });

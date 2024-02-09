@@ -113,6 +113,17 @@ export interface HfsImpl {
 	 * @throws {Error} If the file cannot be copied.
 	 */
 	copy?(fromPath: string|URL, toPath: string|URL): Promise<void>;
+
+	/**
+	 * Copies a file or directory from one location to another.
+	 * @param source The path to the file or directory to copy.
+	 * @param destination The path to copy the file or directory to.
+	 * @returns A promise that resolves when the file or directory is
+	 * copied.
+	 * @throws {Error} If the source file or directory does not exist.
+	 * @throws {Error} If the source cannot be read.
+	 */
+	copyAll?(fromPath: string|URL, toPath: string|URL): Promise<void>;
 }
 
 //------------------------------------------------------------------------------

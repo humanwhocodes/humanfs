@@ -444,6 +444,62 @@ export class MemoryHfsImpl {
 
 		writePath(this.#volume, toPath, value);
 	}
+
+	/**
+	 * Copies a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to copy.
+	 * @param {string|URL} destination The path to copy the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * copied.
+	 * @throws {Error} If the source file or directory does not exist.
+	 * @throws {Error} If the destination file or directory is a directory.
+	 */
+	async copyAll(source, destination) {
+		// for files use copy() and exit
+		if (await this.isFile(source)) {
+			return this.copy(source, destination);
+		}
+
+		// if the source isn't a directory then throw an error
+		if (!(await this.isDirectory(source))) {
+			throw new Error(
+				`ENOENT: no such file or directory, copy '${source}' -> '${destination}'`,
+			);
+		}
+
+		const sourcePath =
+			source instanceof URL
+				? Path.fromURL(source)
+				: Path.fromString(source);
+
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
+
+		// for directories, create the destination directory and copy each entry
+		await this.createDirectory(destination);
+
+		for await (const entry of this.list(source)) {
+			destinationPath.push(entry.name);
+			sourcePath.push(entry.name);
+
+			if (entry.isDirectory) {
+				await this.copyAll(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			} else {
+				await this.copy(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			}
+
+			destinationPath.pop();
+			sourcePath.pop();
+		}
+	}
 }
 
 /**

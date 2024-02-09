@@ -27,7 +27,15 @@ if (await hfs.isDirectory("/path/to/directory")) {
 > [!IMPORTANT]
 > If the directory doesn't exist, `hfs.isDirectory()` returns `false`. This method does not throw errors unless the directorysystem cannot be accessed.
 
-## Deleting directories
+## Copying Directories
+
+To copy a directory and all of its contents, call the `hfs.copyAll(source, destination)` method. For example:
+
+```js
+await hfs.copyAll("/path/to/source", "/path/to/destination");
+```
+
+## Deleting Directories
 
 To delete an empty directory, call the `hfs.delete(dirPath)` method. For example:
 
