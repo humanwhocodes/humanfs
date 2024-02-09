@@ -96,27 +96,26 @@ function writePath(volume, fileOrDirPath, value) {
 		fileOrDirPath instanceof URL
 			? Path.fromURL(fileOrDirPath)
 			: Path.fromString(fileOrDirPath);
-	const parts = [...path];
-	let part = parts.shift();
-	let object = volume;
+	const name = path.pop();
+	let directory = volume;
 
-	do {
-		let entry = object[part];
+	// create any missing directories
+	for (const step of path) {
+		let entry = directory[step];
 
 		if (!entry) {
-			entry = object[part] = {};
+			entry = directory[step] = {};
 		}
 
-		object = entry;
-		part = parts.shift();
-	} while (parts.length > 0);
+		directory = entry;
+	}
 
 	// we don't want to overwrite an existing directory
-	if (object && isDirectory(object[part]) && isDirectory(value)) {
+	if (directory && isDirectory(directory[name]) && isDirectory(value)) {
 		return;
 	}
 
-	object[part] = value;
+	directory[name] = value;
 }
 
 //-----------------------------------------------------------------------------
