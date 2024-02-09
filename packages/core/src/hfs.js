@@ -411,4 +411,19 @@ export class Hfs {
 		assertValidFileOrDirPath(toPath);
 		return this.#callImplMethod("copy", fromPath, toPath);
 	}
+
+	/**
+	 * Copies a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to copy.
+	 * @param {string|URL} destination The path to copy the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * copied.
+	 * @throws {TypeError} If the directory path is not a string or URL.
+	 * @throws {Error} If the directory cannot be copied.
+	 */
+	async copyAll(source, destination) {
+		assertValidFileOrDirPath(source);
+		assertValidFileOrDirPath(destination);
+		return this.#callImplMethod("copyAll", source, destination);
+	}
 }
