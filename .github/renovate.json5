@@ -13,7 +13,7 @@
     // published for 30 days
     {
       matchDatasources: ['npm'],
-      minimumReleaseAge: '30 days',
-    },
-  ],
+      minimumReleaseAge: '30 days'
+    }
+  ]
 }
