@@ -3,6 +3,8 @@
  * @author Nicholas C. Zakas
  */
 
+/*global describe, it */
+
 //------------------------------------------------------------------------------
 // Imports
 //------------------------------------------------------------------------------
@@ -37,4 +39,17 @@ await tester.test({
 await tester.test({
 	name: "MemoryHfsImpl (without volume)",
 	impl: new MemoryHfsImpl(),
+});
+
+describe("MemoryHfsImpl Customizations", () => {
+	describe("delete()", () => {
+		// https://github.com/humanwhocodes/humanfs/issues/74
+		it("should delete a file that was just written at the root", async () => {
+			const impl = new MemoryHfsImpl();
+			await impl.write("foo.txt", "bar");
+			await impl.delete("foo.txt");
+			const result = await impl.isFile("foo.txt");
+			assert.strictEqual(result, false);
+		});
+	});
 });
