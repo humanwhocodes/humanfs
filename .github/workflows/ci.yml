@@ -10,6 +10,7 @@ on:
 
 jobs:
     build:
+        name: "Node.js v${{ matrix.node-version }} and Deno v${{ matrix.deno-version }} Build"
         runs-on: ${{ matrix.os }}
 
         strategy:
@@ -35,5 +36,34 @@ jobs:
               run: |
                   npm install
                   npm test
+              env:
+                  CI: true
+    bun-build:
+        name: "Bun v${{ matrix.bun-version }} and Deno v${{ matrix.deno-version }} Build"
+        runs-on: ${{ matrix.os }}
+
+        strategy:
+            matrix:
+                os: [ubuntu-latest]
+                bun-version: [1.x]
+                deno-version: [1.x]
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Set up Bun ${{ matrix.bun-version }}
+              uses: oven-sh/setup-bun@v1
+              with:
+                  bun-version: ${{ matrix.bun-version }}
+
+            - name: Set up Deno ${{ matrix.deno-version }}
+              uses: denoland/setup-deno@v1
+              with:
+                  deno-version: ${{ matrix.deno-version }}
+
+            - name: bun install, build, and test
+              run: |
+                  bun install
+                  bun test
               env:
                   CI: true
