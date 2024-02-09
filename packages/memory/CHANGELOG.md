@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.10.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.9.0...memory-v0.10.0) (2024-02-09)
+
+
+### Features
+
+* Add copyAll() method ([#77](https://github.com/humanwhocodes/humanfs/issues/77)) ([3c0852a](https://github.com/humanwhocodes/humanfs/commit/3c0852af99cb835b3941f58fdc2206e7b1179e21))
+
+
+### Bug Fixes
+
+* Writing files at the root. ([#75](https://github.com/humanwhocodes/humanfs/issues/75)) ([f978003](https://github.com/humanwhocodes/humanfs/commit/f978003a8b0e5c261dc9613695d1dbb53c399810))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.9.0 to ^0.10.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.8.0 to ^0.9.0
+    * @humanfs/types bumped from ^0.7.0 to ^0.8.0
+
 ## [0.9.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.8.0...memory-v0.9.0) (2024-02-08)
 
 
