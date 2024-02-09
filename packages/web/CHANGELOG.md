@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.6.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.5.0...web-v0.6.0) (2024-02-09)
+
+
+### Features
+
+* Add copyAll() method ([#77](https://github.com/humanwhocodes/humanfs/issues/77)) ([3c0852a](https://github.com/humanwhocodes/humanfs/commit/3c0852af99cb835b3941f58fdc2206e7b1179e21))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.9.0 to ^0.10.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.8.0 to ^0.9.0
+    * @humanfs/types bumped from ^0.7.0 to ^0.8.0
+
 ## [0.5.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.4.0...web-v0.5.0) (2024-02-08)
 
 
