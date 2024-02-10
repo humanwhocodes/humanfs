@@ -4,6 +4,10 @@
 
 humanfs is a modern filesystem library for JavaScript runtimes. The overall goal is to create an enjoyable, flexible, observable library for filesystem operations that adheres more to modern API design than Linux utility design.
 
+## Design Overview
+
+If you'd like to learn more about the design of humanfs, please read the [Design document](design.md).
+
 ## Choosing a Runtime Package
 
 To get started, choose which runtime package you'd like to use:
