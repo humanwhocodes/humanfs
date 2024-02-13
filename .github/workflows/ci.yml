@@ -39,14 +39,13 @@ jobs:
               env:
                   CI: true
     bun-build:
-        name: "Bun v${{ matrix.bun-version }} and Deno v${{ matrix.deno-version }} Build"
+        name: "Bun v${{ matrix.bun-version }} Build"
         runs-on: ${{ matrix.os }}
 
         strategy:
             matrix:
                 os: [ubuntu-latest]
                 bun-version: [1.x]
-                deno-version: [1.x]
 
         steps:
             - uses: actions/checkout@v4
@@ -56,14 +55,22 @@ jobs:
               with:
                   bun-version: ${{ matrix.bun-version }}
 
-            - name: Set up Deno ${{ matrix.deno-version }}
-              uses: denoland/setup-deno@v1
-              with:
-                  deno-version: ${{ matrix.deno-version }}
+            - run: bun install
 
-            - name: bun install, build, and test
-              run: |
-                  bun install
-                  bun test
+            - name: Test Core Package
+              run: bun test
+              working-directory: packages/core
+              env:
+                  CI: true
+
+            - name: Test Node.js Package
+              run: bun test
+              working-directory: packages/node
+              env:
+                  CI: true
+
+            - name: Test Memory Package
+              run: bun test
+              working-directory: packages/memory
               env:
                   CI: true
