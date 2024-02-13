@@ -566,6 +566,7 @@ export class WebHfsImpl {
 			);
 		}
 
+		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
 		const destinationPath =
 			destination instanceof URL
 				? Path.fromURL(destination)
@@ -586,10 +587,12 @@ export class WebHfsImpl {
 			throw ex;
 		};
 
-		// @ts-ignore -- TS doesn't know about this yet
-		return handle
-			.move(destinationParent, destinationName)
-			.catch(handleChromeError);
+		return (
+			fileHandle
+				// @ts-ignore -- TS doesn't know about this yet
+				.move(destinationParent, destinationName)
+				.catch(handleChromeError)
+		);
 	}
 
 	/**
@@ -601,27 +604,46 @@ export class WebHfsImpl {
 	 * @throws {Error} If the source file or directory does not exist.
 	 */
 	async moveAll(source, destination) {
-		// for files use move() and exit
-		if (await this.isFile(source)) {
-			return this.move(source, destination);
-		}
+		const handle = await findPath(this.#root, source);
 
-		// if the source isn't a directory then throw an error
-		if (!(await this.isDirectory(source))) {
+		// if the source doesn't exist then throw an error
+		if (!handle) {
 			throw new Error(
 				`ENOENT: no such file or directory, moveAll '${source}' -> '${destination}'`,
 			);
+		}
+
+		// for files use move() and exit
+		if (handle.kind === "file") {
+			return this.move(source, destination);
+		}
+
+		const directoryHandle = /** @type {FileSystemDirectoryHandle} */ (
+			handle
+		);
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
+
+		// Chrome doesn't yet support move() on directories
+		// @ts-ignore -- TS doesn't know about this yet
+		if (directoryHandle.move) {
+			const destinationName = destinationPath.pop();
+			const destinationParent = await findPath(
+				this.#root,
+				destinationPath.toString(),
+				{ create: true, kind: "directory" },
+			);
+
+			// @ts-ignore -- TS doesn't know about this yet
+			return directoryHandle.move(destinationParent, destinationName);
 		}
 
 		const sourcePath =
 			source instanceof URL
 				? Path.fromURL(source)
 				: Path.fromString(source);
-
-		const destinationPath =
-			destination instanceof URL
-				? Path.fromURL(destination)
-				: Path.fromString(destination);
 
 		// for directories, create the destination directory and move each entry
 		await this.createDirectory(destination);
