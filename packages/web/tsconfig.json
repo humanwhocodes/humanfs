@@ -9,7 +9,7 @@
     "target": "ES2022",
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
-    "types": ["node"],
+    "types": [],
     "typeRoots": ["../../node_modules/@types"]
   }
 }

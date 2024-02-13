@@ -1,4 +1,5 @@
 {
   "deno.lint": false,
-  "deno.enablePaths": ["packages/deno"]
+  "deno.enablePaths": ["packages/deno"],
+  "deno.importMap": "packages/deno/import_map.json"
 }

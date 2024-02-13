@@ -291,15 +291,15 @@ export class DenoHfsImpl {
 
 	/**
 	 * Copies a file from one location to another.
-	 * @param {string|URL} fromPath The path to the file to copy.
-	 * @param {string|URL} toPath The path to the destination file.
+	 * @param {string|URL} source The path to the file to copy.
+	 * @param {string|URL} destination The path to the destination file.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
 	 * @throws {Error} If the source file does not exist.
 	 * @throws {Error} If the source file is a directory.
 	 * @throws {Error} If the destination file is a directory.
 	 */
-	copy(fromPath, toPath) {
-		return this.#deno.copyFile(fromPath, toPath);
+	copy(source, destination) {
+		return this.#deno.copyFile(source, destination);
 	}
 
 	/**
@@ -338,6 +338,38 @@ export class DenoHfsImpl {
 				await this.copy(fromEntryPath, toEntryPath);
 			}
 		}
+	}
+
+	/**
+	 * Moves a file from the source path to the destination path.
+	 * @param {string|URL} source The location of the file to move.
+	 * @param {string|URL} destination The destination of the file to move.
+	 * @returns {Promise<void>} A promise that resolves when the move is complete.
+	 * @throws {TypeError} If the file paths are not strings.
+	 * @throws {Error} If the file cannot be moved.
+	 */
+	move(source, destination) {
+		return this.#deno.stat(source).then(stat => {
+			if (stat.isDirectory) {
+				throw new Error(
+					`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
+				);
+			}
+
+			return this.#deno.rename(source, destination);
+		});
+	}
+
+	/**
+	 * Moves a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to move.
+	 * @param {string|URL} destination The path to move the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * moved.
+	 * @throws {Error} If the source file or directory does not exist.
+	 */
+	moveAll(source, destination) {
+		return this.#deno.rename(source, destination);
 	}
 }
 

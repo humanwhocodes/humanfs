@@ -448,35 +448,38 @@ export class WebHfsImpl {
 
 	/**
 	 * Copies a file from one location to another.
-	 * @param {string|URL} fromPath The path to the file to copy.
-	 * @param {string|URL} toPath The path to the destination file.
+	 * @param {string|URL} source The path to the file to copy.
+	 * @param {string|URL} destination The path to the destination file.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
 	 */
-	async copy(fromPath, toPath) {
+	async copy(source, destination) {
 		const fromHandle = /** @type {FileSystemFileHandle } */ (
-			await findPath(this.#root, fromPath)
+			await findPath(this.#root, source)
 		);
 
 		if (!fromHandle) {
 			throw new Error(
-				`ENOENT: no such file, copy '${fromPath}' -> '${toPath}'`,
+				`ENOENT: no such file, copy '${source}' -> '${destination}'`,
 			);
 		}
 
 		if (fromHandle.kind !== "file") {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
 		}
 
-		if (await this.isDirectory(toPath)) {
+		if (await this.isDirectory(destination)) {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
 		}
 
 		const toHandle = /** @type {FileSystemFileHandle } */ (
-			await findPath(this.#root, toPath, { create: true, kind: "file" })
+			await findPath(this.#root, destination, {
+				create: true,
+				kind: "file",
+			})
 		);
 		const file = await fromHandle.getFile();
 		const writable = await toHandle.createWritable();
@@ -538,6 +541,134 @@ export class WebHfsImpl {
 			destinationPath.pop();
 			sourcePath.pop();
 		}
+	}
+
+	/**
+	 * Moves a file from the source path to the destination path.
+	 * @param {string|URL} source The location of the file to move.
+	 * @param {string|URL} destination The destination of the file to move.
+	 * @returns {Promise<void>} A promise that resolves when the move is complete.
+	 * @throws {TypeError} If the file paths are not strings.
+	 * @throws {Error} If the file cannot be moved.
+	 */
+	async move(source, destination) {
+		const handle = await findPath(this.#root, source);
+
+		if (!handle) {
+			throw new Error(
+				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
+			);
+		}
+
+		if (handle.kind !== "file") {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
+			);
+		}
+
+		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
+		const destinationName = destinationPath.pop();
+		const destinationParent = await findPath(
+			this.#root,
+			destinationPath.toString(),
+			{ create: true, kind: "directory" },
+		);
+
+		const handleChromeError = async ex => {
+			if (ex.name === "NotAllowedError") {
+				await this.copy(source, destination);
+				await this.delete(source);
+				return;
+			}
+			throw ex;
+		};
+
+		return (
+			fileHandle
+				// @ts-ignore -- TS doesn't know about this yet
+				.move(destinationParent, destinationName)
+				.catch(handleChromeError)
+		);
+	}
+
+	/**
+	 * Moves a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to move.
+	 * @param {string|URL} destination The path to move the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * moved.
+	 * @throws {Error} If the source file or directory does not exist.
+	 */
+	async moveAll(source, destination) {
+		const handle = await findPath(this.#root, source);
+
+		// if the source doesn't exist then throw an error
+		if (!handle) {
+			throw new Error(
+				`ENOENT: no such file or directory, moveAll '${source}' -> '${destination}'`,
+			);
+		}
+
+		// for files use move() and exit
+		if (handle.kind === "file") {
+			return this.move(source, destination);
+		}
+
+		const directoryHandle = /** @type {FileSystemDirectoryHandle} */ (
+			handle
+		);
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
+
+		// Chrome doesn't yet support move() on directories
+		// @ts-ignore -- TS doesn't know about this yet
+		if (directoryHandle.move) {
+			const destinationName = destinationPath.pop();
+			const destinationParent = await findPath(
+				this.#root,
+				destinationPath.toString(),
+				{ create: true, kind: "directory" },
+			);
+
+			// @ts-ignore -- TS doesn't know about this yet
+			return directoryHandle.move(destinationParent, destinationName);
+		}
+
+		const sourcePath =
+			source instanceof URL
+				? Path.fromURL(source)
+				: Path.fromString(source);
+
+		// for directories, create the destination directory and move each entry
+		await this.createDirectory(destination);
+
+		for await (const entry of this.list(source)) {
+			destinationPath.push(entry.name);
+			sourcePath.push(entry.name);
+
+			if (entry.isDirectory) {
+				await this.moveAll(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			} else {
+				await this.move(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			}
+
+			destinationPath.pop();
+			sourcePath.pop();
+		}
+
+		await this.delete(source);
 	}
 }
 

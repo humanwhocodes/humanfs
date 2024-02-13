@@ -108,6 +108,9 @@ const size = await hfs.size("file.txt");
 // copy a file from one location to another
 await hfs.copy("file.txt", "file-copy.txt");
 
+// move a file from one location to another
+await hfs.move("file.txt", "renamed.txt");
+
 // delete a file
 await hfs.delete("file.txt");
 
@@ -124,6 +127,9 @@ const dirFound = await hfs.isDirectory("dir");
 
 // copy the entire directory
 hfs.copyAll("from-dir", "to-dir");
+
+// move the entire directory
+hfs.moveAll("from-dir", "to-dir");
 
 // delete a directory
 await hfs.delete("dir");
