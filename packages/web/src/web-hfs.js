@@ -448,35 +448,38 @@ export class WebHfsImpl {
 
 	/**
 	 * Copies a file from one location to another.
-	 * @param {string|URL} fromPath The path to the file to copy.
-	 * @param {string|URL} toPath The path to the destination file.
+	 * @param {string|URL} source The path to the file to copy.
+	 * @param {string|URL} destination The path to the destination file.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
 	 */
-	async copy(fromPath, toPath) {
+	async copy(source, destination) {
 		const fromHandle = /** @type {FileSystemFileHandle } */ (
-			await findPath(this.#root, fromPath)
+			await findPath(this.#root, source)
 		);
 
 		if (!fromHandle) {
 			throw new Error(
-				`ENOENT: no such file, copy '${fromPath}' -> '${toPath}'`,
+				`ENOENT: no such file, copy '${source}' -> '${destination}'`,
 			);
 		}
 
 		if (fromHandle.kind !== "file") {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
 		}
 
-		if (await this.isDirectory(toPath)) {
+		if (await this.isDirectory(destination)) {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
 		}
 
 		const toHandle = /** @type {FileSystemFileHandle } */ (
-			await findPath(this.#root, toPath, { create: true, kind: "file" })
+			await findPath(this.#root, destination, {
+				create: true,
+				kind: "file",
+			})
 		);
 		const file = await fromHandle.getFile();
 		const writable = await toHandle.createWritable();
@@ -549,15 +552,13 @@ export class WebHfsImpl {
 	 * @throws {Error} If the file cannot be moved.
 	 */
 	async move(source, destination) {
+		const handle = await findPath(this.#root, source);
 
-		
-		const handle = (await findPath(this.#root, source));
-		
 		if (!handle) {
 			throw new Error(
 				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
-				);
-			}
+			);
+		}
 
 		if (handle.kind !== "file") {
 			throw new Error(
@@ -565,49 +566,87 @@ export class WebHfsImpl {
 			);
 		}
 
-		const destinationPath = destination instanceof URL ? Path.fromURL(destination) : Path.fromString(destination);
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
 		const destinationName = destinationPath.pop();
-		const sourceParent = await findPath(this.#root, source, { returnParent: true });
-		const destinationParent = await findPath(this.#root, destinationPath.toString(), { create: true, kind: "directory" });
+		const destinationParent = await findPath(
+			this.#root,
+			destinationPath.toString(),
+			{ create: true, kind: "directory" },
+		);
 
-		const handleChromeError = async (ex) => {
+		const handleChromeError = async ex => {
 			if (ex.name === "NotAllowedError") {
 				await this.copy(source, destination);
 				await this.delete(source);
 				return;
 			}
-
 			throw ex;
 		};
 
-		// Simple case -- just rename. Supported by both Chrome and Firefox.
-		if (sourceParent.isSameEntry(destinationParent)) {
-			// @ts-ignore -- TS doesn't know about this yet
-			return handle.move(destinationName)
-				.catch(handleChromeError);
+		// @ts-ignore -- TS doesn't know about this yet
+		return handle
+			.move(destinationParent, destinationName)
+			.catch(handleChromeError);
+	}
+
+	/**
+	 * Moves a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to move.
+	 * @param {string|URL} destination The path to move the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * moved.
+	 * @throws {Error} If the source file or directory does not exist.
+	 */
+	async moveAll(source, destination) {
+		// for files use move() and exit
+		if (await this.isFile(source)) {
+			return this.move(source, destination);
 		}
 
-		// More complex case -- change directories. Supported by Firefox but not Chrome.
+		// if the source isn't a directory then throw an error
+		if (!(await this.isDirectory(source))) {
+			throw new Error(
+				`ENOENT: no such file or directory, moveAll '${source}' -> '${destination}'`,
+			);
+		}
 
-		// @ts-ignore -- TS doesn't know about this yet
-		try {
-			await handle.move();
-		} catch (ex) {
+		const sourcePath =
+			source instanceof URL
+				? Path.fromURL(source)
+				: Path.fromString(source);
 
-			/*
-			 * Chromium throws an error only in automation mode, not in the browser.
-			 * So for testing purposes, we need to check for this error and do the
-			 * brute force method instead.
-			 */
-			if (ex.name === "NotAllowedError") {				
-				await this.copy(source, destination);
-				await this.delete(source);
-				return;
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
+
+		// for directories, create the destination directory and move each entry
+		await this.createDirectory(destination);
+
+		for await (const entry of this.list(source)) {
+			destinationPath.push(entry.name);
+			sourcePath.push(entry.name);
+
+			if (entry.isDirectory) {
+				await this.moveAll(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			} else {
+				await this.move(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
 			}
 
-			throw ex;
+			destinationPath.pop();
+			sourcePath.pop();
 		}
 
+		await this.delete(source);
 	}
 }
 

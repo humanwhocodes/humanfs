@@ -414,35 +414,35 @@ export class MemoryHfsImpl {
 
 	/**
 	 * Copies a file from one location to another.
-	 * @param {string|URL} fromPath The path to the file to copy.
-	 * @param {string|URL} toPath The path to the destination file.
+	 * @param {string|URL} source The path to the file to copy.
+	 * @param {string|URL} destination The path to the destination file.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
 	 * @throws {Error} If the source file does not exist.
 	 * @throws {Error} If the source file is a directory.
 	 * @throws {Error} If the destination file is a directory.
 	 */
-	async copy(fromPath, toPath) {
-		const value = readPath(this.#volume, fromPath);
+	async copy(source, destination) {
+		const value = readPath(this.#volume, source);
 
 		if (!value) {
 			throw new Error(
-				`ENOENT: no such file, copy '${fromPath}' -> '${toPath}'`,
+				`ENOENT: no such file, copy '${source}' -> '${destination}'`,
 			);
 		}
 
 		if (!isFile(value)) {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
 		}
 
-		if (await this.isDirectory(toPath)) {
+		if (await this.isDirectory(destination)) {
 			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${fromPath}' -> '${toPath}'`,
+				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
 		}
 
-		writePath(this.#volume, toPath, value);
+		writePath(this.#volume, destination, value);
 	}
 
 	/**
@@ -511,7 +511,6 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be moved.
 	 */
 	async move(source, destination) {
-
 		const value = readPath(this.#volume, source);
 
 		if (!value) {
@@ -527,6 +526,64 @@ export class MemoryHfsImpl {
 		}
 
 		writePath(this.#volume, destination, value);
+
+		this.delete(source);
+	}
+
+	/**
+	 * Moves a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to move.
+	 * @param {string|URL} destination The path to move the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * moved.
+	 * @throws {Error} If the source file or directory does not exist.
+	 * @throws {Error} If the file or directory cannot be moved.
+	 */
+	async moveAll(source, destination) {
+		// for files use move() and exit
+		if (await this.isFile(source)) {
+			return this.move(source, destination);
+		}
+
+		// if the source isn't a directory then throw an error
+		if (!(await this.isDirectory(source))) {
+			throw new Error(
+				`ENOENT: no such file or directory, moveAll '${source}' -> '${destination}'`,
+			);
+		}
+
+		const sourcePath =
+			source instanceof URL
+				? Path.fromURL(source)
+				: Path.fromString(source);
+
+		const destinationPath =
+			destination instanceof URL
+				? Path.fromURL(destination)
+				: Path.fromString(destination);
+
+		// for directories, create the destination directory and copy each entry
+		await this.createDirectory(destination);
+
+		for await (const entry of this.list(source)) {
+			destinationPath.push(entry.name);
+			sourcePath.push(entry.name);
+
+			if (entry.isDirectory) {
+				await this.moveAll(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			} else {
+				await this.move(
+					sourcePath.toString(),
+					destinationPath.toString(),
+				);
+			}
+
+			destinationPath.pop();
+			sourcePath.pop();
+		}
 
 		this.delete(source);
 	}

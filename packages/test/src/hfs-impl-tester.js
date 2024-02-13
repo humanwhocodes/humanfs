@@ -1196,10 +1196,7 @@ export class HfsImplTester {
 			}
 
 			if (impl.move) {
-
-				describe.only("move()", () => {
-
-
+				describe("move()", () => {
 					let dirPath = this.#outputDir + "/tmp-move";
 
 					beforeEach(async () => {
@@ -1225,7 +1222,10 @@ export class HfsImplTester {
 						await impl.move(filePath, newFilePath);
 
 						assert.strictEqual(await impl.isFile(filePath), false);
-						assert.strictEqual(await impl.isFile(newFilePath), true);
+						assert.strictEqual(
+							await impl.isFile(newFilePath),
+							true,
+						);
 
 						const text = await impl.text(newFilePath);
 						assert.strictEqual(text, "Hello, world!");
@@ -1239,7 +1239,10 @@ export class HfsImplTester {
 						await impl.move(fileUrl, newFileUrl);
 
 						assert.strictEqual(await impl.isFile(filePath), false);
-						assert.strictEqual(await impl.isFile(newFilePath), true);
+						assert.strictEqual(
+							await impl.isFile(newFilePath),
+							true,
+						);
 
 						const text = await impl.text(newFilePath);
 						assert.strictEqual(text, "Hello, world!");
@@ -1247,14 +1250,26 @@ export class HfsImplTester {
 
 					it("should move a file to a new directory", async () => {
 						const filePath = dirPath + "/test1.txt";
-						const newFilePath = dirPath + "/subdir/test1-moved.txt";
+						const newFilePath = dirPath + "/subdir/test1.txt";
 						await impl.move(filePath, newFilePath);
 
-						assert.strictEqual(await impl.isFile(filePath), false);
-						assert.strictEqual(await impl.isFile(newFilePath), true);
+						assert.strictEqual(
+							await impl.isFile(filePath),
+							false,
+							"File should not exist at the old location.",
+						);
+						assert.strictEqual(
+							await impl.isFile(newFilePath),
+							true,
+							"File should exist at the new location.",
+						);
 
 						const text = await impl.text(newFilePath);
-						assert.strictEqual(text, "Hello, world!");
+						assert.strictEqual(
+							text,
+							"Hello, world!",
+							"The file should contain the correct contents at the new location.",
+						);
 					});
 
 					it("should reject a promise when the source file doesn't exist", async () => {
@@ -1267,7 +1282,6 @@ export class HfsImplTester {
 					});
 
 					it("should reject a promise when the source is a directory", async () => {
-
 						const subdirPath = dirPath + "/subdir";
 						const newFilePath = dirPath + "/subdir-moved";
 						await assert.rejects(
@@ -1275,7 +1289,118 @@ export class HfsImplTester {
 							/EISDIR|EPERM|ENOTSUP/,
 						);
 					});
+				});
+			}
 
+			if (impl.moveAll) {
+				describe("moveAll()", () => {
+					let dirPath = this.#outputDir + "/tmp-move-all";
+
+					beforeEach(async () => {
+						await impl.createDirectory(dirPath);
+						await impl.createDirectory(dirPath + "/subdir");
+						await impl.write(
+							dirPath + "/test1.txt",
+							"Hello, world!",
+						);
+						await impl.write(
+							dirPath + "/test2.txt",
+							"Hello, world!",
+						);
+						await impl.write(
+							dirPath + "/subdir/test3.txt",
+							"Hello, world!",
+						);
+					});
+
+					afterEach(async () => {
+						await impl.deleteAll(dirPath);
+					});
+
+					it("should move a file", async () => {
+						const sourcePath = dirPath + "/test1.txt";
+						const destPath = dirPath + "/test1-moved.txt";
+						await impl.moveAll(sourcePath, destPath);
+
+						assert.strictEqual(
+							await impl.isFile(sourcePath),
+							false,
+						);
+						assert.strictEqual(await impl.isFile(destPath), true);
+
+						const text = await impl.text(destPath);
+						assert.strictEqual(text, "Hello, world!");
+					});
+
+					it("should move a file at the file URL", async () => {
+						const sourcePath = dirPath + "/test1.txt";
+						const destPath = dirPath + "/test1-moved.txt";
+						const sourceUrl = filePathToUrl(sourcePath);
+						const destUrl = filePathToUrl(destPath);
+						await impl.moveAll(sourceUrl, destUrl);
+
+						assert.strictEqual(
+							await impl.isFile(sourcePath),
+							false,
+						);
+						assert.strictEqual(await impl.isFile(destPath), true);
+
+						const text = await impl.text(destPath);
+						assert.strictEqual(text, "Hello, world!");
+					});
+
+					it("should move a file to a new directory", async () => {
+						const sourcePath = dirPath + "/test1.txt";
+						const destPath = dirPath + "/subdir/test1.txt";
+						await impl.moveAll(sourcePath, destPath);
+
+						assert.strictEqual(
+							await impl.isFile(sourcePath),
+							false,
+							"File should not exist at the old location.",
+						);
+						assert.strictEqual(
+							await impl.isFile(destPath),
+							true,
+							"File should exist at the new location.",
+						);
+
+						const text = await impl.text(destPath);
+						assert.strictEqual(
+							text,
+							"Hello, world!",
+							"The file should contain the correct contents at the new location.",
+						);
+					});
+
+					it("should reject a promise when the source doesn't exist", async () => {
+						const sourcePath = dirPath + "/nonexistent.txt";
+						const destPath = dirPath + "/nonexistent-moved.txt";
+						await assert.rejects(
+							() => impl.moveAll(sourcePath, destPath),
+							/ENOENT/,
+						);
+					});
+
+					it("should move a directory to a new directory", async () => {
+						const sourcePath = dirPath + "/subdir";
+						const destPath = dirPath + "/subdir-moved";
+						await impl.moveAll(sourcePath, destPath);
+
+						assert.strictEqual(
+							await impl.isDirectory(sourcePath),
+							false,
+							"Directory should not exist at the old location.",
+						);
+						assert.strictEqual(
+							await impl.isDirectory(destPath),
+							true,
+							"Directory should exist at the new location.",
+						);
+
+						const text = await impl.text(destPath + "/test3.txt");
+						assert.strictEqual(text, "Hello, world!"); //, "The file should contain the correct contents at the new location.");
+					});
 				});
 			}
 		});

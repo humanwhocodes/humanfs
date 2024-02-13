@@ -672,7 +672,9 @@ describe("Hfs", () => {
 
 			return assert.rejects(
 				hfs.write("/path/to/file.txt", 123),
-				new TypeError("File contents must be a string, ArrayBuffer, or ArrayBuffer view."),
+				new TypeError(
+					"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
+				),
 			);
 		});
 	});
@@ -1349,7 +1351,6 @@ describe("Hfs", () => {
 	});
 
 	describe("move()", () => {
-
 		it("should call impl method", async () => {
 			const hfs = new Hfs({
 				impl: {
@@ -1444,6 +1445,102 @@ describe("Hfs", () => {
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
+	});
 
+	describe("moveAll()", () => {
+		it("should call impl method", async () => {
+			const hfs = new Hfs({
+				impl: {
+					moveAll() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.moveAll("/path/to/dir", "/path/to/newdir");
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					moveAll() {
+						return undefined;
+					},
+				},
+			});
+
+			hfs.logStart("moveAll");
+			await hfs.moveAll("/path/to/dir", "/path/to/newdir");
+			const logs = hfs.logEnd("moveAll").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "moveAll",
+						args: ["/path/to/dir", "/path/to/newdir"],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the source is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					moveAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.moveAll(123, "/path/to/newdir"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the source is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					moveAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.moveAll("", "/path/to/newdir"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the destination is not a string", () => {
+			const hfs = new Hfs({
+				impl: {
+					moveAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.moveAll("/path/to/dir", 123),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the destination is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					moveAll() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.moveAll("/path/to/dir", ""),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
 	});
 });

@@ -400,16 +400,16 @@ export class Hfs {
 
 	/**
 	 * Copys a file from one location to another.
-	 * @param {string|URL} fromPath The path to the file to copy.
-	 * @param {string|URL} toPath The path to the new file.
+	 * @param {string|URL} source The path to the file to copy.
+	 * @param {string|URL} destination The path to the new file.
 	 * @returns {Promise<void>} A promise that resolves when the file is copied.
 	 * @throws {TypeError} If the file path is not a string or URL.
 	 * @throws {Error} If the file cannot be copied.
 	 */
-	async copy(fromPath, toPath) {
-		assertValidFileOrDirPath(fromPath);
-		assertValidFileOrDirPath(toPath);
-		return this.#callImplMethod("copy", fromPath, toPath);
+	async copy(source, destination) {
+		assertValidFileOrDirPath(source);
+		assertValidFileOrDirPath(destination);
+		return this.#callImplMethod("copy", source, destination);
 	}
 
 	/**
@@ -439,5 +439,21 @@ export class Hfs {
 		assertValidFileOrDirPath(source);
 		assertValidFileOrDirPath(destination);
 		return this.#callImplMethod("move", source, destination);
+	}
+
+	/**
+	 * Moves a file or directory from one location to another.
+	 * @param {string|URL} source The path to the file or directory to move.
+	 * @param {string|URL} destination The path to move the file or directory to.
+	 * @returns {Promise<void>} A promise that resolves when the file or directory is
+	 * moved.
+	 * @throws {TypeError} If the source is not a string or URL.
+	 * @throws {TypeError} If the destination is not a string or URL.
+	 * @throws {Error} If the file or directory cannot be moved.
+	 */
+	async moveAll(source, destination) {
+		assertValidFileOrDirPath(source);
+		assertValidFileOrDirPath(destination);
+		return this.#callImplMethod("moveAll", source, destination);
 	}
 }

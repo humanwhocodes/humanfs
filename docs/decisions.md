@@ -1,3 +1,21 @@
+# 2024-02-10 The `move()` method should work only on files
+
+## Background
+
+File system APIs typically have a single method (usually `rename()`) that moves both files and directories.
+
+## Decision
+
+The `move()` method will only work on files. The `moveAll()` method will work on files and directories.
+
+## Rationale
+
+We already have `copy()` for copying just files (and empty directories) and `copyAll()` that recursively copies directories, making it obvious that you could be operating on a directory and that operation is potentially more impactful. Even though moving a directory is not destructive, `move()` has the same perils as `copy()` in that it might not be obvious if you mistakenly passed in a directory instead of a file. Further, in some cases `moveAll()` may need to fall back to calling `copyAll()` and `deleteAll()`, so it should have the same name indicating the same significance of the operation.
+
+## Related
+
+* https://github.com/humanwhocodes/humanfs/issues/20
+
 # 2024-02-05 The `move()` method instead of the `rename()` method
 
 ## Background

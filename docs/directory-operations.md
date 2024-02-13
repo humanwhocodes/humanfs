@@ -35,6 +35,14 @@ To copy a directory and all of its contents, call the `hfs.copyAll(source, desti
 await hfs.copyAll("/path/to/source", "/path/to/destination");
 ```
 
+## Moving Directories
+
+To move a directory and all of its contents, call the `hfs.moveAll(source, destination)` method. For example:
+
+```js
+await hfs.moveAll("/path/to/source", "/path/to/destination");
+```
+
 ## Deleting Directories
 
 To delete an empty directory, call the `hfs.delete(dirPath)` method. For example:

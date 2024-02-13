@@ -107,3 +107,11 @@ To copy a file from one location to another, call the `hfs.copy(fromPath, toPath
 ```js
 await hfs.copy("/path/to/file.txt", "/path/to/other-file.txt");
 ```
+
+## Moving Files
+
+To move a file from one location to another, call the `hfs.move(fromPath, toPath)` method. This method only works on files and will throw an error when attempting to move a directory. Here's an example:
+
+```js
+await hfs.move("/path/to/file.txt", "/path/to/other-file.txt");
+```
