@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.10.0...memory-v0.11.0) (2024-02-14)
+
+
+### Features
+
+* Add append() method ([#82](https://github.com/humanwhocodes/humanfs/issues/82)) ([ab7b978](https://github.com/humanwhocodes/humanfs/commit/ab7b978ff3be84dc3fd2fd4d6fa1131dfdec8134))
+* Add move() and moveAll() methods ([#80](https://github.com/humanwhocodes/humanfs/issues/80)) ([85f100b](https://github.com/humanwhocodes/humanfs/commit/85f100b721c99b920b307779548c2a043e7e18b5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.10.0 to ^0.11.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.9.0 to ^0.10.0
+    * @humanfs/types bumped from ^0.8.0 to ^0.9.0
+
 ## [0.10.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.9.0...memory-v0.10.0) (2024-02-09)
 
 
