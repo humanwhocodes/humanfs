@@ -99,6 +99,12 @@ await hfs.write("file.txt", "Hello world!");
 // write bytes to a file
 await hfs.write("file.txt", new TextEncoder().encode("Hello world!"));
 
+// append text to a file
+await hfs.append("file.txt", "Hello world!");
+
+// append bytes to a file
+await hfs.append("file.txt", new TextEncoder().encode("Hello world!"));
+
 // does the file exist?
 const found = await hfs.isFile("file.txt");
 

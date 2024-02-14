@@ -225,6 +225,51 @@ export class NodeHfsImpl {
 	}
 
 	/**
+	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
+	 * @param {string|URL} filePath The path to the file to append to.
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 *  file.
+	 * @returns {Promise<void>} A promise that resolves when the file is
+	 * written.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {Error} If the file cannot be appended to.
+	 */
+	async append(filePath, contents) {
+		let value;
+
+		if (typeof contents === "string") {
+			value = contents;
+		} else if (contents instanceof ArrayBuffer) {
+			value = Buffer.from(contents);
+		} else if (ArrayBuffer.isView(contents)) {
+			const bytes = contents.buffer.slice(
+				contents.byteOffset,
+				contents.byteOffset + contents.byteLength,
+			);
+			value = Buffer.from(bytes);
+		}
+
+		return this.#retrier
+			.retry(() => this.#fsp.appendFile(filePath, value))
+			.catch(error => {
+				// the directory may not exist, so create it
+				if (error.code === "ENOENT") {
+					const dirPath = path.dirname(
+						filePath instanceof URL
+							? fileURLToPath(filePath)
+							: filePath,
+					);
+
+					return this.#fsp
+						.mkdir(dirPath, { recursive: true })
+						.then(() => this.#fsp.appendFile(filePath, value));
+				}
+
+				throw error;
+			});
+	}
+
+	/**
 	 * Checks if a file exists.
 	 * @param {string|URL} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the

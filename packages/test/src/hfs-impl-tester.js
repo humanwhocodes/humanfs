@@ -497,6 +497,204 @@ export class HfsImplTester {
 				});
 			});
 
+			describe("append()", () => {
+				const dirPath = this.#outputDir + "/tmp-append";
+
+				beforeEach(async () => {
+					await impl.createDirectory(dirPath);
+				});
+
+				afterEach(async () => {
+					await impl.deleteAll(dirPath);
+				});
+
+				it("should append a string to a file", async () => {
+					const filePath = dirPath + "/test-generated-text.txt";
+					await impl.write(filePath, "Hello, world!");
+					await impl.append(filePath, " Goodbye, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append a string to a file URL", async () => {
+					const filePath = dirPath + "/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(fileUrl, "Hello, world!");
+					await impl.append(fileUrl, " Goodbye, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append an ArrayBuffer to a file", async () => {
+					const filePath =
+						dirPath + "/test-generated-arraybuffer.txt";
+					await impl.write(
+						filePath,
+						new TextEncoder().encode("Hello, world!").buffer,
+					);
+					await impl.append(
+						filePath,
+						new TextEncoder().encode(" Goodbye, world!").buffer,
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append an ArrayBuffer to a file URL", async () => {
+					const filePath =
+						dirPath + "/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(
+						fileUrl,
+						new TextEncoder().encode("Hello, world!").buffer,
+					);
+					await impl.append(
+						fileUrl,
+						new TextEncoder().encode(" Goodbye, world!").buffer,
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append a Uint8Array to a file", async () => {
+					const filePath =
+						dirPath + "/test-generated-arraybuffer.txt";
+					await impl.write(
+						filePath,
+						new TextEncoder().encode("Hello, world!"),
+					);
+					await impl.append(
+						filePath,
+						new TextEncoder().encode(" Goodbye, world!"),
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append a Uint8Array to a file URL", async () => {
+					const filePath =
+						dirPath + "/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(
+						fileUrl,
+						new TextEncoder().encode("Hello, world!"),
+					);
+					await impl.append(
+						fileUrl,
+						new TextEncoder().encode(" Goodbye, world!"),
+					);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append a Uint8Array subarray to a file", async () => {
+					const filePath =
+						dirPath + "/test-generated-arraybuffer.txt";
+					const bytes = new TextEncoder()
+						.encode("Hello, world! Goodbye, world!")
+						.subarray(4, 7);
+					await impl.append(filePath, bytes);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "o, ");
+				});
+
+				it("should append a Uint8Array subarray to a file URL", async () => {
+					const filePath =
+						dirPath + "/test-generated-arraybuffer.txt";
+					const fileUrl = filePathToUrl(filePath);
+					const bytes = new TextEncoder()
+						.encode("Hello, world! Goodbye, world!")
+						.subarray(4, 7);
+					await impl.append(fileUrl, bytes);
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "o, ");
+				});
+
+				it("should append to an already existing file", async () => {
+					const filePath = dirPath + "/test-generated-text.txt";
+					await impl.write(filePath, "Hello, world!");
+
+					await impl.append(filePath, " Goodbye, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append to an already existing file URL", async () => {
+					const filePath = dirPath + "/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+					await impl.write(fileUrl, "Hello, world!");
+
+					await impl.append(fileUrl, " Goodbye, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+				});
+
+				it("should append to a file when the directory doesn't exist", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-append/nonexistent/test-generated-text.txt";
+
+					await impl.append(filePath, "Hello, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
+				it("should append to a file URL when the directory doesn't exist", async () => {
+					const filePath =
+						this.#outputDir +
+						"/tmp-append/nonexistent/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+
+					await impl.append(fileUrl, "Hello, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
+				it("should create a file when the file doesn't exist", async () => {
+					const filePath = dirPath + "/test-generated-text.txt";
+					await impl.append(filePath, "Hello, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+
+				it("should create a file when the file URL doesn't exist", async () => {
+					const filePath = dirPath + "/test-generated-text.txt";
+					const fileUrl = filePathToUrl(filePath);
+
+					await impl.append(fileUrl, "Hello, world!");
+
+					// make sure the file was written
+					const result = await impl.text(filePath);
+					assert.strictEqual(result, "Hello, world!");
+				});
+			});
+
 			describe("isFile()", () => {
 				it("should return true if a file exists", async () => {
 					const filePath = this.#outputDir + "/hello.txt";

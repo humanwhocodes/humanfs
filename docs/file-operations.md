@@ -71,6 +71,26 @@ await hfs.write("/path/to/file.txt", bytes);
 > [!TIP]
 > This method will create any necessary parent directories that are missing in order to write the file. Effectively, it will run `mkdir -p` and then write the file.
 
+## Appending to Files
+
+To append to files, call the `hfs.append()` method. This method accepts two arguments:
+
+-   `filePath:string` - the path to write to
+-   `value:string|ArrayBuffer|ArrayBufferView` - the value to write to the file
+
+Here's an example:
+
+```js
+await hfs.append("/path/to/file.txt", "Hello world!");
+
+const bytes = new TextEncoder().encode("Goodbye world!");
+
+await hfs.append("/path/to/file.txt", bytes);
+```
+
+> [!TIP]
+> This method will create any necessary parent directories that are missing in order to write the file. Effectively, it will run `mkdir -p` and then write the file.
+
 ## Detecting Files
 
 To determine to if a file exists, use the `hfs.isFile(filePath)` method, which returns `true` if the given file exists or `false` otherwise.
