@@ -254,6 +254,54 @@ export class MemoryHfsImpl {
 	}
 
 	/**
+	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
+	 * @param {string|URL} filePath The path to the file to append to.
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 *  file.
+	 * @returns {Promise<void>} A promise that resolves when the file is
+	 * written.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {Error} If the file cannot be appended to.
+	 */
+	async append(filePath, contents) {
+		const existing = readPath(this.#volume, filePath);
+
+		// simple cases
+		if (typeof contents === "string") {
+			if (existing === undefined) {
+				return writePath(this.#volume, filePath, contents);
+			}
+
+			if (typeof existing === "string") {
+				return writePath(this.#volume, filePath, existing + contents);
+			}
+		}
+
+		// contents must be an ArrayBuffer or ArrayBufferView
+
+		const originalValue =
+			existing instanceof ArrayBuffer
+				? existing
+				: new TextEncoder().encode(existing).buffer;
+
+		const valueToAppend = /** @type {ArrayBuffer} */ (
+			ArrayBuffer.isView(contents)
+				? contents.buffer.slice(
+						contents.byteOffset,
+						contents.byteOffset + contents.byteLength,
+					)
+				: contents
+		);
+
+		const newValue = new Uint8Array([
+			...new Uint8Array(originalValue),
+			...new Uint8Array(valueToAppend),
+		]).buffer;
+
+		return writePath(this.#volume, filePath, newValue);
+	}
+
+	/**
 	 * Checks if a file exists.
 	 * @param {string|URL} filePath The path to the file to check.
 	 * @returns {Promise<boolean>} A promise that resolves with true if the

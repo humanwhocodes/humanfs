@@ -679,6 +679,117 @@ describe("Hfs", () => {
 		});
 	});
 
+	describe("append()", () => {
+		it("should not reject a promise when the value to write is a string", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.append("/path/to/file.txt", "Hello, world!");
+		});
+
+		it("should not reject a promise when the value to write is an ArayBuffer", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new Uint8Array([1, 2, 3]).buffer,
+			);
+		});
+
+		it("should not reject a promise when the value to write is a Uint8Array", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			await hfs.append("/path/to/file.txt", new Uint8Array([1, 2, 3]));
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			hfs.logStart("append");
+			await hfs.append("/path/to/file.txt", "Hello, world!");
+			const logs = hfs.logEnd("append").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "append",
+						args: ["/path/to/file.txt", "Hello, world!"],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string or URL", () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.append(123, "Hello, world!"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.append("", "Hello, world!"),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the contents are a number", () => {
+			const hfs = new Hfs({
+				impl: {
+					append() {
+						return undefined;
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.append("/path/to/file.txt", 123),
+				new TypeError(
+					"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
+				),
+			);
+		});
+	});
+
 	describe("isFile()", () => {
 		it("should return true when the file exists", async () => {
 			const hfs = new Hfs({

@@ -47,6 +47,15 @@ export interface HfsImpl {
 	write?(filePath: string|URL, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
 
 	/**
+	 * Appends the given data to the given file. For text, assumes UTF-8 encoding.
+	 * @param filePath The file to append to.
+	 * @param data The data to append.
+	 * @returns A promise that resolves when the file is written.
+	 * @throws {Error} If the file cannot be written.
+	 */
+	append?(filePath: string|URL, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
+
+	/**
 	 * Checks if the given file exists.
 	 * @param filePath The file to check.
 	 * @returns True if the file exists, false if not.

@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global navigator, URL */
+/* global navigator, URL, TextEncoder */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -266,6 +266,56 @@ export class WebHfsImpl {
 		const writable = await handle.createWritable();
 		await writable.write(value);
 		await writable.close();
+	}
+
+	/**
+	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
+	 * @param {string|URL} filePath The path to the file to append to.
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 *  file.
+	 * @returns {Promise<void>} A promise that resolves when the file is
+	 * written.
+	 * @throws {TypeError} If the file path is not a string.
+	 * @throws {Error} If the file cannot be appended to.
+	 */
+	async append(filePath, contents) {
+		const handle = /** @type {FileSystemFileHandle} */ (
+			await findPath(this.#root, filePath)
+		);
+
+		// if there's no existing file, just write the contents
+		if (!handle) {
+			return this.write(filePath, contents);
+		}
+
+		// can't write to a directory
+		if (handle.kind !== "file") {
+			throw new Error(
+				`EISDIR: illegal operation on a directory, open '${filePath}'`,
+			);
+		}
+
+		const existing = await (await handle.getFile()).arrayBuffer();
+
+		// contents must be an ArrayBuffer or ArrayBufferView
+
+		const valueToAppend = /** @type {ArrayBuffer} */ (
+			ArrayBuffer.isView(contents)
+				? contents.buffer.slice(
+						contents.byteOffset,
+						contents.byteOffset + contents.byteLength,
+					)
+				: typeof contents === "string"
+					? new TextEncoder().encode(contents).buffer
+					: contents
+		);
+
+		const newValue = new Uint8Array([
+			...new Uint8Array(existing),
+			...new Uint8Array(valueToAppend),
+		]).buffer;
+
+		return this.write(filePath, newValue);
 	}
 
 	/**

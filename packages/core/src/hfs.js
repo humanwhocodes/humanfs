@@ -314,6 +314,23 @@ export class Hfs {
 	}
 
 	/**
+	 * Appends the given data to the given file. Creates any necessary directories along the way.
+	 * If the data is a string, UTF-8 encoding is used.
+	 * @param {string|URL} filePath The file to append to.
+	 * @param {any} contents The data to append.
+	 * @returns {Promise<void>} A promise that resolves when the file is appended to.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 * @throws {TypeError} When the file path is not a non-empty string.
+	 * @throws {TypeError} When the file contents are not a string or ArrayBuffer.
+	 * @throws {Error} When the file cannot be appended to.
+	 */
+	async append(filePath, contents) {
+		assertValidFileOrDirPath(filePath);
+		assertValidFileContents(contents);
+		return this.#callImplMethod("append", filePath, contents);
+	}
+
+	/**
 	 * Determines if the given file exists.
 	 * @param {string|URL} filePath The file to check.
 	 * @returns {Promise<boolean>} True if the file exists.
