@@ -57,6 +57,9 @@ const found = await hfs.isFile("file.txt");
 // how big is the file?
 const size = await hfs.size("file.txt");
 
+// when was the file modified?
+const mtime = await hfs.lastModified("file.txt");
+
 // copy a file from one location to another
 await hfs.copy("file.txt", "file-copy.txt");
 

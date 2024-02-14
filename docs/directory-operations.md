@@ -75,3 +75,11 @@ for await (const entry of hfs.list("/path/to/directory")) {
 ```
 
 Each entry in the async iterator implements the [`HfsDirectoryEntry` interface](../packages/types/src/@humanfs/types.ts).
+
+## Retrieving Directory Modification Time
+
+To get the datetime when a directory was last modified, call the `hfs.lastModified(dirPath)` method. This method returns a `Date` object or `undefined` if the directory isn't found. Here's an example:
+
+```js
+const mtime = await hfs.lastModified("/path/to/directory");
+```

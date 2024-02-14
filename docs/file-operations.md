@@ -100,6 +100,14 @@ To get the size of a file in bytes, call the `hfs.size(filePath)` method. This m
 const size = await hfs.size("/path/to/file.txt");
 ```
 
+## Retrieving File Modification Time
+
+To get the datetime when a file was last modified, call the `hfs.lastModified(filePath)` method. This method returns a `Date` object or `undefined` if the file isn't found. Here's an example:
+
+```js
+const mtime = await hfs.lastModified("/path/to/file.txt");
+```
+
 ## Copying Files
 
 To copy a file from one location to another, call the `hfs.copy(fromPath, toPath)` method. This method only works on files and will throw an error when attempting to copy a directory. Here's an example:
