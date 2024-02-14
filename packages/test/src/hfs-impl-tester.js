@@ -1009,6 +1009,36 @@ export class HfsImplTester {
 				});
 			}
 
+			if (impl.lastModified) {
+				describe("lastModified()", () => {
+					it("should return the last modified date of a file", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const result = await impl.lastModified(filePath);
+						assert.ok(result instanceof Date);
+					});
+
+					it("should return the last modified date of a file when using a file URL", async () => {
+						const filePath = this.#outputDir + "/hello.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.lastModified(fileUrl);
+						assert.ok(result instanceof Date);
+					});
+
+					it("should return undefined if the file doesn't exist", async () => {
+						const filePath = this.#outputDir + "/nonexistent.txt";
+						const result = await impl.lastModified(filePath);
+						assert.strictEqual(result, undefined);
+					});
+
+					it("should return undefined if the file doesn't exist at the file URL", async () => {
+						const filePath = this.#outputDir + "/nonexistent.txt";
+						const fileUrl = filePathToUrl(filePath);
+						const result = await impl.lastModified(fileUrl);
+						assert.strictEqual(result, undefined);
+					});
+				});
+			}
+
 			if (impl.copy) {
 				describe("copy()", () => {
 					let dirPath = this.#outputDir + "/tmp-copy";

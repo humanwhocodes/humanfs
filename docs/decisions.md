@@ -1,3 +1,17 @@
+# 2024-02-14 The `lastModified()` method should return a `Date`
+
+## Background
+
+Node.js returns mtimes as both milliseconds and `Date` objects. Deno returns mtimes as `Date` objects. The origin private file system returns mtimes as milliseconds.
+
+## Decision
+
+The `lastModified()` method will return a `Date` object.
+
+## Rationale
+
+When considering developer ergonomics, it seems that returning a `Date` object would be the expected common case for this method. For people who want the milliseconds, they can call `result.getTime()` or even `+result` vs. forcing people to write `new Date(result)` if a number was returned. Once again, I think Deno got this correct.
+
 # 2024-02-10 The `move()` method should work only on files
 
 ## Background

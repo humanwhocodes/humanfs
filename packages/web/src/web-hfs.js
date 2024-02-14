@@ -447,6 +447,25 @@ export class WebHfsImpl {
 	}
 
 	/**
+	 * Returns the last modified date of a file. This method handles ENOENT errors
+	 * and returns undefined in that case.
+	 * @param {string|URL} filePath The path to the file to read.
+	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified
+	 * date of the file or undefined if the file doesn't exist.
+	 */
+	async lastModified(filePath) {
+		const handle = await findPath(this.#root, filePath);
+
+		if (!handle || handle.kind !== "file") {
+			return undefined;
+		}
+
+		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
+		const file = await fileHandle.getFile();
+		return new Date(file.lastModified);
+	}
+
+	/**
 	 * Copies a file from one location to another.
 	 * @param {string|URL} source The path to the file to copy.
 	 * @param {string|URL} destination The path to the destination file.

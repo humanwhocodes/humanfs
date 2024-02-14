@@ -1171,6 +1171,74 @@ describe("Hfs", () => {
 		});
 	});
 
+	describe("lastModified()", () => {
+		it("should return the last modified time of the file", async () => {
+			const hfs = new Hfs({
+				impl: {
+					lastModified() {
+						return new Date(123);
+					},
+				},
+			});
+
+			const result = await hfs.lastModified("/path/to/file.txt");
+			assert.deepStrictEqual(result, new Date(123));
+		});
+
+		it("should log the method call", async () => {
+			const hfs = new Hfs({
+				impl: {
+					lastModified() {
+						return new Date(123);
+					},
+				},
+			});
+
+			hfs.logStart("lastModified");
+			await hfs.lastModified("/path/to/file.txt");
+			const logs = hfs.logEnd("lastModified").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "lastModified",
+						args: ["/path/to/file.txt"],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the file path is not a string or URL", () => {
+			const hfs = new Hfs({
+				impl: {
+					lastModified() {
+						return new Date(123);
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.lastModified(123),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the file path is empty", () => {
+			const hfs = new Hfs({
+				impl: {
+					lastModified() {
+						return new Date(123);
+					},
+				},
+			});
+
+			return assert.rejects(
+				hfs.lastModified(""),
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+	});
+
 	describe("copy()", () => {
 		it("should not reject a promise when the source and destination are strings", async () => {
 			const hfs = new Hfs({

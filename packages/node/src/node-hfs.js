@@ -347,6 +347,26 @@ export class NodeHfsImpl {
 	}
 
 	/**
+	 * Returns the last modified date of a file. This method handles ENOENT errors
+	 * and returns undefined in that case.
+	 * @param {string|URL} filePath The path to the file to read.
+	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified
+	 * date of the file or undefined if the file doesn't exist.
+	 */
+	lastModified(filePath) {
+		return this.#fsp
+			.stat(filePath)
+			.then(stat => stat.mtime)
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return undefined;
+				}
+
+				throw error;
+			});
+	}
+
+	/**
 	 * Copies a file from one location to another.
 	 * @param {string|URL} source The path to the file to copy.
 	 * @param {string|URL} destination The path to copy the file to.
