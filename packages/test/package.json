@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/test",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Testing utilities for hfs",
   "type": "module",
   "types": "dist/index.d.ts",
