@@ -1215,6 +1215,11 @@ export class HfsImplTester {
 						assert.ok(result instanceof Date);
 					});
 
+					it("should return the last modified date of a directory", async () => {
+						const result = await impl.lastModified(this.#outputDir);
+						assert.ok(result instanceof Date);
+					});
+
 					it("should return the last modified date of a file when using a file URL", async () => {
 						const filePath = this.#outputDir + "/hello.txt";
 						const fileUrl = filePathToUrl(filePath);
@@ -1225,6 +1230,12 @@ export class HfsImplTester {
 					it("should return undefined if the file doesn't exist", async () => {
 						const filePath = this.#outputDir + "/nonexistent.txt";
 						const result = await impl.lastModified(filePath);
+						assert.strictEqual(result, undefined);
+					});
+
+					it("should return undefined if the directory doesn't exist", async () => {
+						const dirPath = this.#outputDir + "/nonexistent";
+						const result = await impl.lastModified(dirPath);
 						assert.strictEqual(result, undefined);
 					});
 

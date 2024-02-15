@@ -497,22 +497,52 @@ export class WebHfsImpl {
 	}
 
 	/**
-	 * Returns the last modified date of a file. This method handles ENOENT errors
+	 * Returns the last modified date of a file or directory. This method handles ENOENT errors
 	 * and returns undefined in that case.
-	 * @param {string|URL} filePath The path to the file to read.
+	 * @param {string|URL} fileOrDirPath The path to the file to read.
 	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified
-	 * date of the file or undefined if the file doesn't exist.
+	 * date of the file or directory, or undefined if the file doesn't exist.
 	 */
-	async lastModified(filePath) {
-		const handle = await findPath(this.#root, filePath);
+	async lastModified(fileOrDirPath) {
+		const handle = await findPath(this.#root, fileOrDirPath);
 
-		if (!handle || handle.kind !== "file") {
+		if (!handle) {
 			return undefined;
 		}
 
-		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
-		const file = await fileHandle.getFile();
-		return new Date(file.lastModified);
+		if (handle.kind === "file") {
+			const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
+			const file = await fileHandle.getFile();
+			return new Date(file.lastModified);
+		}
+
+		/*
+		 * OPFS doesn't support last modified dates for directories, so we'll
+		 * check each entry to see what the most recent last modified date is.
+		 */
+		let lastModified = new Date(0);
+
+		// @ts-ignore -- TS doesn't know about this yet
+		for await (const entry of this.list(fileOrDirPath)) {
+			const entryPath =
+				fileOrDirPath instanceof URL
+					? Path.fromURL(fileOrDirPath)
+					: Path.fromString(fileOrDirPath);
+			entryPath.push(entry.name);
+
+			const date = await this.lastModified(entryPath.toString());
+			if (date && date > lastModified) {
+				lastModified = date;
+			}
+		}
+
+		/*
+		 * Kind of messy -- if the last modified date is the one we set for
+		 * default, then we'll return a new Date() instead. This is because
+		 * we can't return undefined from this method when the directory is
+		 * found, and it also really doesn't matter when the directory is empty.
+		 */
+		return lastModified.getTime() === 0 ? new Date() : lastModified;
 	}
 
 	/**

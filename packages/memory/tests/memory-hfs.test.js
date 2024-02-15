@@ -17,7 +17,6 @@ import assert from "node:assert";
 // Helpers
 //------------------------------------------------------------------------------
 
-const volume = {};
 const fixturesDir = "fixtures";
 
 //------------------------------------------------------------------------------
@@ -32,12 +31,7 @@ const tester = new HfsImplTester({
 });
 
 await tester.test({
-	name: "MemoryHfsImpl (with volume)",
-	impl: new MemoryHfsImpl({ volume }),
-});
-
-await tester.test({
-	name: "MemoryHfsImpl (without volume)",
+	name: "MemoryHfsImpl",
 	impl: new MemoryHfsImpl(),
 });
 
@@ -50,6 +44,14 @@ describe("MemoryHfsImpl Customizations", () => {
 			await impl.delete("foo.txt");
 			const result = await impl.isFile("foo.txt");
 			assert.strictEqual(result, false);
+		});
+	});
+
+	describe("text()", () => {
+		it("should return undefined when reading toString", async () => {
+			const impl = new MemoryHfsImpl();
+			const result = await impl.text("toString");
+			assert.strictEqual(result, undefined);
 		});
 	});
 });
