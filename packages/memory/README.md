@@ -111,6 +111,9 @@ const found = await hfs.isFile("file.txt");
 // how big is the file?
 const size = await hfs.size("file.txt");
 
+// when was the file modified?
+const mtime = await hfs.lastModified("file.txt");
+
 // copy a file from one location to another
 await hfs.copy("file.txt", "file-copy.txt");
 
@@ -150,10 +153,6 @@ If you'd like to create your own instance, import the `MemoryHfs` constructor:
 import { MemoryHfs } from "@humanfs/memory";
 
 const hfs = new MemoryHfs();
-
-// optionally specify the object to use when storing data
-const volume = {};
-const hfs = new MemoryHfs({ volume });
 ```
 
 If you'd like to use just the impl, import the `MemoryHfsImpl` constructor:
@@ -162,10 +161,6 @@ If you'd like to use just the impl, import the `MemoryHfsImpl` constructor:
 import { MemoryHfsImpl } from "@humanfs/memory";
 
 const hfs = new MemoryHfsImpl();
-
-// optionally specify the object to use when storing data
-const volume = {};
-const hfs = new MemoryHfsImpl({ volume });
 ```
 
 ## License

@@ -416,16 +416,15 @@ export class Hfs {
 	}
 
 	/**
-	 * Returns the last modified timestamp of the given file.
-	 * @param {string|URL} filePath The path to the file.
+	 * Returns the last modified timestamp of the given file or directory.
+	 * @param {string|URL} fileOrDirPath The path to the file or directory.
 	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified date
-	 *  or undefined if the file does not exist.
-	 * @throws {TypeError} If the file path is not a string or URL.
-	 * @throws {Error} If the file does not exist or cannot be accessed.
+	 *  or undefined if the file or directory does not exist.
+	 * @throws {TypeError} If the path is not a string or URL.
 	 */
-	async lastModified(filePath) {
-		assertValidFileOrDirPath(filePath);
-		return this.#callImplMethod("lastModified", filePath);
+	async lastModified(fileOrDirPath) {
+		assertValidFileOrDirPath(fileOrDirPath);
+		return this.#callImplMethod("lastModified", fileOrDirPath);
 	}
 
 	/**

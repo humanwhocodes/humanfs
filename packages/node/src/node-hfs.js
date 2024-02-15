@@ -392,15 +392,15 @@ export class NodeHfsImpl {
 	}
 
 	/**
-	 * Returns the last modified date of a file. This method handles ENOENT errors
+	 * Returns the last modified date of a file or directory. This method handles ENOENT errors
 	 * and returns undefined in that case.
-	 * @param {string|URL} filePath The path to the file to read.
+	 * @param {string|URL} fileOrDirPath The path to the file to read.
 	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified
-	 * date of the file or undefined if the file doesn't exist.
+	 * date of the file or directory, or undefined if the file doesn't exist.
 	 */
-	lastModified(filePath) {
+	lastModified(fileOrDirPath) {
 		return this.#fsp
-			.stat(filePath)
+			.stat(fileOrDirPath)
 			.then(stat => stat.mtime)
 			.catch(error => {
 				if (error.code === "ENOENT") {

@@ -22,21 +22,15 @@ import { Hfs, Path } from "@humanfs/core";
 //-----------------------------------------------------------------------------
 
 /**
- * Checks if a value is a file.
- * @param {string|ArrayBuffer|object|undefined} value The value to check.
- * @returns {boolean} True if the value is a file, false if not.
+ * Checks if a value is an ArrayBuffer.
+ * @param {any} value The value to check.
+ * @returns {void}
+ * @throws {TypeError} If the value is not an ArrayBuffer.
  */
-function isFile(value) {
-	return typeof value === "string" || value instanceof ArrayBuffer;
-}
-
-/**
- * Checks if a value is a directory.
- * @param {string|ArrayBuffer|object|undefined} value The value to check.
- * @returns {boolean} True if the value is a directory, false if not.
- */
-function isDirectory(value) {
-	return typeof value === "object" && !isFile(value);
+function assertArrayBuffer(value) {
+	if (!(value instanceof ArrayBuffer)) {
+		throw new TypeError("Value must be an ArrayBuffer.");
+	}
 }
 
 /**
@@ -55,12 +49,12 @@ function findPath(volume, fileOrDirPath) {
 	let object = volume;
 	let key = parts.shift();
 
-	while (object[key]) {
+	while (object.get(key)) {
 		if (parts.length === 0) {
 			return { object, key };
 		}
 
-		object = object[key];
+		object = object.get(key);
 		key = parts.shift();
 	}
 
@@ -69,9 +63,9 @@ function findPath(volume, fileOrDirPath) {
 
 /**
  * Finds a file or directory in the volume.
- * @param {object} volume The volume to search.
+ * @param {MemoryHfsDirectory} volume The volume to search.
  * @param {string|URL} fileOrDirPath The path to the file or directory to find.
- * @returns {string|ArrayBuffer|object|undefined} The file or directory found.
+ * @returns {MemoryHfsDirectory|MemoryHfsFile|undefined} The file or directory found.
  */
 function readPath(volume, fileOrDirPath) {
 	const location = findPath(volume, fileOrDirPath);
@@ -81,14 +75,14 @@ function readPath(volume, fileOrDirPath) {
 	}
 
 	const { object, key } = location;
-	return object[key];
+	return object.get(key);
 }
 
 /**
  * Writes a file or directory to the volume.
- * @param {object} volume The volume to search.
+ * @param {MemoryHfsDirectory} volume The volume to search.
  * @param {string|URL} fileOrDirPath The path to the file or directory to find.
- * @param {string|ArrayBuffer|object|undefined} value The value to write.
+ * @param {MemoryHfsDirectory|MemoryHfsFile|undefined} value The value to write.
  * @returns {void}
  */
 function writePath(volume, fileOrDirPath, value) {
@@ -101,21 +95,152 @@ function writePath(volume, fileOrDirPath, value) {
 
 	// create any missing directories
 	for (const step of path) {
-		let entry = directory[step];
+		let entry = directory.get(step);
 
 		if (!entry) {
-			entry = directory[step] = {};
+			entry = new MemoryHfsDirectory();
+			directory.set(step, entry);
 		}
 
 		directory = entry;
 	}
 
 	// we don't want to overwrite an existing directory
-	if (directory && isDirectory(directory[name]) && isDirectory(value)) {
+	if (
+		directory &&
+		directory.get("name")?.kind === "directory" &&
+		value.kind === "directory"
+	) {
 		return;
 	}
 
-	directory[name] = value;
+	directory.set(name, value);
+}
+
+//-----------------------------------------------------------------------------
+// Utility Classes
+//-----------------------------------------------------------------------------
+
+/**
+ * A class representing a file in memory.
+ */
+class MemoryHfsFile {
+	/**
+	 * The contents of the file.
+	 * @type {ArrayBuffer}
+	 */
+	#contents;
+
+	/**
+	 * The last modified date of the file.
+	 * @type {Date}
+	 */
+	lastModified = new Date();
+
+	/**
+	 * The kind of file system object.
+	 * @type {string}
+	 * @readonly
+	 */
+	kind = "file";
+
+	/**
+	 * The parent directory of the file.
+	 * @type {MemoryHfsDirectory|undefined}
+	 */
+	parent;
+
+	/**
+	 * Creates a new instance.
+	 * @param {ArrayBuffer} contents The contents of the file.
+	 * @throws {TypeError} If the contents are not an ArrayBuffer.
+	 */
+	constructor(contents) {
+		assertArrayBuffer(contents);
+		this.#contents = contents;
+	}
+
+	/**
+	 * Gets the contents of the file.
+	 * @type {ArrayBuffer}
+	 */
+	get contents() {
+		return this.#contents;
+	}
+
+	/**
+	 * Sets the contents of the file.
+	 * @param {ArrayBuffer} value The new contents of the file.
+	 * @throws {TypeError} If the contents are not an ArrayBuffer.
+	 * @returns {void}
+	 */
+	set contents(value) {
+		assertArrayBuffer(value);
+		this.#contents = value;
+		this.lastModified = new Date();
+
+		// now update each ancestor's last modified date
+		let current = this.parent;
+
+		while (current) {
+			current.lastModified = this.lastModified;
+			current = current.parent;
+		}
+	}
+}
+
+export class MemoryHfsDirectory extends Map {
+	/**
+	 * The last modified date of the directory.
+	 * @type {Date}
+	 */
+	lastModified = new Date();
+
+	/**
+	 * The kind of file system object.
+	 * @type {string}
+	 * @readonly
+	 */
+	kind = "directory";
+
+	/**
+	 * The parent directory of the directory.
+	 * @type {MemoryHfsDirectory|undefined}
+	 */
+	parent;
+
+	/**
+	 * Sets a value in the directory.
+	 * @param {string} key The key to set.
+	 * @param {MemoryHfsFile|MemoryHfsDirectory} entry The value to set.
+	 * @returns {this} The instance for chaining.
+	 */
+	set(key, entry) {
+		entry.lastModified = new Date();
+		entry.parent = this;
+		return super.set(key, entry);
+	}
+
+	/**
+	 * Deletes a value from the directory.
+	 * @param {string} key The key to delete.
+	 * @returns {boolean} True if the key was deleted, false if not.
+	 */
+	delete(key) {
+		this.lastModified = new Date();
+
+		if (this.has(key)) {
+			const entry = this.get(key);
+
+			if (entry.kind === "directory") {
+				entry.parent = undefined;
+			}
+
+			return super.delete(key);
+		}
+
+		return false;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -129,18 +254,9 @@ function writePath(volume, fileOrDirPath, value) {
 export class MemoryHfsImpl {
 	/**
 	 * The in-memory file system volume to use.
-	 * @type {object}
+	 * @type {MemoryHfsDirectory}
 	 */
-	#volume;
-
-	/**
-	 * Creates a new instance.
-	 * @param {object} [options={}] The options for the instance.
-	 * @param {object} [options.volume] The in-memory file system volume to use.
-	 */
-	constructor({ volume = {} } = {}) {
-		this.#volume = volume;
-	}
+	#root = new MemoryHfsDirectory();
 
 	/**
 	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
@@ -153,17 +269,13 @@ export class MemoryHfsImpl {
 	 * @throws {RangeError} If the file path is not readable.
 	 */
 	async text(filePath) {
-		const value = readPath(this.#volume, filePath);
+		const bytes = await this.bytes(filePath);
 
-		if (!isFile(value)) {
+		if (bytes === undefined) {
 			return undefined;
 		}
 
-		if (value instanceof ArrayBuffer) {
-			return new TextDecoder().decode(value);
-		}
-
-		return value;
+		return new TextDecoder().decode(bytes);
 	}
 
 	/**
@@ -191,17 +303,14 @@ export class MemoryHfsImpl {
 	 * @deprecated Use bytes() instead.
 	 */
 	async arrayBuffer(filePath) {
-		const value = readPath(this.#volume, filePath);
+		const entry = readPath(this.#root, filePath);
 
-		if (!isFile(value)) {
+		if (entry?.kind !== "file") {
 			return undefined;
 		}
 
-		if (typeof value === "string") {
-			return new TextEncoder().encode(value).buffer;
-		}
-
-		return value;
+		const file = /** @type {MemoryHfsFile} */ (entry);
+		return file.contents;
 	}
 
 	/**
@@ -213,17 +322,8 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async bytes(filePath) {
-		const value = readPath(this.#volume, filePath);
-
-		if (!isFile(value)) {
-			return undefined;
-		}
-
-		if (typeof value === "string") {
-			return new TextEncoder().encode(value);
-		}
-
-		return value;
+		const buffer = await this.arrayBuffer(filePath);
+		return buffer ? new Uint8Array(buffer) : undefined;
 	}
 
 	/**
@@ -240,7 +340,7 @@ export class MemoryHfsImpl {
 		let value;
 
 		if (typeof contents === "string") {
-			value = contents;
+			value = new TextEncoder().encode(contents).buffer;
 		} else if (contents instanceof ArrayBuffer) {
 			value = contents;
 		} else if (ArrayBuffer.isView(contents)) {
@@ -250,7 +350,7 @@ export class MemoryHfsImpl {
 			);
 		}
 
-		return writePath(this.#volume, filePath, value);
+		return writePath(this.#root, filePath, new MemoryHfsFile(value));
 	}
 
 	/**
@@ -264,41 +364,30 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be appended to.
 	 */
 	async append(filePath, contents) {
-		const existing = readPath(this.#volume, filePath);
-
-		// simple cases
-		if (typeof contents === "string") {
-			if (existing === undefined) {
-				return writePath(this.#volume, filePath, contents);
-			}
-
-			if (typeof existing === "string") {
-				return writePath(this.#volume, filePath, existing + contents);
-			}
-		}
-
-		// contents must be an ArrayBuffer or ArrayBufferView
-
-		const originalValue =
-			existing instanceof ArrayBuffer
-				? existing
-				: new TextEncoder().encode(existing).buffer;
-
-		const valueToAppend = /** @type {ArrayBuffer} */ (
-			ArrayBuffer.isView(contents)
-				? contents.buffer.slice(
-						contents.byteOffset,
-						contents.byteOffset + contents.byteLength,
-					)
-				: contents
+		const existing = /** @type {MemoryHfsFile} */ (
+			readPath(this.#root, filePath)
 		);
 
+		if (!existing) {
+			return this.write(filePath, contents);
+		}
+
+		const valueToAppend =
+			typeof contents === "string"
+				? new TextEncoder().encode(contents).buffer
+				: ArrayBuffer.isView(contents)
+					? contents.buffer.slice(
+							contents.byteOffset,
+							contents.byteOffset + contents.byteLength,
+						)
+					: contents;
+
 		const newValue = new Uint8Array([
-			...new Uint8Array(originalValue),
+			...new Uint8Array(existing.contents),
 			...new Uint8Array(valueToAppend),
 		]).buffer;
 
-		return writePath(this.#volume, filePath, newValue);
+		existing.contents = newValue;
 	}
 
 	/**
@@ -309,7 +398,7 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async isFile(filePath) {
-		const location = findPath(this.#volume, filePath);
+		const location = findPath(this.#root, filePath);
 
 		if (!location) {
 			return false;
@@ -317,7 +406,7 @@ export class MemoryHfsImpl {
 
 		const { object, key } = location;
 
-		return isFile(object[key]);
+		return object.get(key).kind === "file";
 	}
 
 	/**
@@ -328,14 +417,14 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 */
 	async isDirectory(dirPath) {
-		const location = findPath(this.#volume, dirPath);
+		const location = findPath(this.#root, dirPath);
 
 		if (!location) {
 			return false;
 		}
 
 		const { object, key } = location;
-		return isDirectory(object[key]);
+		return object.get(key).kind === "directory";
 	}
 
 	/**
@@ -345,7 +434,7 @@ export class MemoryHfsImpl {
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
-		writePath(this.#volume, dirPath, {});
+		writePath(this.#root, dirPath, new MemoryHfsDirectory());
 	}
 
 	/**
@@ -359,7 +448,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
-		const location = findPath(this.#volume, fileOrDirPath);
+		const location = findPath(this.#root, fileOrDirPath);
 
 		if (!location) {
 			throw new Error(
@@ -369,15 +458,15 @@ export class MemoryHfsImpl {
 
 		const { object, key } = location;
 
-		const value = object[key];
+		const entry = object.get(key);
 
-		if (isDirectory(value) && Object.keys(value).length > 0) {
+		if (entry.kind === "directory" && entry.size > 0) {
 			throw new Error(
 				`ENOTEMPTY: directory not empty, rmdir '${fileOrDirPath}'`,
 			);
 		}
 
-		delete object[key];
+		object.delete(key);
 	}
 
 	/**
@@ -391,7 +480,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async deleteAll(fileOrDirPath) {
-		const location = findPath(this.#volume, fileOrDirPath);
+		const location = findPath(this.#root, fileOrDirPath);
 
 		if (!location) {
 			throw new Error(
@@ -401,7 +490,7 @@ export class MemoryHfsImpl {
 
 		const { object, key } = location;
 
-		delete object[key];
+		object.delete(key);
 	}
 
 	/**
@@ -415,9 +504,9 @@ export class MemoryHfsImpl {
 
 		// Special case: if the path is ".", then we're listing the root
 		if (dirPath === ".") {
-			target = this.#volume;
+			target = this.#root;
 		} else {
-			const location = findPath(this.#volume, dirPath);
+			const location = findPath(this.#root, dirPath);
 
 			if (!location) {
 				throw new Error(
@@ -426,14 +515,14 @@ export class MemoryHfsImpl {
 			}
 
 			const { object, key } = location;
-			target = object[key];
+			target = object.get(key);
 		}
 
-		for (const [name, value] of Object.entries(target)) {
+		for (const [name, value] of target.entries()) {
 			yield {
 				name,
-				isDirectory: isDirectory(value),
-				isFile: isFile(value),
+				isDirectory: value.kind === "directory",
+				isFile: value.kind === "file",
 				isSymlink: false,
 			};
 		}
@@ -446,18 +535,30 @@ export class MemoryHfsImpl {
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */
 	async size(filePath) {
-		const value = readPath(this.#volume, filePath);
+		const entry = readPath(this.#root, filePath);
 
-		if (!isFile(value)) {
+		if (entry?.kind !== "file") {
 			return undefined;
 		}
 
-		if (value instanceof ArrayBuffer) {
-			return value.byteLength;
+		return /** @type {MemoryHfsFile} */ (entry).contents.byteLength;
+	}
+
+	/**
+	 * Returns the last modified date of a file or directory. This method handles ENOENT errors
+	 * and returns undefined in that case.
+	 * @param {string|URL} fileOrDirPath The path to the file to read.
+	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified
+	 * date of the file or directory, or undefined if the file doesn't exist.
+	 */
+	async lastModified(fileOrDirPath) {
+		const entry = readPath(this.#root, fileOrDirPath);
+
+		if (!entry) {
+			return undefined;
 		}
 
-		// use byteLength for strings for accuracy
-		return new TextEncoder().encode(value).byteLength;
+		return entry.lastModified;
 	}
 
 	/**
@@ -470,15 +571,15 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the destination file is a directory.
 	 */
 	async copy(source, destination) {
-		const value = readPath(this.#volume, source);
+		const entry = readPath(this.#root, source);
 
-		if (!value) {
+		if (!entry) {
 			throw new Error(
 				`ENOENT: no such file, copy '${source}' -> '${destination}'`,
 			);
 		}
 
-		if (!isFile(value)) {
+		if (entry.kind !== "file") {
 			throw new Error(
 				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
 			);
@@ -490,7 +591,9 @@ export class MemoryHfsImpl {
 			);
 		}
 
-		writePath(this.#volume, destination, value);
+		const file = /** @type {MemoryHfsFile} */ (entry);
+
+		writePath(this.#root, destination, new MemoryHfsFile(file.contents));
 	}
 
 	/**
@@ -559,21 +662,21 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be moved.
 	 */
 	async move(source, destination) {
-		const value = readPath(this.#volume, source);
+		const entry = readPath(this.#root, source);
 
-		if (!value) {
+		if (!entry) {
 			throw new Error(
 				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
 			);
 		}
 
-		if (!isFile(value)) {
+		if (entry.kind !== "file") {
 			throw new Error(
 				`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
 			);
 		}
 
-		writePath(this.#volume, destination, value);
+		writePath(this.#root, destination, entry);
 
 		this.delete(source);
 	}
@@ -644,11 +747,9 @@ export class MemoryHfsImpl {
 export class MemoryHfs extends Hfs {
 	/**
 	 * Creates a new instance.
-	 * @param {object} [options={}] The options for the instance.
-	 * @param {object} [options.volume] The in-memory file system volume to use.
 	 */
-	constructor({ volume } = {}) {
-		super({ impl: new MemoryHfsImpl({ volume }) });
+	constructor() {
+		super({ impl: new MemoryHfsImpl() });
 	}
 }
 
