@@ -416,6 +416,19 @@ export class Hfs {
 	}
 
 	/**
+	 * Returns the last modified timestamp of the given file.
+	 * @param {string|URL} filePath The path to the file.
+	 * @returns {Promise<Date|undefined>} A promise that resolves with the last modified date
+	 *  or undefined if the file does not exist.
+	 * @throws {TypeError} If the file path is not a string or URL.
+	 * @throws {Error} If the file does not exist or cannot be accessed.
+	 */
+	async lastModified(filePath) {
+		assertValidFileOrDirPath(filePath);
+		return this.#callImplMethod("lastModified", filePath);
+	}
+
+	/**
 	 * Copys a file from one location to another.
 	 * @param {string|URL} source The path to the file to copy.
 	 * @param {string|URL} destination The path to the new file.

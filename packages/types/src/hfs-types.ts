@@ -115,6 +115,15 @@ export interface HfsImpl {
 	size?(filePath: string|URL): Promise<number|undefined>;
 
 	/**
+	 * Returns the last modified date of the given file.
+	 * @param filePath The path to the file to check.
+	 * @returns A promise that resolves with the last modified date of the file or
+	 * 		undefined if the file does not exist.
+	 * @throws {Error} If the file cannot be read.
+	 */
+	lastModified?(filePath: string|URL): Promise<Date|undefined>;
+
+	/**
 	 * Copies the file from the source path to the destination path.
 	 * @param source The source file to copy.
 	 * @param destination The destination file to copy to.
