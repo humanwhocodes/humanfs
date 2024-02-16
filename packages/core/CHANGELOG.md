@@ -6,6 +6,25 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.11.0...core-v0.12.0) (2024-02-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rewrite MemoryHfsImpl to support lastModified() ([#87](https://github.com/humanwhocodes/humanfs/issues/87))
+
+### Features
+
+* Add lastModified() method ([#84](https://github.com/humanwhocodes/humanfs/issues/84)) ([9cbcd03](https://github.com/humanwhocodes/humanfs/commit/9cbcd03c86e4c1bed5985e10da6ab452e8c2b44c))
+* Rewrite MemoryHfsImpl to support lastModified() ([#87](https://github.com/humanwhocodes/humanfs/issues/87)) ([84e9812](https://github.com/humanwhocodes/humanfs/commit/84e98129e48acb3f2ea067b0ea745d591e8d8b91))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.9.0 to ^0.10.0
+
 ## [0.11.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.10.0...core-v0.11.0) (2024-02-14)
 
 
