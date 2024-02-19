@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.11.0...memory-v0.12.0) (2024-02-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* Rewrite MemoryHfsImpl to support lastModified() ([#87](https://github.com/humanwhocodes/humanfs/issues/87))
+
+### Features
+
+* Rewrite MemoryHfsImpl to support lastModified() ([#87](https://github.com/humanwhocodes/humanfs/issues/87)) ([84e9812](https://github.com/humanwhocodes/humanfs/commit/84e98129e48acb3f2ea067b0ea745d591e8d8b91))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.11.0 to ^0.12.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.10.0 to ^0.11.0
+    * @humanfs/types bumped from ^0.9.0 to ^0.10.0
+
 ## [0.11.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.10.0...memory-v0.11.0) (2024-02-14)
 
 
