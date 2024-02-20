@@ -1032,6 +1032,16 @@ export class HfsImplTester {
 						assert.strictEqual(await impl.isFile(destPath), true);
 					});
 
+					it("should reject a promise when copying to a directory that doesn't exist", async () => {
+						const sourcePath =
+							dirPath + "/subdir/subsubdir/test.txt";
+						const destPath = dirPath + "/nonexistent/test.txt";
+						await assert.rejects(
+							() => impl.copy(sourcePath, destPath),
+							/ENOENT/,
+						);
+					});
+
 					/*
 					 * Different runtimes return different error codes
 					 * when a directory is used in place of a file.

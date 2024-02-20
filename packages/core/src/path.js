@@ -127,6 +127,15 @@ export class Path {
 	}
 
 	/**
+	 * Determines if this path is equal to another path.
+	 * @param {Path} otherPath The other path to compare.
+	 * @returns {boolean} True if the paths are equal, false if not.
+	 */
+	equals(otherPath) {
+		return this.toString() === otherPath.toString();
+	}
+
+	/**
 	 * Returns an iterator for the steps in the path.
 	 * @returns {IterableIterator<string>} An iterator for the steps in the path.
 	 */
