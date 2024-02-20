@@ -19,6 +19,7 @@ import {
 //-----------------------------------------------------------------------------
 
 /** @typedef {import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
+/** @typedef {import("@humanfs/types").HfsStat} HfsStat */
 
 //-----------------------------------------------------------------------------
 // Data
@@ -26,6 +27,12 @@ import {
 
 let objectId = 0;
 const parents = new WeakMap();
+
+/**
+ * A map of object IDs to objects.
+ * @type {Map<string, MemoryHfsFile|MemoryHfsDirectory>}
+ */
+const objects = new Map();
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -145,7 +152,7 @@ export class MemoryHfsFile {
 
 	/**
 	 * The kind of file system object.
-	 * @type {string}
+	 * @type {"file"}
 	 * @readonly
 	 */
 	kind = "file";
@@ -167,6 +174,7 @@ export class MemoryHfsFile {
 		assertArrayBuffer(contents);
 		this.#contents = contents;
 		this.name = name;
+		objects.set(this.#id, this);
 	}
 
 	/**
@@ -260,7 +268,7 @@ export class MemoryHfsDirectory {
 
 	/**
 	 * The kind of file system object.
-	 * @type {string}
+	 * @type {"directory"}
 	 * @readonly
 	 */
 	kind = "directory";
@@ -274,6 +282,7 @@ export class MemoryHfsDirectory {
 	constructor({ name, entries = [] } = {}) {
 		this.name = name;
 		this.#entries = entries;
+		objects.set(this.#id, this);
 	}
 
 	/**
@@ -363,12 +372,10 @@ export class MemoryHfsDirectory {
 
 	/**
 	 * Returns an iterator over the entries in the directory.
-	 * @returns {IterableIterator<[string, MemoryHfsFile|MemoryHfsDirectory]>} The iterator.
+	 * @returns {IterableIterator<MemoryHfsFile|MemoryHfsDirectory>} The iterator.
 	 */
-	*entries() {
-		for (const entry of this.#entries) {
-			yield [entry.name, entry];
-		}
+	entries() {
+		return this.#entries.values();
 	}
 }
 
@@ -380,11 +387,6 @@ export class MemoryHfsDirectory {
  * mimic cloud-based file systems.
  */
 export class MemoryHfsVolume {
-	/**
-	 * A map of object IDs to objects.
-	 * @type {Map<string, MemoryHfsFile|MemoryHfsDirectory>}
-	 */
-	#objects = new Map();
 
 	/**
 	 * The root directory of the volume.
@@ -407,7 +409,7 @@ export class MemoryHfsVolume {
 			throw new TypeError("ID must be a string.");
 		}
 
-		return this.#objects.get(id);
+		return objects.get(id);
 	}
 
 	/**
@@ -438,7 +440,7 @@ export class MemoryHfsVolume {
 	 */
 	deleteObject(id) {
 		// throw an error if the object doesn't exist
-		const object = this.#objects.get(id);
+		const object = objects.get(id);
 
 		if (!object) {
 			throw new NotFoundError(`deleteObject ${id}`);
@@ -448,7 +450,7 @@ export class MemoryHfsVolume {
 		object.parent.delete(object.name);
 
 		// remove the object from the map
-		this.#objects.delete(id);
+		objects.delete(id);
 	}
 
 	/**
@@ -462,7 +464,7 @@ export class MemoryHfsVolume {
 	 * @throws {TypeError} If the contents are not an ArrayBuffer.
 	 */
 	createFileObject(name, parentId, contents) {
-		const parent = this.#objects.get(parentId);
+		const parent = objects.get(parentId);
 
 		if (!parent) {
 			throw new NotFoundError(`createObject ${parentId}`);
@@ -471,12 +473,12 @@ export class MemoryHfsVolume {
 		if (parent.kind !== "directory") {
 			throw new DirectoryError(`createObject ${parentId}`);
 		}
-
+		
 		const directory = /** @type {MemoryHfsDirectory} */ (parent);
 		const file = new MemoryHfsFile({ name, contents });
 
 		directory.add(file);
-		this.#objects.set(file.id, file);
+		objects.set(file.id, file);
 
 		return file.id;
 	}
@@ -490,7 +492,7 @@ export class MemoryHfsVolume {
 	 * @throws {NotFoundError} If the parent ID is not found.
 	 */
 	createDirectoryObject(name, parentId) {
-		const parent = this.#objects.get(parentId);
+		const parent = objects.get(parentId);
 
 		if (!parent) {
 			throw new NotFoundError(`createObject ${parentId}`);
@@ -504,7 +506,7 @@ export class MemoryHfsVolume {
 		const newDirectory = new MemoryHfsDirectory({ name });
 
 		directory.add(newDirectory);
-		this.#objects.set(newDirectory.id, newDirectory);
+		objects.set(newDirectory.id, newDirectory);
 
 		return newDirectory.id;
 	}
@@ -518,7 +520,7 @@ export class MemoryHfsVolume {
 	 * @throws {DirectoryError} If the ID is not a file.
 	 */
 	readFileObject(id) {
-		const object = this.#objects.get(id);
+		const object = objects.get(id);
 
 		if (!object) {
 			return undefined;
@@ -541,7 +543,7 @@ export class MemoryHfsVolume {
 	 * @throws {TypeError} If the contents are not an ArrayBuffer.
 	 */
 	writeFileObject(id, contents) {
-		const object = this.#objects.get(id);
+		const object = objects.get(id);
 
 		if (!object) {
 			throw new NotFoundError(`writeObject ${id}`);
@@ -563,23 +565,24 @@ export class MemoryHfsVolume {
 	 * @throws {DirectoryError} If the ID is not a directory.
 	 */
 	readDirectoryObject(id) {
-		const object = this.#objects.get(id);
+		const object = objects.get(id);
 
 		if (!object) {
-			throw new NotFoundError(`readObject ${id}`);
+			throw new NotFoundError(`readDirectoryObject ${id}`);
 		}
 
 		if (object.kind !== "directory") {
-			throw new DirectoryError(`readObject ${id}`);
+			throw new DirectoryError(`readDirectoryObject ${id}`);
 		}
 
 		const directory = /** @type {MemoryHfsDirectory} */ (object);
 
-		return Array.from(directory.entries()).map(([name, object]) => ({
-			isFile: object.kind === "file",
-			isDirectory: object.kind === "directory",
+		return Array.from(directory.entries()).map(entry => ({
+			isFile: entry.kind === "file",
+			isDirectory: entry.kind === "directory",
 			isSymlink: false,
-			name: name,
+			name: entry.name,
+			id: entry.id,
 		}));
 	}
 
@@ -587,18 +590,20 @@ export class MemoryHfsVolume {
 	 * Moves an object to a new parent.
 	 * @param {string} id The ID of the object to move.
 	 * @param {string} parentId The ID of the new parent directory.
+	 * @param {object} options The options for the new object.
+	 * @param {string} [options.name] The new name of the object.
 	 * @returns {void}
 	 * @throws {NotFoundError} If the object or parent is not found.
 	 * @throws {DirectoryError} If the parent is not a directory.
 	 */
-	moveObject(id, parentId) {
-		const object = this.#objects.get(id);
+	moveObject(id, parentId, {name} = {}) {
+		const object = objects.get(id);
 
 		if (!object) {
 			throw new NotFoundError(`moveObject ${id}`);
 		}
 
-		const parent = this.#objects.get(parentId);
+		const parent = objects.get(parentId);
 
 		if (!parent) {
 			throw new NotFoundError(`moveObject ${parentId}`);
@@ -612,25 +617,31 @@ export class MemoryHfsVolume {
 
 		object.parent.delete(object.name);
 		directory.add(object);
+
+		if (name) {
+			object.name = name;
+		}
 	}
 
 	/**
 	 * Copies an object to a new parent.
 	 * @param {string} id The ID of the object to copy.
 	 * @param {string} parentId The ID of the new parent directory.
+	 * @param {object} options The options for the new object.
+	 * @param {string} [options.name] The name of the new object.
 	 * @returns {void}
 	 * @throws {NotFoundError} If the object or parent is not found.
 	 * @throws {DirectoryError} If the parent is not a directory.
 	 * @throws {DirectoryError} If the parent is a file.
 	 */
-	copyObject(id, parentId) {
-		const object = this.#objects.get(id);
+	copyObject(id, parentId, {name} = {}) {
+		const object = objects.get(id);
 
 		if (!object) {
 			throw new NotFoundError(`copyObject ${id}`);
 		}
 
-		const parent = this.#objects.get(parentId);
+		const parent = objects.get(parentId);
 
 		if (!parent) {
 			throw new NotFoundError(`copyObject ${parentId}`);
@@ -644,7 +655,33 @@ export class MemoryHfsVolume {
 		const copy = object.clone();
 
 		directory.add(copy);
-		this.#objects.set(copy.id, copy);
+		objects.set(copy.id, copy);
+
+		if (name) {
+			copy.name = name;
+		}
+	}
+
+	/**
+	 * Retrieves information about an object.
+	 * @param {string} id The ID of the object to check.
+	 * @returns {HfsStat|undefined} The information about the object or undefined if not found.
+	 */
+	statObject(id) {
+		const object = objects.get(id);
+
+		if (!object) {
+			return undefined;
+		}
+
+		return {
+			kind: object.kind,
+			mtime: object.lastModified,
+			size:
+				object.kind === "file"
+					? /** @type {MemoryHfsFile} */ (object).contents.byteLength
+					: 0,
+		};
 	}
 
 	//-----------------------------------------------------------------------------
@@ -682,7 +719,7 @@ export class MemoryHfsVolume {
 			filePath,
 			new MemoryHfsFile({ contents }),
 		)) {
-			this.#objects.set(entry.id, entry);
+			objects.set(entry.id, entry);
 		}
 	}
 
@@ -760,7 +797,7 @@ export class MemoryHfsVolume {
 	/**
 	 * Retrieves information about a file or directory.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to check.
-	 * @returns {object} The information about the file or directory or undefined if not found.
+	 * @returns {object|undefined} The information about the file or directory or undefined if not found.
 	 */
 	stat(fileOrDirPath) {
 		const path = Path.from(fileOrDirPath);
@@ -791,7 +828,7 @@ export class MemoryHfsVolume {
 			dirPath,
 			new MemoryHfsDirectory(),
 		)) {
-			this.#objects.set(entry.id, entry);
+			objects.set(entry.id, entry);
 		}
 	}
 
@@ -818,11 +855,11 @@ export class MemoryHfsVolume {
 
 		const directory = /** @type {MemoryHfsDirectory} */ (object);
 
-		return Array.from(directory.entries()).map(([id, object]) => ({
-			isFile: object.kind === "file",
-			isDirectory: object.kind === "directory",
+		return Array.from(directory.entries()).map(entry => ({
+			isFile: entry.kind === "file",
+			isDirectory: entry.kind === "directory",
 			isSymlink: false,
-			name: id,
+			name: entry.name,
 		}));
 	}
 

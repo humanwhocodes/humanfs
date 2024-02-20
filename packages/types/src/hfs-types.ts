@@ -173,3 +173,22 @@ export interface HfsDirectoryEntry {
 	isSymlink: boolean;
 
 }
+
+export interface HfsStat {
+	
+	/**
+	 * The type of the entry.
+	 */
+	kind: 'file' | 'directory';
+	
+	/**
+	 * The size of the file in bytes.
+	 */
+	size: number;
+
+	/**
+	 * The last modified date of the file.
+	 */
+	mtime: Date;
+
+}

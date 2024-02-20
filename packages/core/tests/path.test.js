@@ -390,6 +390,11 @@ describe("Path", () => {
 				assert.deepStrictEqual([...path], ["foo", "bar"]);
 			});
 
+			it("should create a new Path instance from a string without a slash", () => {
+				const path = Path.from("foo");
+				assert.deepStrictEqual([...path], ["foo"]);
+			});
+
 			it("should throw a TypeError when the string is empty", () => {
 				assert.throws(() => {
 					Path.from("");

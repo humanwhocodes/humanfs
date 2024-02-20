@@ -143,7 +143,8 @@ describe("MemoryHfsVolume", () => {
 			volume.writeFile("dir/file2.txt", HELLO_WORLD);
 
 			const dir = volume.readdir("dir");
-			assert.deepStrictEqual(dir, [
+			assert.deepStrictEqual(
+				dir.map(({ id, ...entry }) => entry), [
 				{
 					name: "file1.txt",
 					isDirectory: false,
@@ -453,7 +454,8 @@ describe("MemoryHfsVolume", () => {
 
 			const id = volume.getObjectIdFromPath("dir");
 			const dir = volume.readDirectoryObject(id);
-			assert.deepStrictEqual(dir, [
+			assert.deepStrictEqual(
+				dir.map(({ id, ...entry }) => entry), [
 				{
 					name: "file1.txt",
 					isDirectory: false,
@@ -489,6 +491,18 @@ describe("MemoryHfsVolume", () => {
 			assert.deepEqual(file, HELLO_WORLD);
 		});
 
+        it("should move a file to a new location with a new name", () => {
+            volume.writeFile("file.txt", HELLO_WORLD);
+            volume.mkdirp("dir");
+
+            const id = volume.getObjectIdFromPath("file.txt");
+            const parentId = volume.getObjectIdFromPath("dir");
+            volume.moveObject(id, parentId, { name: "file2.txt"});
+
+            const file = volume.readFile("dir/file2.txt");
+            assert.deepEqual(file, HELLO_WORLD);
+        });
+
 		it("should move a directory to a new location", () => {
 			volume.mkdirp("dir");
 			volume.mkdirp("dir2");
@@ -500,6 +514,18 @@ describe("MemoryHfsVolume", () => {
 			const stat = volume.stat("dir2/dir");
 			assert.strictEqual(stat.kind, "directory");
 		});
+
+        it("should move a directory to a new location with a new name", () => {
+            volume.mkdirp("dir");
+            volume.mkdirp("dir2");
+
+            const id = volume.getObjectIdFromPath("dir");
+            const parentId = volume.getObjectIdFromPath("dir2");
+            volume.moveObject(id, parentId, { name: "dir3" });
+
+            const stat = volume.stat("dir2/dir3");
+            assert.strictEqual(stat.kind, "directory");
+        });
 
 		it("should throw an error when the ID doesn't exist", () => {
 			assert.throws(() => volume.moveObject("file-1", "dir-1"), /ENOENT/);
@@ -534,6 +560,18 @@ describe("MemoryHfsVolume", () => {
 			assert.deepEqual(file, HELLO_WORLD);
 		});
 
+        it("should copy a file to a new location with a new name", () => {
+            volume.writeFile("file.txt", HELLO_WORLD);
+            volume.mkdirp("dir");
+
+            const id = volume.getObjectIdFromPath("file.txt");
+            const parentId = volume.getObjectIdFromPath("dir");
+            volume.copyObject(id, parentId, { name: "file2.txt"});
+
+            const file = volume.readFile("dir/file2.txt");
+            assert.deepEqual(file, HELLO_WORLD);
+        });
+
 		it("should copy a directory to a new location", () => {
 			volume.mkdirp("dir");
 			volume.mkdirp("dir2");
@@ -544,6 +582,40 @@ describe("MemoryHfsVolume", () => {
 
 			const stat = volume.stat("dir2/dir");
 			assert.strictEqual(stat.kind, "directory");
+		});
+
+        it("should copy a directory to a new location with a new name", () => {
+            volume.mkdirp("dir");
+            volume.mkdirp("dir2");
+
+            const id = volume.getObjectIdFromPath("dir");
+            const parentId = volume.getObjectIdFromPath("dir2");
+            volume.copyObject(id, parentId, {name:"dir3"});
+
+            const stat = volume.stat("dir2/dir3");
+            assert.strictEqual(stat.kind, "directory");
+        });
+
+		it("should copy a directory recursively to a new location", () => {
+			volume.mkdirp("dir");
+			volume.writeFile("dir/file1.txt", HELLO_WORLD);
+			volume.writeFile("dir/file2.txt", HELLO_WORLD);
+			volume.mkdirp("dir/subdir");
+			volume.writeFile("dir/subdir/file3.txt", HELLO_WORLD);
+
+			volume.mkdirp("dir2");
+
+			const id = volume.getObjectIdFromPath("dir");
+			const parentId = volume.getObjectIdFromPath("dir2");
+			volume.copyObject(id, parentId, { name: "dir3"});
+
+			const stat1 = volume.stat("dir2/dir3/file1.txt");
+			const stat2 = volume.stat("dir2/dir3/file2.txt");
+			const stat3 = volume.stat("dir2/dir3/subdir/file3.txt");
+
+			assert.strictEqual(stat1.kind, "file");
+			assert.strictEqual(stat2.kind, "file");
+			assert.strictEqual(stat3.kind, "file");
 		});
 
 		it("should throw an error when the ID doesn't exist", () => {
@@ -563,6 +635,33 @@ describe("MemoryHfsVolume", () => {
 			const id = volume.getObjectIdFromPath("file.txt");
 			const parentId = volume.getObjectIdFromPath("file2.txt");
 			assert.throws(() => volume.copyObject(id, parentId), /EISDIR/);
+		});
+	});
+
+	describe("statObject()", () => {
+
+		it("should return undefined when the ID doesn't exist", () => {
+			assert.strictEqual(volume.statObject("file-1"), undefined);
+		});
+
+		it("should return information about a file", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("file.txt");
+			const stats = volume.statObject(id);
+
+			assert.strictEqual(stats.kind, "file");
+			assert.strictEqual(stats.size, HELLO_WORLD.byteLength);
+			assert.strictEqual(stats.mtime instanceof Date, true);
+		});
+
+		it("should return information about a directory", () => {
+			volume.mkdirp("dir");
+			const id = volume.getObjectIdFromPath("dir");
+			const stats = volume.statObject(id);
+
+			assert.strictEqual(stats.kind, "directory");
+			assert.strictEqual(stats.size, 0);
+			assert.strictEqual(stats.mtime instanceof Date, true);
 		});
 	});
 });

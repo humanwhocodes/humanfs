@@ -3,6 +3,9 @@
   "plugins": ["node-workspace"],
   "bump-minor-pre-major": true,
   "packages": {
+    "packages/box": {
+      "release-type": "node"
+    },
     "packages/core": {
       "release-type": "node",
       "extra-files": [
