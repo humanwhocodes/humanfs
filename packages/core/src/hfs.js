@@ -3,7 +3,7 @@
  * @author Nicholas C. Zakas
  */
 
-/* global URL */
+/* global URL, TextDecoder */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -16,6 +16,8 @@
 // Helpers
 //-----------------------------------------------------------------------------
 
+const decoder = new TextDecoder();
+
 /**
  * Error to represent when a method is missing on an impl.
  */
@@ -26,6 +28,21 @@ export class NoSuchMethodError extends Error {
 	 */
 	constructor(methodName) {
 		super(`Method "${methodName}" does not exist on impl.`);
+	}
+}
+
+/**
+ * Error to represent when a method is not supported on an impl. This happens
+ * when a method on `Hfs` is called with one name and the corresponding method
+ * on the impl has a different name. (Example: `text()` and `bytes()`.)
+ */
+export class MethodNotSupportedError extends Error {
+	/**
+	 * Creates a new instance.
+	 * @param {string} methodName The name of the method that was missing.
+	 */
+	constructor(methodName) {
+		super(`Method "${methodName}" is not supported on this impl.`);
 	}
 }
 
@@ -236,6 +253,21 @@ export class Hfs {
 	}
 
 	/**
+	 * Asserts that the given method exists on the current implementation, and if not,
+	 * throws an error with a different method name.
+	 * @param {string} methodName The name of the method to check.
+	 * @param {string} targetMethodName The name of the method that should be reported
+	 *  as an error when methodName does not exist.
+	 * @returns {void}
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 */
+	#assertImplMethodAlt(methodName, targetMethodName) {
+		if (typeof this.#impl[methodName] !== "function") {
+			throw new MethodNotSupportedError(targetMethodName);
+		}
+	}
+
+	/**
 	 * Calls the given method on the current implementation.
 	 * @param {string} methodName The name of the method to call.
 	 * @param {...any} args The arguments to the method.
@@ -249,6 +281,20 @@ export class Hfs {
 	}
 
 	/**
+	 * Calls the given method on the current implementation but logs a different method name.
+	 * @param {string} methodName The name of the method to call.
+	 * @param {string} targetMethodName The name of the method to log.
+	 * @param {...any} args The arguments to the method.
+	 * @returns {any} The return value from the method.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 */
+	#callImplMethodAlt(methodName, targetMethodName, ...args) {
+		this.#log(targetMethodName, ...args);
+		this.#assertImplMethodAlt(methodName, targetMethodName);
+		return this.#impl[methodName](...args);
+	}
+
+	/**
 	 * Reads the given file and returns the contents as text. Assumes UTF-8 encoding.
 	 * @param {string|URL} filePath The file to read.
 	 * @returns {Promise<string|undefined>} The contents of the file.
@@ -257,7 +303,9 @@ export class Hfs {
 	 */
 	async text(filePath) {
 		assertValidFileOrDirPath(filePath);
-		return this.#callImplMethod("text", filePath);
+
+		const result = await this.#callImplMethodAlt("bytes", "text", filePath);
+		return result ? decoder.decode(result) : undefined;
 	}
 
 	/**
@@ -270,7 +318,9 @@ export class Hfs {
 	 */
 	async json(filePath) {
 		assertValidFileOrDirPath(filePath);
-		return this.#callImplMethod("json", filePath);
+
+		const result = await this.#callImplMethodAlt("bytes", "json", filePath);
+		return result ? JSON.parse(decoder.decode(result)) : undefined;
 	}
 
 	/**
@@ -283,7 +333,13 @@ export class Hfs {
 	 */
 	async arrayBuffer(filePath) {
 		assertValidFileOrDirPath(filePath);
-		return this.#callImplMethod("arrayBuffer", filePath);
+
+		const result = await this.#callImplMethodAlt(
+			"bytes",
+			"arrayBuffer",
+			filePath,
+		);
+		return result?.buffer;
 	}
 
 	/**

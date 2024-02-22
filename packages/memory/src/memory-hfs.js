@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global TextEncoder, TextDecoder, URL */
+/* global TextEncoder, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -259,61 +259,6 @@ export class MemoryHfsImpl {
 	#root = new MemoryHfsDirectory();
 
 	/**
-	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
-	 *     the file or undefined if the file does not exist.
-	 * @throws {TypeError} If the file path is not a string.
-	 * @throws {RangeError} If the file path is not absolute.
-	 * @throws {RangeError} If the file path is not a file.
-	 * @throws {RangeError} If the file path is not readable.
-	 */
-	async text(filePath) {
-		const bytes = await this.bytes(filePath);
-
-		if (bytes === undefined) {
-			return undefined;
-		}
-
-		return new TextDecoder().decode(bytes);
-	}
-
-	/**
-	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<object|null>} A promise that resolves with the contents of
-	 *    the file or undefined if the file does not exist.
-	 * @throws {SyntaxError} If the file contents are not valid JSON.
-	 * @throws {Error} If the file cannot be read.
-	 * @throws {TypeError} If the file path is not a string.
-	 */
-	async json(filePath) {
-		return this.text(filePath).then(text =>
-			text === undefined ? text : JSON.parse(text),
-		);
-	}
-
-	/**
-	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
-	 *    of the file or undefined if the file does not exist.
-	 * @throws {Error} If the file cannot be read.
-	 * @throws {TypeError} If the file path is not a string.
-	 * @deprecated Use bytes() instead.
-	 */
-	async arrayBuffer(filePath) {
-		const entry = readPath(this.#root, filePath);
-
-		if (entry?.kind !== "file") {
-			return undefined;
-		}
-
-		const file = /** @type {MemoryHfsFile} */ (entry);
-		return file.contents;
-	}
-
-	/**
 	 * Reads a file and returns the contents as an Uint8Array.
 	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents
@@ -322,8 +267,14 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async bytes(filePath) {
-		const buffer = await this.arrayBuffer(filePath);
-		return buffer ? new Uint8Array(buffer) : undefined;
+		const entry = readPath(this.#root, filePath);
+
+		if (entry?.kind !== "file") {
+			return undefined;
+		}
+
+		const file = /** @type {MemoryHfsFile} */ (entry);
+		return file.contents ? new Uint8Array(file.contents) : undefined;
 	}
 
 	/**

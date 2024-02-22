@@ -106,59 +106,6 @@ export class NodeHfsImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
-	 *     the file or undefined if the file doesn't exist.
-	 * @throws {TypeError} If the file path is not a string.
-	 * @throws {RangeError} If the file path is empty.
-	 * @throws {RangeError} If the file path is not absolute.
-	 * @throws {RangeError} If the file path is not a file.
-	 * @throws {RangeError} If the file path is not readable.
-	 */
-	text(filePath) {
-		return this.#retrier
-			.retry(() => this.#fsp.readFile(filePath, "utf8"))
-			.catch(error => {
-				if (error.code === "ENOENT") {
-					return undefined;
-				}
-
-				throw error;
-			});
-	}
-
-	/**
-	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<object|undefined>} A promise that resolves with the contents of
-	 *    the file or undefined if the file doesn't exist.
-	 * @throws {SyntaxError} If the file contents are not valid JSON.
-	 * @throws {Error} If the file cannot be read.
-	 * @throws {TypeError} If the file path is not a string.
-	 */
-	json(filePath) {
-		return this.text(filePath).then(text =>
-			text === undefined ? text : JSON.parse(text),
-		);
-	}
-
-	/**
-	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
-	 *    of the file or undefined if the file doesn't exist.
-	 * @throws {Error} If the file cannot be read.
-	 * @throws {TypeError} If the file path is not a string.
-	 * @deprecated Use bytes() instead.
-	 */
-	arrayBuffer(filePath) {
-		return this.bytes(filePath).then(bytes =>
-			bytes === undefined ? bytes : bytes.buffer,
-		);
-	}
-
-	/**
 	 * Reads a file and returns the contents as an Uint8Array.
 	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents

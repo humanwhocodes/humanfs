@@ -156,54 +156,6 @@ export class WebHfsImpl {
 	}
 
 	/**
-	 * Reads a file and returns the contents as a string. Assumes UTF-8 encoding.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<string|undefined>} A promise that resolves with the contents of
-	 *     the file or undefined if the file does not exist.
-	 * @throws {TypeError} If the file path is not a string.
-	 * @throws {RangeError} If the file path is not absolute.
-	 * @throws {RangeError} If the file path is not a file.
-	 * @throws {RangeError} If the file path is not readable.
-	 */
-	async text(filePath) {
-		const text = /** @type {string|undefined} */ (
-			await readFile(this.#root, filePath, "text")
-		);
-		return text;
-	}
-
-	/**
-	 * Reads a file and returns the contents as a JSON object. Assumes UTF-8 encoding.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<object|null>} A promise that resolves with the contents of
-	 *    the file or undefined if the file does not exist.
-	 * @throws {SyntaxError} If the file contents are not valid JSON.
-	 * @throws {Error} If the file cannot be read.
-	 * @throws {TypeError} If the file path is not a string.
-	 */
-	async json(filePath) {
-		return this.text(filePath).then(text =>
-			text === undefined ? text : JSON.parse(text),
-		);
-	}
-
-	/**
-	 * Reads a file and returns the contents as an ArrayBuffer.
-	 * @param {string|URL} filePath The path to the file to read.
-	 * @returns {Promise<ArrayBuffer|undefined>} A promise that resolves with the contents
-	 *    of the file or undefined if the file does not exist.
-	 * @throws {Error} If the file cannot be read.
-	 * @throws {TypeError} If the file path is not a string.
-	 * @deprecated Use bytes() instead.
-	 */
-	async arrayBuffer(filePath) {
-		const buffer = /** @type {ArrayBuffer|undefined} */ (
-			await readFile(this.#root, filePath, "arrayBuffer")
-		);
-		return buffer;
-	}
-
-	/**
 	 * Reads a file and returns the contents as an Uint8Array.
 	 * @param {string|URL} filePath The path to the file to read.
 	 * @returns {Promise<Uint8Array|undefined>} A promise that resolves with the contents

@@ -77,11 +77,11 @@ import { HfsImplTester } from "https://cdn.skypack.dev/@humanfs/test";
 
 At a minimum, an impl must implement these methods to use `HfsImplTester`:
 
+* `bytes()`
 * `createDirectory()`
 * `deleteAll()`
 * `isDirectory()`
 * `isFile()`
-* `text()`
 * `write()`
 
 ### The `HfsImplTester` Class

@@ -2,13 +2,18 @@
  * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
-/* global it, describe, URL */
+/* global it, describe, URL, TextEncoder */
 
 //------------------------------------------------------------------------------
 // Imports
 //------------------------------------------------------------------------------
 
-import { Hfs, NoSuchMethodError, ImplAlreadySetError } from "../src/hfs.js";
+import {
+	Hfs,
+	NoSuchMethodError,
+	ImplAlreadySetError,
+	MethodNotSupportedError,
+} from "../src/hfs.js";
 import assert from "node:assert";
 
 //-----------------------------------------------------------------------------
@@ -24,13 +29,26 @@ function normalizeLogEntry({ timestamp, ...rest }) {
 	return rest;
 }
 
+const encoder = new TextEncoder();
+
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
 describe("Hfs", () => {
 	describe("Missing Methods", () => {
-		["text", "json", "bytes", "bytes"].forEach(methodName => {
+		["text", "json", "arrayBuffer"].forEach(methodName => {
+			it(`should reject a promise when the ${methodName}() method is not present on the impl`, () => {
+				const hfs = new Hfs({ impl: {} });
+
+				return assert.rejects(
+					hfs[methodName]("/path/to/file.txt"),
+					new MethodNotSupportedError(methodName),
+				);
+			});
+		});
+
+		["bytes"].forEach(methodName => {
 			it(`should reject a promise when the ${methodName}() method is not present on the impl`, () => {
 				const hfs = new Hfs({ impl: {} });
 
@@ -46,8 +64,8 @@ describe("Hfs", () => {
 		it("should change the impl when setImpl() is called", async () => {
 			const hfs = new Hfs({ impl: {} });
 			const impl1 = {
-				text() {
-					return "Hello, world!";
+				bytes() {
+					return encoder.encode("Hello, world!");
 				},
 			};
 
@@ -60,8 +78,8 @@ describe("Hfs", () => {
 		it("should change the impl back when resetImpl() is called", async () => {
 			const hfs = new Hfs({ impl: {} });
 			const impl1 = {
-				text() {
-					return "Hello, world!";
+				bytes() {
+					return encoder.encode("Hello, world!");
 				},
 			};
 
@@ -74,7 +92,7 @@ describe("Hfs", () => {
 
 			return assert.rejects(
 				hfs.text("/path/to/file.txt"),
-				new NoSuchMethodError("text"),
+				new MethodNotSupportedError("text"),
 			);
 		});
 
@@ -112,8 +130,8 @@ describe("Hfs", () => {
 		it("should start a new log and add an entry", async () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -135,8 +153,8 @@ describe("Hfs", () => {
 		it("should start two new logs and add an entry to both", async () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -168,12 +186,12 @@ describe("Hfs", () => {
 		});
 	});
 
-	describe("text", () => {
+	describe("text()", () => {
 		it("should return the text from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -185,8 +203,8 @@ describe("Hfs", () => {
 		it("should return the text from the file with a URL filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -200,8 +218,8 @@ describe("Hfs", () => {
 		it("should log the method call", async () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -223,8 +241,8 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is not a string or URL", () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -238,8 +256,8 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is empty", () => {
 			const hfs = new Hfs({
 				impl: {
-					text() {
-						return "Hello, world!";
+					bytes() {
+						return encoder.encode("Hello, world!");
 					},
 				},
 			});
@@ -251,12 +269,12 @@ describe("Hfs", () => {
 		});
 	});
 
-	describe("json", () => {
+	describe("json()", () => {
 		it("should return the JSON from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
-					json() {
-						return { foo: "bar" };
+					bytes() {
+						return encoder.encode(JSON.stringify({ foo: "bar" }));
 					},
 				},
 			});
@@ -268,8 +286,8 @@ describe("Hfs", () => {
 		it("should return the JSON from the file with a URL filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
-					json() {
-						return { foo: "bar" };
+					bytes() {
+						return encoder.encode(JSON.stringify({ foo: "bar" }));
 					},
 				},
 			});
@@ -283,8 +301,8 @@ describe("Hfs", () => {
 		it("should log the method call", async () => {
 			const hfs = new Hfs({
 				impl: {
-					json() {
-						return { foo: "bar" };
+					bytes() {
+						return encoder.encode(JSON.stringify({ foo: "bar" }));
 					},
 				},
 			});
@@ -306,8 +324,8 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is not a string", () => {
 			const hfs = new Hfs({
 				impl: {
-					json() {
-						return { foo: "bar" };
+					bytes() {
+						return encoder.encode(JSON.stringify({ foo: "bar" }));
 					},
 				},
 			});
@@ -321,8 +339,8 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is empty", () => {
 			const hfs = new Hfs({
 				impl: {
-					json() {
-						return { foo: "bar" };
+					bytes() {
+						return encoder.encode(JSON.stringify({ foo: "bar" }));
 					},
 				},
 			});
@@ -338,8 +356,8 @@ describe("Hfs", () => {
 		it("should return the bytes from the file with a string filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
-					arrayBuffer() {
-						return new Uint8Array([1, 2, 3]).buffer;
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
 					},
 				},
 			});
@@ -351,8 +369,8 @@ describe("Hfs", () => {
 		it("should return the bytes from the file with a URL filePath", async () => {
 			const hfs = new Hfs({
 				impl: {
-					arrayBuffer() {
-						return new Uint8Array([1, 2, 3]).buffer;
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
 					},
 				},
 			});
@@ -366,8 +384,8 @@ describe("Hfs", () => {
 		it("should log the method call", async () => {
 			const hfs = new Hfs({
 				impl: {
-					arrayBuffer() {
-						return new Uint8Array([1, 2, 3]).buffer;
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
 					},
 				},
 			});
@@ -389,8 +407,8 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is not a string", () => {
 			const hfs = new Hfs({
 				impl: {
-					arrayBuffer() {
-						return new Uint8Array([1, 2, 3]).buffer;
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
 					},
 				},
 			});
@@ -404,8 +422,8 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is empty", () => {
 			const hfs = new Hfs({
 				impl: {
-					arrayBuffer() {
-						return new Uint8Array([1, 2, 3]).buffer;
+					bytes() {
+						return new Uint8Array([1, 2, 3]);
 					},
 				},
 			});
