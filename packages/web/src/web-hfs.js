@@ -137,7 +137,7 @@ async function readFile(root, filePath, dataType) {
 //-----------------------------------------------------------------------------
 
 /**
- * A class representing the Node.js implementation of Hfs.
+ * A class representing the Origin Private File System implementation of Hfs.
  * @implements {HfsImpl}
  */
 export class WebHfsImpl {

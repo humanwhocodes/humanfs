@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/deno",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "The Deno bindings of the humanfs library.",
   "type": "module",
   "types": "dist/deno-hfs.d.ts",
