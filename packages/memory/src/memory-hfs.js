@@ -15,7 +15,13 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Hfs, Path } from "@humanfs/core";
+import {
+	Hfs,
+	Path,
+	NotFoundError,
+	DirectoryError,
+	NotEmptyError,
+} from "@humanfs/core";
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -451,9 +457,7 @@ export class MemoryHfsImpl {
 		const location = findPath(this.#root, fileOrDirPath);
 
 		if (!location) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
-			);
+			throw new NotFoundError(`delete '${fileOrDirPath}'`);
 		}
 
 		const { object, key } = location;
@@ -461,9 +465,7 @@ export class MemoryHfsImpl {
 		const entry = object.get(key);
 
 		if (entry.kind === "directory" && entry.size > 0) {
-			throw new Error(
-				`ENOTEMPTY: directory not empty, rmdir '${fileOrDirPath}'`,
-			);
+			throw new NotEmptyError(`delete '${fileOrDirPath}'`);
 		}
 
 		object.delete(key);
@@ -483,9 +485,7 @@ export class MemoryHfsImpl {
 		const location = findPath(this.#root, fileOrDirPath);
 
 		if (!location) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
-			);
+			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
 		}
 
 		const { object, key } = location;
@@ -509,9 +509,7 @@ export class MemoryHfsImpl {
 			const location = findPath(this.#root, dirPath);
 
 			if (!location) {
-				throw new Error(
-					`ENOENT: no such file or directory, list '${dirPath}'`,
-				);
+				throw new NotFoundError(`list '${dirPath}'`);
 			}
 
 			const { object, key } = location;
@@ -574,21 +572,15 @@ export class MemoryHfsImpl {
 		const entry = readPath(this.#root, source);
 
 		if (!entry) {
-			throw new Error(
-				`ENOENT: no such file, copy '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`copy '${source}' -> '${destination}'`);
 		}
 
 		if (entry.kind !== "file") {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
-			);
+			throw new DirectoryError(`copy '${source}' -> '${destination}'`);
 		}
 
 		if (await this.isDirectory(destination)) {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
-			);
+			throw new DirectoryError(`copy '${source}' -> '${destination}'`);
 		}
 
 		const file = /** @type {MemoryHfsFile} */ (entry);
@@ -613,9 +605,7 @@ export class MemoryHfsImpl {
 
 		// if the source isn't a directory then throw an error
 		if (!(await this.isDirectory(source))) {
-			throw new Error(
-				`ENOENT: no such file or directory, copy '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`copyAll '${source}' -> '${destination}'`);
 		}
 
 		const sourcePath =
@@ -665,15 +655,11 @@ export class MemoryHfsImpl {
 		const entry = readPath(this.#root, source);
 
 		if (!entry) {
-			throw new Error(
-				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`move '${source}' -> '${destination}'`);
 		}
 
 		if (entry.kind !== "file") {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
-			);
+			throw new DirectoryError(`move '${source}' -> '${destination}'`);
 		}
 
 		writePath(this.#root, destination, entry);
@@ -698,9 +684,7 @@ export class MemoryHfsImpl {
 
 		// if the source isn't a directory then throw an error
 		if (!(await this.isDirectory(source))) {
-			throw new Error(
-				`ENOENT: no such file or directory, moveAll '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`moveAll '${source}' -> '${destination}'`);
 		}
 
 		const sourcePath =

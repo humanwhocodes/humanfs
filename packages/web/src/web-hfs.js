@@ -15,7 +15,13 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Hfs, Path } from "@humanfs/core";
+import {
+	Hfs,
+	Path,
+	NotFoundError,
+	DirectoryError,
+	NotEmptyError,
+} from "@humanfs/core";
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -290,9 +296,7 @@ export class WebHfsImpl {
 
 		// can't write to a directory
 		if (handle.kind !== "file") {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, open '${filePath}'`,
-			);
+			throw new DirectoryError(`append '${filePath}'`);
 		}
 
 		const existing = await (await handle.getFile()).arrayBuffer();
@@ -380,9 +384,7 @@ export class WebHfsImpl {
 			) ?? this.#root;
 
 		if (!handle) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
-			);
+			throw new NotFoundError(`delete '${fileOrDirPath}'`);
 		}
 
 		// nonempty directories must not be deleted
@@ -391,9 +393,7 @@ export class WebHfsImpl {
 			const entries = handle.values();
 			const next = await entries.next();
 			if (!next.done) {
-				throw new Error(
-					`ENOTEMPTY: directory not empty, rmdir '${fileOrDirPath}'`,
-				);
+				throw new NotEmptyError(`delete '${fileOrDirPath}'`);
 			}
 		}
 
@@ -414,9 +414,7 @@ export class WebHfsImpl {
 		const handle = await findPath(this.#root, fileOrDirPath);
 
 		if (!handle) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
-			);
+			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
 		}
 
 		/*
@@ -442,9 +440,7 @@ export class WebHfsImpl {
 			) ?? this.#root;
 
 		if (!handle) {
-			throw new Error(
-				`ENOENT: no such file or directory, unlink '${fileOrDirPath}'`,
-			);
+			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
 		}
 		parentHandle.removeEntry(handle.name, { recursive: true });
 	}
@@ -557,21 +553,15 @@ export class WebHfsImpl {
 		);
 
 		if (!fromHandle) {
-			throw new Error(
-				`ENOENT: no such file, copy '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`copy '${source}' -> '${destination}'`);
 		}
 
 		if (fromHandle.kind !== "file") {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
-			);
+			throw new DirectoryError(`copy '${source}' -> '${destination}'`);
 		}
 
 		if (await this.isDirectory(destination)) {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, copy '${source}' -> '${destination}'`,
-			);
+			throw new DirectoryError(`copy '${source}' -> '${destination}'`);
 		}
 
 		const toHandle = /** @type {FileSystemFileHandle } */ (
@@ -603,9 +593,7 @@ export class WebHfsImpl {
 
 		// if the source isn't a directory then throw an error
 		if (!(await this.isDirectory(source))) {
-			throw new Error(
-				`ENOENT: no such file or directory, copyAll '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`copyAll '${source}' -> '${destination}'`);
 		}
 
 		const sourcePath =
@@ -654,15 +642,11 @@ export class WebHfsImpl {
 		const handle = await findPath(this.#root, source);
 
 		if (!handle) {
-			throw new Error(
-				`ENOENT: no such file or directory, move '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`move '${source}' -> '${destination}'`);
 		}
 
 		if (handle.kind !== "file") {
-			throw new Error(
-				`EISDIR: illegal operation on a directory, move '${source}' -> '${destination}'`,
-			);
+			throw new DirectoryError(`move '${source}' -> '${destination}'`);
 		}
 
 		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
@@ -707,9 +691,7 @@ export class WebHfsImpl {
 
 		// if the source doesn't exist then throw an error
 		if (!handle) {
-			throw new Error(
-				`ENOENT: no such file or directory, moveAll '${source}' -> '${destination}'`,
-			);
+			throw new NotFoundError(`moveAll '${source}' -> '${destination}'`);
 		}
 
 		// for files use move() and exit
