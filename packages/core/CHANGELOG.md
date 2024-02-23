@@ -6,6 +6,21 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.12.0...core-v0.13.0) (2024-02-23)
+
+
+### Features
+
+* Impls only need bytes() method to read data ([#90](https://github.com/humanwhocodes/humanfs/issues/90)) ([c0c3b36](https://github.com/humanwhocodes/humanfs/commit/c0c3b36413c8d10e63a94ad1cc6a5cead7b52e88))
+* standard error classes ([#89](https://github.com/humanwhocodes/humanfs/issues/89)) ([c3e751c](https://github.com/humanwhocodes/humanfs/commit/c3e751c4fa6e646fa0768ecd9f897b38b411a36d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.10.0 to ^0.11.0
+
 ## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.11.0...core-v0.12.0) (2024-02-16)
 
 
