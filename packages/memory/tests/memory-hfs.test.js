@@ -47,10 +47,10 @@ describe("MemoryHfsImpl Customizations", () => {
 		});
 	});
 
-	describe("text()", () => {
+	describe("bytes()", () => {
 		it("should return undefined when reading toString", async () => {
 			const impl = new MemoryHfsImpl();
-			const result = await impl.text("toString");
+			const result = await impl.bytes("toString");
 			assert.strictEqual(result, undefined);
 		});
 	});

@@ -1,3 +1,17 @@
+# 2024-02-22 Impls only need to implements `bytes()` to read files.
+
+## Background
+
+Originally, impls needed to implement `text()`, `json()`, `arrayBuffer()`, and `bytes()` to support all ways of reading a file.
+
+## Decision
+
+Impls need only implement `bytes()`; the `text()`, `json()`, and `arrayBuffer()` methods will exist only on `Hfs` and will use `bytes()` from the impl.
+
+## Rationale
+
+In implementing multiple different impls, it became clear that there was a lot of unnecessarily duplication of functionality. For instance, `json()` is just `text()` passed through `JSON.parse()`, so that could be moved to the `Hfs` class. Further `arrayBuffer()` is just `bytes()` and then accessing the `buffer` property, and even further, `text()` can be implemented with `bytes()` and `TextDecoder`. Impls should not need to share code from other impls, and so refocusing on `bytes()` as the primary impl read method reduces development time and the amount of code necessary to create an impl.
+
 # 2024-02-14 The `lastModified()` method should return a `Date`
 
 ## Background

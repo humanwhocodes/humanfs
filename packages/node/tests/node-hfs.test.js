@@ -84,112 +84,9 @@ describe("NodeHfsImpl Customizations", () => {
 		});
 	});
 
-	describe("text()", () => {
-		it("should return text contents when ENFILE error occurs", async () => {
-			let callCount = 0;
-			const impl = new NodeHfsImpl({
-				fsp: {
-					async readFile() {
-						if (callCount === 0) {
-							callCount++;
-							const error = new Error(
-								"ENFILE: file table overflow",
-							);
-							error.code = "ENFILE";
-							throw error;
-						}
-
-						return "Hello world!";
-					},
-				},
-			});
-
-			const result = await impl.text(".hfs/foo");
-			assert.strictEqual(result, "Hello world!");
-		});
-
-		it("should return text contents when EMFILE error occurs", async () => {
-			let callCount = 0;
-			const impl = new NodeHfsImpl({
-				fsp: {
-					async readFile() {
-						if (callCount === 0) {
-							callCount++;
-							const error = new Error(
-								"EMFILE: file table overflow",
-							);
-							error.code = "EMFILE";
-							throw error;
-						}
-
-						return "Hello world!";
-					},
-				},
-			});
-
-			const result = await impl.text(".hfs/foo");
-			assert.strictEqual(result, "Hello world!");
-		});
-
-		it("should return text contents when EMFILE error occurs multiple times", async () => {
-			let callCount = 0;
-			const impl = new NodeHfsImpl({
-				fsp: {
-					async readFile() {
-						if (callCount < 3) {
-							callCount++;
-							const error = new Error(
-								"EMFILE: file table overflow",
-							);
-							error.code = "EMFILE";
-							throw error;
-						}
-
-						return "Hello world!";
-					},
-				},
-			});
-
-			const result = await impl.text(".hfs/foo");
-			assert.strictEqual(result, "Hello world!");
-		});
-
-		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new NodeHfsImpl({
-				fsp: {
-					async readFile() {
-						throw new Error("Boom!");
-					},
-				},
-			});
-			await assert.rejects(() => impl.text(".hfs/foo"), /Boom!/);
-		});
-
-		it("should rethrow an error that isn't ENFILE after ENFILE occurs", async () => {
-			let callCount = 0;
-			const impl = new NodeHfsImpl({
-				fsp: {
-					async readFile() {
-						if (callCount < 3) {
-							callCount++;
-							const error = new Error(
-								"EMFILE: file table overflow",
-							);
-							error.code = "EMFILE";
-							throw error;
-						}
-
-						throw new Error("Boom!");
-					},
-				},
-			});
-			await assert.rejects(() => impl.text(".hfs/foo"), /Boom!/);
-		});
-	});
-
-	describe("arrayBuffer()", () => {
+	describe("bytes()", () => {
 		it("should return contents when ENFILE error occurs", async () => {
-			const contents = new TextEncoder().encode("Hello world!").buffer;
+			const contents = new TextEncoder().encode("Hello world!");
 			let callCount = 0;
 			const impl = new NodeHfsImpl({
 				fsp: {
@@ -203,17 +100,17 @@ describe("NodeHfsImpl Customizations", () => {
 							throw error;
 						}
 
-						return Buffer.from(contents);
+						return Buffer.from(contents.buffer);
 					},
 				},
 			});
 
-			const result = await impl.arrayBuffer(".hfs/foo");
-			assert.strictEqual(result, contents);
+			const result = await impl.bytes(".hfs/foo");
+			assert.deepStrictEqual(result, contents);
 		});
 
 		it("should return contents when EMFILE error occurs", async () => {
-			const contents = new TextEncoder().encode("Hello world!").buffer;
+			const contents = new TextEncoder().encode("Hello world!");
 			let callCount = 0;
 			const impl = new NodeHfsImpl({
 				fsp: {
@@ -227,17 +124,17 @@ describe("NodeHfsImpl Customizations", () => {
 							throw error;
 						}
 
-						return Buffer.from(contents);
+						return Buffer.from(contents.buffer);
 					},
 				},
 			});
 
-			const result = await impl.arrayBuffer(".hfs/foo");
-			assert.strictEqual(result, contents);
+			const result = await impl.bytes(".hfs/foo");
+			assert.deepStrictEqual(result, contents);
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
-			const contents = new TextEncoder().encode("Hello world!").buffer;
+			const contents = new TextEncoder().encode("Hello world!");
 			let callCount = 0;
 			const impl = new NodeHfsImpl({
 				fsp: {
@@ -251,13 +148,13 @@ describe("NodeHfsImpl Customizations", () => {
 							throw error;
 						}
 
-						return Buffer.from(contents);
+						return Buffer.from(contents.buffer);
 					},
 				},
 			});
 
-			const result = await impl.arrayBuffer(".hfs/foo");
-			assert.strictEqual(result, contents);
+			const result = await impl.bytes(".hfs/foo");
+			assert.deepStrictEqual(result, contents);
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
@@ -268,7 +165,7 @@ describe("NodeHfsImpl Customizations", () => {
 					},
 				},
 			});
-			await assert.rejects(() => impl.arrayBuffer(".hfs/foo"), /Boom!/);
+			await assert.rejects(() => impl.bytes(".hfs/foo"), /Boom!/);
 		});
 	});
 

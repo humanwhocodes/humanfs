@@ -8,27 +8,6 @@
 //------------------------------------------------------------------------------
 
 export interface HfsImpl {
-	/**
-	 * Reads the given file and returns the contents as text. Assumes the file is UTF-8 encoded.
-	 * @param filePath The file to read.
-	 * @returns The contents of the file or undefined if the file is empty.
-	 */
-	text?(filePath: string|URL): Promise<string|undefined>;
-
-	/**
-	 * Reads the given file and returns the contents as JSON. Assumes the file is UTF-8 encoded.
-	 * @param filePath The file to read.
-	 * @returns The contents of the file as JSON or undefined if the file is empty.
-	 */
-	json?(filePath: string|URL): Promise<any|undefined>;
-
-	/**
-	 * Reads the given file and returns the contents as an ArrayBuffer.
-	 * @param filePath The file to read.
-	 * @returns The contents of the file as an ArrayBuffer or undefined if the file is empty.
-	 * @deprecated Use bytes() instead.
-	 */
-	arrayBuffer?(filePath: string|URL): Promise<ArrayBuffer|undefined>;
 
 	/**
 	 * Reads the given file and returns the contents as an Uint8Array.

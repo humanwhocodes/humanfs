@@ -100,112 +100,9 @@ describe("DenoHfsImpl Customizations", () => {
 		});
 	});
 
-	describe("text()", () => {
-		it("should return text contents when ENFILE error occurs", async () => {
-			let callCount = 0;
-			const impl = new DenoHfsImpl({
-				deno: {
-					async readTextFile() {
-						if (callCount === 0) {
-							callCount++;
-							const error = new Error(
-								"ENFILE: file table overflow",
-							);
-							error.code = "ENFILE";
-							throw error;
-						}
-
-						return "Hello world!";
-					},
-				},
-			});
-
-			const result = await impl.text(".hfs/foo");
-			assertEquals(result, "Hello world!");
-		});
-
-		it("should return text contents when EMFILE error occurs", async () => {
-			let callCount = 0;
-			const impl = new DenoHfsImpl({
-				deno: {
-					async readTextFile() {
-						if (callCount === 0) {
-							callCount++;
-							const error = new Error(
-								"EMFILE: file table overflow",
-							);
-							error.code = "EMFILE";
-							throw error;
-						}
-
-						return "Hello world!";
-					},
-				},
-			});
-
-			const result = await impl.text(".hfs/foo");
-			assertEquals(result, "Hello world!");
-		});
-
-		it("should return text contents when EMFILE error occurs multiple times", async () => {
-			let callCount = 0;
-			const impl = new DenoHfsImpl({
-				deno: {
-					async readTextFile() {
-						if (callCount < 3) {
-							callCount++;
-							const error = new Error(
-								"EMFILE: file table overflow",
-							);
-							error.code = "EMFILE";
-							throw error;
-						}
-
-						return "Hello world!";
-					},
-				},
-			});
-
-			const result = await impl.text(".hfs/foo");
-			assertEquals(result, "Hello world!");
-		});
-
-		it("should rethrow an error that isn't ENFILE", async () => {
-			const impl = new DenoHfsImpl({
-				deno: {
-					async readTextFile() {
-						throw new Error("Boom!");
-					},
-				},
-			});
-			await assertRejects(() => impl.text(".hfs/foo"), /Boom!/);
-		});
-
-		it("should rethrow an error that isn't ENFILE after ENFILE occurs", async () => {
-			let callCount = 0;
-			const impl = new DenoHfsImpl({
-				deno: {
-					async readTextFile() {
-						if (callCount < 3) {
-							callCount++;
-							const error = new Error(
-								"EMFILE: file table overflow",
-							);
-							error.code = "EMFILE";
-							throw error;
-						}
-
-						throw new Error("Boom!");
-					},
-				},
-			});
-			await assertRejects(() => impl.text(".hfs/foo"), /Boom!/);
-		});
-	});
-
-	describe("arrayBuffer()", () => {
+	describe("bytes()", () => {
 		it("should return contents when ENFILE error occurs", async () => {
-			const contents = new TextEncoder().encode("Hello world!").buffer;
+			const contents = new TextEncoder().encode("Hello world!");
 			let callCount = 0;
 			const impl = new DenoHfsImpl({
 				deno: {
@@ -224,12 +121,12 @@ describe("DenoHfsImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".hfs/foo");
+			const result = await impl.bytes(".hfs/foo");
 			assertEquals(result, contents);
 		});
 
 		it("should return contents when EMFILE error occurs", async () => {
-			const contents = new TextEncoder().encode("Hello world!").buffer;
+			const contents = new TextEncoder().encode("Hello world!");
 			let callCount = 0;
 			const impl = new DenoHfsImpl({
 				deno: {
@@ -248,12 +145,12 @@ describe("DenoHfsImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".hfs/foo");
+			const result = await impl.bytes(".hfs/foo");
 			assertEquals(result, contents);
 		});
 
 		it("should return text contents when EMFILE error occurs multiple times", async () => {
-			const contents = new TextEncoder().encode("Hello world!").buffer;
+			const contents = new TextEncoder().encode("Hello world!");
 			let callCount = 0;
 			const impl = new DenoHfsImpl({
 				deno: {
@@ -272,7 +169,7 @@ describe("DenoHfsImpl Customizations", () => {
 				},
 			});
 
-			const result = await impl.arrayBuffer(".hfs/foo");
+			const result = await impl.bytes(".hfs/foo");
 			assertEquals(result, contents);
 		});
 
@@ -284,7 +181,7 @@ describe("DenoHfsImpl Customizations", () => {
 					},
 				},
 			});
-			await assertRejects(() => impl.arrayBuffer(".hfs/foo"), /Boom!/);
+			await assertRejects(() => impl.bytes(".hfs/foo"), /Boom!/);
 		});
 	});
 
