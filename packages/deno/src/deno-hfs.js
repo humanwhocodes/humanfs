@@ -81,7 +81,7 @@ export class DenoHfsImpl {
 	 * Writes a value to a file, creating any necessary directories along the way.
 	 * If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to write.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
+	 * @param {Uint8Array} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 *  written.
@@ -89,32 +89,10 @@ export class DenoHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		let value;
-
-		if (typeof contents === "string") {
-			value = contents;
-		} else if (contents instanceof Uint8Array) {
-			value = contents;
-		} else if (contents instanceof ArrayBuffer) {
-			value = new Uint8Array(contents);
-		} else if (ArrayBuffer.isView(contents)) {
-			const bytes = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-			value = new Uint8Array(bytes);
-		}
-
-		const op =
-			typeof value === "string"
-				? () =>
-						this.#deno.writeTextFile(filePath, value, {
-							create: true,
-						})
-				: () =>
-						this.#deno.writeFile(filePath, new Uint8Array(value), {
-							create: true,
-						});
+		const op = () =>
+			this.#deno.writeFile(filePath, contents, {
+				create: true,
+			});
 
 		return this.#retrier.retry(op).catch(error => {
 			if (error.code === "ENOENT") {
@@ -134,7 +112,7 @@ export class DenoHfsImpl {
 	/**
 	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to append to.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 * @param {Uint8Array} contents The contents to append to the
 	 *  file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 * written.
@@ -142,32 +120,10 @@ export class DenoHfsImpl {
 	 * @throws {Error} If the file cannot be appended to.
 	 */
 	async append(filePath, contents) {
-		let value;
-
-		if (typeof contents === "string") {
-			value = contents;
-		} else if (contents instanceof Uint8Array) {
-			value = contents;
-		} else if (contents instanceof ArrayBuffer) {
-			value = new Uint8Array(contents);
-		} else if (ArrayBuffer.isView(contents)) {
-			const bytes = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-			value = new Uint8Array(bytes);
-		}
-
-		const op =
-			typeof value === "string"
-				? () =>
-						this.#deno.writeTextFile(filePath, value, {
-							append: true,
-						})
-				: () =>
-						this.#deno.writeFile(filePath, new Uint8Array(value), {
-							append: true,
-						});
+		const op = () =>
+			this.#deno.writeFile(filePath, contents, {
+				append: true,
+			});
 
 		return this.#retrier.retry(op).catch(error => {
 			if (error.code === "ENOENT") {

@@ -586,29 +586,29 @@ describe("Hfs", () => {
 		});
 	});
 
-	describe("write()", () => {
+	describe("append()", () => {
 		it("should not reject a promise when the value to write is a string", async () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
-			await hfs.write("/path/to/file.txt", "Hello, world!");
+			await hfs.append("/path/to/file.txt", "Hello, world!");
 		});
 
 		it("should not reject a promise when the value to write is an ArayBuffer", async () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
-			await hfs.write(
+			await hfs.append(
 				"/path/to/file.txt",
 				new Uint8Array([1, 2, 3]).buffer,
 			);
@@ -617,32 +617,32 @@ describe("Hfs", () => {
 		it("should not reject a promise when the value to write is a Uint8Array", async () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
-			await hfs.write("/path/to/file.txt", new Uint8Array([1, 2, 3]));
+			await hfs.append("/path/to/file.txt", new Uint8Array([1, 2, 3]));
 		});
 
 		it("should log the method call", async () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
-			hfs.logStart("write");
-			await hfs.write("/path/to/file.txt", "Hello, world!");
-			const logs = hfs.logEnd("write").map(normalizeLogEntry);
+			hfs.logStart("append");
+			await hfs.append("/path/to/file.txt", "Hello, world!");
+			const logs = hfs.logEnd("append").map(normalizeLogEntry);
 			assert.deepStrictEqual(logs, [
 				{
 					type: "call",
 					data: {
-						methodName: "write",
+						methodName: "append",
 						args: ["/path/to/file.txt", "Hello, world!"],
 					},
 				},
@@ -652,14 +652,14 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is not a string", () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
 			return assert.rejects(
-				hfs.write(123, "Hello, world!"),
+				hfs.append(123, "Hello, world!"),
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
@@ -667,14 +667,14 @@ describe("Hfs", () => {
 		it("should reject a promise when the file path is empty", () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
 			return assert.rejects(
-				hfs.write("", "Hello, world!"),
+				hfs.append("", "Hello, world!"),
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
@@ -682,17 +682,91 @@ describe("Hfs", () => {
 		it("should reject a promise when the contents are a number", () => {
 			const hfs = new Hfs({
 				impl: {
-					write() {
+					append() {
 						return undefined;
 					},
 				},
 			});
 
 			return assert.rejects(
-				hfs.write("/path/to/file.txt", 123),
+				hfs.append("/path/to/file.txt", 123),
 				new TypeError(
 					"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
 				),
+			);
+		});
+
+		it("should pass a Uint8Array to the impl method when text is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append("/path/to/file.txt", "Hello, world!");
+		});
+
+		it("should pass a Uint8Array to the impl method when an ArrayBuffer is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new Uint8Array([1, 2, 3]).buffer,
+			);
+		});
+
+		it("should pass a Uint8Array to the impl method when a Uint8Array is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append("/path/to/file.txt", new Uint8Array([1, 2, 3]));
+		});
+
+		it("should pass a Uint8Array to the impl method when a DataView is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new DataView(new Uint8Array([1, 2, 3]).buffer),
+			);
+		});
+
+		it("should pass a Uint8Array to the impl method when a Uint8Array subarray is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+						assert.strictEqual(contents.byteLength, 2);
+						assert.deepStrictEqual(
+							contents,
+							new Uint8Array([2, 3]),
+						);
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new Uint8Array([1, 2, 3]).subarray(1),
 			);
 		});
 	});
@@ -804,6 +878,80 @@ describe("Hfs", () => {
 				new TypeError(
 					"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
 				),
+			);
+		});
+
+		it("should pass a Uint8Array to the impl method when text is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append("/path/to/file.txt", "Hello, world!");
+		});
+
+		it("should pass a Uint8Array to the impl method when an ArrayBuffer is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new Uint8Array([1, 2, 3]).buffer,
+			);
+		});
+
+		it("should pass a Uint8Array to the impl method when a Uint8Array is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append("/path/to/file.txt", new Uint8Array([1, 2, 3]));
+		});
+
+		it("should pass a Uint8Array to the impl method when a DataView is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new DataView(new Uint8Array([1, 2, 3]).buffer),
+			);
+		});
+
+		it("should pass a Uint8Array to the impl method when a Uint8Array subarray is passed", async () => {
+			const hfs = new Hfs({
+				impl: {
+					append(path, contents) {
+						assert.ok(contents instanceof Uint8Array);
+						assert.strictEqual(contents.byteLength, 2);
+						assert.deepStrictEqual(
+							contents,
+							new Uint8Array([2, 3]),
+						);
+					},
+				},
+			});
+
+			await hfs.append(
+				"/path/to/file.txt",
+				new Uint8Array([1, 2, 3]).subarray(1),
 			);
 		});
 	});

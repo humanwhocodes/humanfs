@@ -1,4 +1,18 @@
-# 2024-02-22 Impls only need to implements `bytes()` to read files.
+# 2024-02-22 Impls only need to implement `write()` and `append()` to accept `Uint8Array`.
+
+## Background
+
+Originally, impls needed to implement `write()` and `append()` to accept strings, `ArrayBuffer`s, and `ArrayBuffer` views.
+
+## Decision
+
+Impls need only implement `write()` and `append()` to accept `Uint8Array`; `Hfs` will ensure that any data that is passed to `write()` or `append()` is converted to a `Uint8Array` before passing the data to the impl.
+
+## Rationale
+
+Similar to the previous decision regarding `bytes()`, implementing `write()` and `append()` across impls revealed a lot of code duplication to validate and transform the input. The validation and transformation logic can more centrally be done in the `Hfs` class, making impl implementation simpler.
+
+# 2024-02-22 Impls only need to implement `bytes()` to read files
 
 ## Background
 

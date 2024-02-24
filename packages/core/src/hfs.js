@@ -3,7 +3,7 @@
  * @author Nicholas C. Zakas
  */
 
-/* global URL, TextDecoder */
+/* global URL, TextDecoder, TextEncoder */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -17,6 +17,7 @@
 //-----------------------------------------------------------------------------
 
 const decoder = new TextDecoder();
+const encoder = new TextEncoder();
 
 /**
  * Error to represent when a method is missing on an impl.
@@ -89,6 +90,37 @@ function assertValidFileContents(contents) {
 			"File contents must be a string, ArrayBuffer, or ArrayBuffer view.",
 		);
 	}
+}
+
+/**
+ * Converts the given contents to Uint8Array.
+ * @param {any} contents The data to convert.
+ * @returns {Uint8Array} The converted Uint8Array.
+ * @throws {TypeError} When the contents are not a string or ArrayBuffer.
+ */
+function toUint8Array(contents) {
+	if (contents instanceof Uint8Array) {
+		return contents;
+	}
+
+	if (typeof contents === "string") {
+		return encoder.encode(contents);
+	}
+
+	if (contents instanceof ArrayBuffer) {
+		return new Uint8Array(contents);
+	}
+
+	if (ArrayBuffer.isView(contents)) {
+		const bytes = contents.buffer.slice(
+			contents.byteOffset,
+			contents.byteOffset + contents.byteLength,
+		);
+		return new Uint8Array(bytes);
+	}
+	throw new TypeError(
+		"Invalid contents type. Expected string or ArrayBuffer.",
+	);
 }
 
 //-----------------------------------------------------------------------------
@@ -281,6 +313,18 @@ export class Hfs {
 	}
 
 	/**
+	 * Calls the given method on the current implementation and doesn't log the call.
+	 * @param {string} methodName The name of the method to call.
+	 * @param {...any} args The arguments to the method.
+	 * @returns {any} The return value from the method.
+	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
+	 */
+	#callImplMethodWithoutLog(methodName, ...args) {
+		this.#assertImplMethod(methodName);
+		return this.#impl[methodName](...args);
+	}
+
+	/**
 	 * Calls the given method on the current implementation but logs a different method name.
 	 * @param {string} methodName The name of the method to call.
 	 * @param {string} targetMethodName The name of the method to log.
@@ -358,7 +402,7 @@ export class Hfs {
 	 * Writes the given data to the given file. Creates any necessary directories along the way.
 	 * If the data is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The file to write.
-	 * @param {any} contents The data to write.
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The data to write.
 	 * @returns {Promise<void>} A promise that resolves when the file is written.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -366,14 +410,17 @@ export class Hfs {
 	async write(filePath, contents) {
 		assertValidFileOrDirPath(filePath);
 		assertValidFileContents(contents);
-		return this.#callImplMethod("write", filePath, contents);
+		this.#log("write", filePath, contents);
+
+		let value = toUint8Array(contents);
+		return this.#callImplMethodWithoutLog("write", filePath, value);
 	}
 
 	/**
 	 * Appends the given data to the given file. Creates any necessary directories along the way.
 	 * If the data is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The file to append to.
-	 * @param {any} contents The data to append.
+	 * @param {string|ArrayBuffer|ArrayBufferView} contents The data to append.
 	 * @returns {Promise<void>} A promise that resolves when the file is appended to.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
@@ -383,7 +430,10 @@ export class Hfs {
 	async append(filePath, contents) {
 		assertValidFileOrDirPath(filePath);
 		assertValidFileContents(contents);
-		return this.#callImplMethod("append", filePath, contents);
+		this.#log("append", filePath, contents);
+
+		let value = toUint8Array(contents);
+		return this.#callImplMethodWithoutLog("append", filePath, value);
 	}
 
 	/**

@@ -40,7 +40,7 @@ describe("MemoryHfsImpl Customizations", () => {
 		// https://github.com/humanwhocodes/humanfs/issues/74
 		it("should delete a file that was just written at the root", async () => {
 			const impl = new MemoryHfsImpl();
-			await impl.write("foo.txt", "bar");
+			await impl.write("foo.txt", new Uint8Array([1, 2, 3]));
 			await impl.delete("foo.txt");
 			const result = await impl.isFile("foo.txt");
 			assert.strictEqual(result, false);

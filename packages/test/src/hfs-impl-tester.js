@@ -32,6 +32,15 @@
 // Helpers
 //-----------------------------------------------------------------------------
 
+const encoder = new TextEncoder();
+const HELLO_WORLD = "Hello, world!";
+const GOODBYE_WORLD = "Goodbye, world!";
+const HELLO_WORLD_BYTES = encoder.encode(HELLO_WORLD);
+const GOODBYE_WORLD_BYTES = encoder.encode(GOODBYE_WORLD);
+const HELLO_WORLD_JSON = encoder.encode(
+	JSON.stringify({ message: HELLO_WORLD }),
+);
+
 /**
  * Converts a file path into a URL with a file protocol. This first normalizes
  * the file path to use forward slashes and then creates a URL with the file
@@ -109,11 +118,11 @@ export class HfsImplTester {
 				await impl.createDirectory(this.#outputDir);
 				await impl.write(
 					this.#outputDir + "/hello.txt",
-					"Hello world!\n",
+					HELLO_WORLD_BYTES,
 				);
 				await impl.write(
 					this.#outputDir + "/message.json",
-					JSON.stringify({ message: "Hello world!" }),
+					HELLO_WORLD_JSON,
 				);
 			});
 
@@ -129,10 +138,7 @@ export class HfsImplTester {
 						const result = await impl.bytes(filePath);
 						assert.ok(result instanceof Uint8Array);
 						const decoder = new TextDecoder();
-						assert.strictEqual(
-							decoder.decode(result),
-							"Hello world!\n",
-						);
+						assert.strictEqual(decoder.decode(result), HELLO_WORLD);
 					});
 
 					it("should read a file and return the contents as an Uint8Array when using a file URL", async () => {
@@ -141,10 +147,7 @@ export class HfsImplTester {
 						const result = await impl.bytes(fileUrl);
 						assert.ok(result instanceof Uint8Array);
 						const decoder = new TextDecoder();
-						assert.strictEqual(
-							decoder.decode(result),
-							"Hello world!\n",
-						);
+						assert.strictEqual(decoder.decode(result), HELLO_WORLD);
 					});
 
 					it("should return undefined when a file doesn't exist", async () => {
@@ -180,73 +183,16 @@ export class HfsImplTester {
 					await impl.deleteAll(this.#outputDir + "/tmp-write");
 				});
 
-				it("should write a string to a file", async () => {
-					const filePath =
-						this.#outputDir + "/tmp-write/test-generated-text.txt";
-					await impl.write(filePath, "Hello, world!");
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
-				});
-
-				it("should write a string to a file URL", async () => {
-					const filePath =
-						this.#outputDir + "/tmp-write/test-generated-text.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await impl.write(fileUrl, "Hello, world!");
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
-				});
-
-				it("should write an ArrayBuffer to a file", async () => {
-					const filePath =
-						this.#outputDir +
-						"/tmp-write/test-generated-arraybuffer.txt";
-					await impl.write(
-						filePath,
-						new TextEncoder().encode("Hello, world!").buffer,
-					);
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
-				});
-
-				it("should write an ArrayBuffer to a file URL", async () => {
-					const filePath =
-						this.#outputDir +
-						"/tmp-write/test-generated-arraybuffer.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await impl.write(
-						fileUrl,
-						new TextEncoder().encode("Hello, world!").buffer,
-					);
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
-				});
-
 				it("should write a Uint8Array to a file", async () => {
 					const filePath =
 						this.#outputDir +
 						"/tmp-write/test-generated-arraybuffer.txt";
-					await impl.write(
-						filePath,
-						new TextEncoder().encode("Hello, world!"),
-					);
+					await impl.write(filePath, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 
 				it("should write a Uint8Array to a file URL", async () => {
@@ -254,55 +200,19 @@ export class HfsImplTester {
 						this.#outputDir +
 						"/tmp-write/test-generated-arraybuffer.txt";
 					const fileUrl = filePathToUrl(filePath);
-					await impl.write(
-						fileUrl,
-						new TextEncoder().encode("Hello, world!"),
-					);
+					await impl.write(fileUrl, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
-				});
-
-				it("should write a Uint8Array to a file", async () => {
-					const filePath =
-						this.#outputDir +
-						"/tmp-write/test-generated-arraybuffer.txt";
-					await impl.write(
-						filePath,
-						new TextEncoder().encode("Hello, world!"),
-					);
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
-				});
-
-				it("should write a Uint8Array to a file URL", async () => {
-					const filePath =
-						this.#outputDir +
-						"/tmp-write/test-generated-arraybuffer.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await impl.write(
-						fileUrl,
-						new TextEncoder().encode("Hello, world!"),
-					);
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 
 				it("should write a Uint8Array subarray to a file", async () => {
 					const filePath =
 						this.#outputDir +
 						"/tmp-write/test-generated-arraybuffer.txt";
-					const bytes = new TextEncoder()
-						.encode("Hello, world!")
-						.subarray(4, 7);
+					const bytes = HELLO_WORLD_BYTES.subarray(4, 7);
 					await impl.write(filePath, bytes);
 
 					// make sure the file was written
@@ -316,9 +226,7 @@ export class HfsImplTester {
 						this.#outputDir +
 						"/tmp-write/test-generated-arraybuffer.txt";
 					const fileUrl = filePathToUrl(filePath);
-					const bytes = new TextEncoder()
-						.encode("Hello, world!")
-						.subarray(4, 7);
+					const bytes = HELLO_WORLD_BYTES.subarray(4, 7);
 					await impl.write(fileUrl, bytes);
 
 					// make sure the file was written
@@ -330,26 +238,26 @@ export class HfsImplTester {
 				it("should write to an already existing file", async () => {
 					const filePath =
 						this.#outputDir + "/tmp-write/test-generated-text.txt";
-					await impl.write(filePath, "Hello, world!");
 
-					await impl.write(filePath, "Goodbye, world!");
+					await impl.write(filePath, HELLO_WORLD_BYTES);
+					await impl.write(filePath, GOODBYE_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Goodbye, world!");
+					assert.strictEqual(result, GOODBYE_WORLD);
 				});
 
 				it("should write to an already existing file URL", async () => {
 					const filePath =
 						this.#outputDir + "/tmp-write/test-generated-text.txt";
 					const fileUrl = filePathToUrl(filePath);
-					await impl.write(fileUrl, "Hello, world!");
 
-					await impl.write(fileUrl, "Goodbye, world!");
+					await impl.write(fileUrl, HELLO_WORLD_BYTES);
+					await impl.write(fileUrl, GOODBYE_WORLD_BYTES);
 
 					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
+					const resultBytes = await impl.bytes(fileUrl);
 					const result = new TextDecoder().decode(resultBytes);
 					assert.strictEqual(result, "Goodbye, world!");
 				});
@@ -359,12 +267,12 @@ export class HfsImplTester {
 						this.#outputDir +
 						"/tmp-write/nonexistent/test-generated-text.txt";
 
-					await impl.write(filePath, "Hello, world!");
+					await impl.write(filePath, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 
 				it("should write a file URL when the directory doesn't exist", async () => {
@@ -373,12 +281,12 @@ export class HfsImplTester {
 						"/tmp-write/nonexistent/test-generated-text.txt";
 					const fileUrl = filePathToUrl(filePath);
 
-					await impl.write(fileUrl, "Hello, world!");
+					await impl.write(fileUrl, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
+					const resultBytes = await impl.bytes(fileUrl);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 			});
 
@@ -393,108 +301,36 @@ export class HfsImplTester {
 					await impl.deleteAll(dirPath);
 				});
 
-				it("should append a string to a file", async () => {
-					const filePath = dirPath + "/test-generated-text.txt";
-					await impl.write(filePath, "Hello, world!");
-					await impl.append(filePath, " Goodbye, world!");
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
-				});
-
-				it("should append a string to a file URL", async () => {
-					const filePath = dirPath + "/test-generated-text.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await impl.write(fileUrl, "Hello, world!");
-					await impl.append(fileUrl, " Goodbye, world!");
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
-				});
-
-				it("should append an ArrayBuffer to a file", async () => {
-					const filePath =
-						dirPath + "/test-generated-arraybuffer.txt";
-					await impl.write(
-						filePath,
-						new TextEncoder().encode("Hello, world!").buffer,
-					);
-					await impl.append(
-						filePath,
-						new TextEncoder().encode(" Goodbye, world!").buffer,
-					);
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
-				});
-
-				it("should append an ArrayBuffer to a file URL", async () => {
-					const filePath =
-						dirPath + "/test-generated-arraybuffer.txt";
-					const fileUrl = filePathToUrl(filePath);
-					await impl.write(
-						fileUrl,
-						new TextEncoder().encode("Hello, world!").buffer,
-					);
-					await impl.append(
-						fileUrl,
-						new TextEncoder().encode(" Goodbye, world!").buffer,
-					);
-
-					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
-					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
-				});
-
 				it("should append a Uint8Array to a file", async () => {
 					const filePath =
 						dirPath + "/test-generated-arraybuffer.txt";
-					await impl.write(
-						filePath,
-						new TextEncoder().encode("Hello, world!"),
-					);
-					await impl.append(
-						filePath,
-						new TextEncoder().encode(" Goodbye, world!"),
-					);
+					await impl.write(filePath, HELLO_WORLD_BYTES);
+					await impl.append(filePath, GOODBYE_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+					assert.strictEqual(result, HELLO_WORLD + GOODBYE_WORLD);
 				});
 
 				it("should append a Uint8Array to a file URL", async () => {
 					const filePath =
 						dirPath + "/test-generated-arraybuffer.txt";
 					const fileUrl = filePathToUrl(filePath);
-					await impl.write(
-						fileUrl,
-						new TextEncoder().encode("Hello, world!"),
-					);
-					await impl.append(
-						fileUrl,
-						new TextEncoder().encode(" Goodbye, world!"),
-					);
+					await impl.write(fileUrl, HELLO_WORLD_BYTES);
+					await impl.append(fileUrl, GOODBYE_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+					assert.strictEqual(result, HELLO_WORLD + GOODBYE_WORLD);
 				});
 
 				it("should append a Uint8Array subarray to a file", async () => {
 					const filePath =
 						dirPath + "/test-generated-arraybuffer.txt";
 					const bytes = new TextEncoder()
-						.encode("Hello, world! Goodbye, world!")
+						.encode(HELLO_WORLD + " " + GOODBYE_WORLD)
 						.subarray(4, 7);
 					await impl.append(filePath, bytes);
 
@@ -509,7 +345,7 @@ export class HfsImplTester {
 						dirPath + "/test-generated-arraybuffer.txt";
 					const fileUrl = filePathToUrl(filePath);
 					const bytes = new TextEncoder()
-						.encode("Hello, world! Goodbye, world!")
+						.encode(HELLO_WORLD + " " + GOODBYE_WORLD)
 						.subarray(4, 7);
 					await impl.append(fileUrl, bytes);
 
@@ -521,27 +357,26 @@ export class HfsImplTester {
 
 				it("should append to an already existing file", async () => {
 					const filePath = dirPath + "/test-generated-text.txt";
-					await impl.write(filePath, "Hello, world!");
 
-					await impl.append(filePath, " Goodbye, world!");
+					await impl.append(filePath, HELLO_WORLD_BYTES);
+					await impl.append(filePath, GOODBYE_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+					assert.strictEqual(result, HELLO_WORLD + GOODBYE_WORLD);
 				});
 
 				it("should append to an already existing file URL", async () => {
 					const filePath = dirPath + "/test-generated-text.txt";
 					const fileUrl = filePathToUrl(filePath);
-					await impl.write(fileUrl, "Hello, world!");
-
-					await impl.append(fileUrl, " Goodbye, world!");
+					await impl.append(fileUrl, HELLO_WORLD_BYTES);
+					await impl.append(fileUrl, GOODBYE_WORLD_BYTES);
 
 					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
+					const resultBytes = await impl.bytes(fileUrl);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world! Goodbye, world!");
+					assert.strictEqual(result, HELLO_WORLD + GOODBYE_WORLD);
 				});
 
 				it("should append to a file when the directory doesn't exist", async () => {
@@ -549,12 +384,12 @@ export class HfsImplTester {
 						this.#outputDir +
 						"/tmp-append/nonexistent/test-generated-text.txt";
 
-					await impl.append(filePath, "Hello, world!");
+					await impl.append(filePath, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 
 				it("should append to a file URL when the directory doesn't exist", async () => {
@@ -563,34 +398,35 @@ export class HfsImplTester {
 						"/tmp-append/nonexistent/test-generated-text.txt";
 					const fileUrl = filePathToUrl(filePath);
 
-					await impl.append(fileUrl, "Hello, world!");
+					await impl.append(fileUrl, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
+					const resultBytes = await impl.bytes(fileUrl);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 
 				it("should create a file when the file doesn't exist", async () => {
 					const filePath = dirPath + "/test-generated-text.txt";
-					await impl.append(filePath, "Hello, world!");
+
+					await impl.append(filePath, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
 					const resultBytes = await impl.bytes(filePath);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 
 				it("should create a file when the file URL doesn't exist", async () => {
 					const filePath = dirPath + "/test-generated-text.txt";
 					const fileUrl = filePathToUrl(filePath);
 
-					await impl.append(fileUrl, "Hello, world!");
+					await impl.append(fileUrl, HELLO_WORLD_BYTES);
 
 					// make sure the file was written
-					const resultBytes = await impl.bytes(filePath);
+					const resultBytes = await impl.bytes(fileUrl);
 					const result = new TextDecoder().decode(resultBytes);
-					assert.strictEqual(result, "Hello, world!");
+					assert.strictEqual(result, HELLO_WORLD);
 				});
 			});
 
@@ -741,7 +577,7 @@ export class HfsImplTester {
 						);
 						await impl.write(
 							dirPath + "/subdir/subsubdir/test.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 					});
 
@@ -831,7 +667,7 @@ export class HfsImplTester {
 					await impl.createDirectory(dirPath + "/subdir/subsubdir");
 					await impl.write(
 						dirPath + "/subdir/subsubdir/test.txt",
-						"Hello, world!",
+						HELLO_WORLD_BYTES,
 					);
 				});
 
@@ -929,11 +765,11 @@ export class HfsImplTester {
 						await impl.createDirectory(dirPath + "/subdir");
 						await impl.write(
 							dirPath + "/test1.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/test2.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 
 						const result = await impl.list(dirPath);
@@ -945,11 +781,11 @@ export class HfsImplTester {
 						await impl.createDirectory(dirPath + "/subdir");
 						await impl.write(
 							dirPath + "/test1.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/test2.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 
 						const dirUrl = filePathToUrl(dirPath);
@@ -972,11 +808,11 @@ export class HfsImplTester {
 						await impl.createDirectory(dirPath + "/subdir");
 						await impl.write(
 							dirPath + "/test1.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/test2.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						const result = [];
 
@@ -1025,11 +861,11 @@ export class HfsImplTester {
 						await impl.createDirectory(dirPath + "/subdir");
 						await impl.write(
 							dirPath + "/test1.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/test2.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						const dirUrl = filePathToUrl(dirPath);
 						const result = [];
@@ -1160,7 +996,7 @@ export class HfsImplTester {
 						);
 						await impl.write(
 							dirPath + "/subdir/subsubdir/test.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 					});
 
@@ -1260,7 +1096,7 @@ export class HfsImplTester {
 						);
 						await impl.write(
 							dirPath + "/subdir/subsubdir/test.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 					});
 
@@ -1342,11 +1178,11 @@ export class HfsImplTester {
 						await impl.createDirectory(dirPath + "/subdir");
 						await impl.write(
 							dirPath + "/test1.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/test2.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 					});
 
@@ -1367,7 +1203,7 @@ export class HfsImplTester {
 
 						const resultBytes = await impl.bytes(newFilePath);
 						const text = new TextDecoder().decode(resultBytes);
-						assert.strictEqual(text, "Hello, world!");
+						assert.strictEqual(text, HELLO_WORLD);
 					});
 
 					it("should move a file at the file URL", async () => {
@@ -1385,7 +1221,7 @@ export class HfsImplTester {
 
 						const resultBytes = await impl.bytes(newFilePath);
 						const text = new TextDecoder().decode(resultBytes);
-						assert.strictEqual(text, "Hello, world!");
+						assert.strictEqual(text, HELLO_WORLD);
 					});
 
 					it("should move a file to a new directory", async () => {
@@ -1408,7 +1244,7 @@ export class HfsImplTester {
 						const text = new TextDecoder().decode(resultBytes);
 						assert.strictEqual(
 							text,
-							"Hello, world!",
+							HELLO_WORLD,
 							"The file should contain the correct contents at the new location.",
 						);
 					});
@@ -1442,15 +1278,15 @@ export class HfsImplTester {
 						await impl.createDirectory(dirPath + "/subdir");
 						await impl.write(
 							dirPath + "/test1.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/test2.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 						await impl.write(
 							dirPath + "/subdir/test3.txt",
-							"Hello, world!",
+							HELLO_WORLD_BYTES,
 						);
 					});
 
@@ -1471,7 +1307,7 @@ export class HfsImplTester {
 
 						const resultBytes = await impl.bytes(destPath);
 						const text = new TextDecoder().decode(resultBytes);
-						assert.strictEqual(text, "Hello, world!");
+						assert.strictEqual(text, HELLO_WORLD);
 					});
 
 					it("should move a file at the file URL", async () => {
@@ -1489,7 +1325,7 @@ export class HfsImplTester {
 
 						const resultBytes = await impl.bytes(destPath);
 						const text = new TextDecoder().decode(resultBytes);
-						assert.strictEqual(text, "Hello, world!");
+						assert.strictEqual(text, HELLO_WORLD);
 					});
 
 					it("should move a file to a new directory", async () => {
@@ -1512,7 +1348,7 @@ export class HfsImplTester {
 						const text = new TextDecoder().decode(resultBytes);
 						assert.strictEqual(
 							text,
-							"Hello, world!",
+							HELLO_WORLD,
 							"The file should contain the correct contents at the new location.",
 						);
 					});
@@ -1546,7 +1382,7 @@ export class HfsImplTester {
 							destPath + "/test3.txt",
 						);
 						const text = new TextDecoder().decode(resultBytes);
-						assert.strictEqual(text, "Hello, world!"); //, "The file should contain the correct contents at the new location.");
+						assert.strictEqual(text, HELLO_WORLD); //, "The file should contain the correct contents at the new location.");
 					});
 				});
 			}
