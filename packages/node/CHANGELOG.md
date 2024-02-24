@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.12.0...node-v0.13.0) (2024-02-23)
+
+
+### Features
+
+* Impls only need bytes() method to read data ([#90](https://github.com/humanwhocodes/humanfs/issues/90)) ([c0c3b36](https://github.com/humanwhocodes/humanfs/commit/c0c3b36413c8d10e63a94ad1cc6a5cead7b52e88))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.12.0 to ^0.13.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.11.0 to ^0.12.0
+    * @humanfs/types bumped from ^0.10.0 to ^0.11.0
+
 ## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.11.0...node-v0.12.0) (2024-02-16)
 
 

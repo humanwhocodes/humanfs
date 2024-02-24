@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.11.0...test-v0.12.0) (2024-02-23)
+
+
+### Features
+
+* Impls only need bytes() method to read data ([#90](https://github.com/humanwhocodes/humanfs/issues/90)) ([c0c3b36](https://github.com/humanwhocodes/humanfs/commit/c0c3b36413c8d10e63a94ad1cc6a5cead7b52e88))
+
 ## [0.11.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.10.0...test-v0.11.0) (2024-02-16)
 
 
