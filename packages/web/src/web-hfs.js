@@ -187,11 +187,6 @@ export class WebHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		let value = contents.buffer.slice(
-			contents.byteOffset,
-			contents.byteOffset + contents.byteLength,
-		);
-
 		let handle = /** @type {FileSystemFileHandle} */ (
 			await findPath(this.#root, filePath)
 		);
@@ -214,7 +209,7 @@ export class WebHfsImpl {
 		}
 
 		const writable = await handle.createWritable();
-		await writable.write(value);
+		await writable.write(contents);
 		await writable.close();
 	}
 
@@ -244,19 +239,9 @@ export class WebHfsImpl {
 		}
 
 		const existing = await (await handle.getFile()).arrayBuffer();
-
-		// contents must be an ArrayBuffer or ArrayBufferView
-
-		const valueToAppend = /** @type {ArrayBuffer} */ (
-			contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			)
-		);
-
 		const newValue = new Uint8Array([
 			...new Uint8Array(existing),
-			...new Uint8Array(valueToAppend),
+			...contents,
 		]);
 
 		return this.write(filePath, newValue);
