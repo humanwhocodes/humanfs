@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global TextEncoder, URL */
+/* global URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -286,7 +286,7 @@ export class MemoryHfsImpl {
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to write.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
+	 * @param {Uint8Array} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 *  written.
@@ -294,18 +294,10 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		let value;
-
-		if (typeof contents === "string") {
-			value = new TextEncoder().encode(contents).buffer;
-		} else if (contents instanceof ArrayBuffer) {
-			value = contents;
-		} else if (ArrayBuffer.isView(contents)) {
-			value = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-		}
+		let value = contents.buffer.slice(
+			contents.byteOffset,
+			contents.byteOffset + contents.byteLength,
+		);
 
 		return writePath(this.#root, filePath, new MemoryHfsFile(value));
 	}
@@ -313,7 +305,7 @@ export class MemoryHfsImpl {
 	/**
 	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to append to.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 * @param {Uint8Array} contents The contents to append to the
 	 *  file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 * written.
@@ -329,15 +321,10 @@ export class MemoryHfsImpl {
 			return this.write(filePath, contents);
 		}
 
-		const valueToAppend =
-			typeof contents === "string"
-				? new TextEncoder().encode(contents).buffer
-				: ArrayBuffer.isView(contents)
-					? contents.buffer.slice(
-							contents.byteOffset,
-							contents.byteOffset + contents.byteLength,
-						)
-					: contents;
+		const valueToAppend = contents.buffer.slice(
+			contents.byteOffset,
+			contents.byteOffset + contents.byteLength,
+		);
 
 		const newValue = new Uint8Array([
 			...new Uint8Array(existing.contents),

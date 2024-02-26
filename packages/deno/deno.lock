@@ -136,5 +136,17 @@
     "https://deno.land/std@0.208.0/testing/_test_suite.ts": "30f018feeb3835f12ab198d8a518f9089b1bcb2e8c838a8b615ab10d5005465c",
     "https://deno.land/std@0.208.0/testing/asserts.ts": "605bbd2ef0695e2a4324d810c4ad22e56041d51afb9584fc0b4e81084b14b1d6",
     "https://deno.land/std@0.208.0/testing/bdd.ts": "c41f019786c4a9112aadb7e5a7bbcc711f58429ac5904b3855fa248ba5fa0ba6"
+  },
+  "workspace": {
+    "dependencies": [
+      "npm:@humanwhocodes/retry@latest"
+    ],
+    "packageJson": {
+      "dependencies": [
+        "npm:@humanwhocodes/retry@^0.1.2",
+        "npm:@types/node@^20.9.4",
+        "npm:typescript@^5.2.2"
+      ]
+    }
   }
 }

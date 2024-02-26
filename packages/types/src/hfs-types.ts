@@ -23,7 +23,7 @@ export interface HfsImpl {
 	 * @returns A promise that resolves when the file is written.
 	 * @throws {Error} If the file cannot be written.
 	 */
-	write?(filePath: string|URL, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
+	write?(filePath: string|URL, data: Uint8Array): Promise<void>;
 
 	/**
 	 * Appends the given data to the given file. For text, assumes UTF-8 encoding.
@@ -32,7 +32,7 @@ export interface HfsImpl {
 	 * @returns A promise that resolves when the file is written.
 	 * @throws {Error} If the file cannot be written.
 	 */
-	append?(filePath: string|URL, data: string|ArrayBuffer|ArrayBufferView): Promise<void>;
+	append?(filePath: string|URL, data: Uint8Array): Promise<void>;
 
 	/**
 	 * Checks if the given file exists.

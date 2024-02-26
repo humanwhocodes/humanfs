@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global navigator, URL, TextEncoder */
+/* global navigator, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -179,7 +179,7 @@ export class WebHfsImpl {
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to write.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
+	 * @param {Uint8Array} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 *  written.
@@ -187,19 +187,6 @@ export class WebHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		let value;
-
-		if (typeof contents === "string") {
-			value = contents;
-		} else if (contents instanceof ArrayBuffer) {
-			value = contents;
-		} else if (ArrayBuffer.isView(contents)) {
-			value = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-		}
-
 		let handle = /** @type {FileSystemFileHandle} */ (
 			await findPath(this.#root, filePath)
 		);
@@ -222,14 +209,14 @@ export class WebHfsImpl {
 		}
 
 		const writable = await handle.createWritable();
-		await writable.write(value);
+		await writable.write(contents);
 		await writable.close();
 	}
 
 	/**
 	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to append to.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 * @param {Uint8Array} contents The contents to append to the
 	 *  file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 * written.
@@ -252,24 +239,10 @@ export class WebHfsImpl {
 		}
 
 		const existing = await (await handle.getFile()).arrayBuffer();
-
-		// contents must be an ArrayBuffer or ArrayBufferView
-
-		const valueToAppend = /** @type {ArrayBuffer} */ (
-			ArrayBuffer.isView(contents)
-				? contents.buffer.slice(
-						contents.byteOffset,
-						contents.byteOffset + contents.byteLength,
-					)
-				: typeof contents === "string"
-					? new TextEncoder().encode(contents).buffer
-					: contents
-		);
-
 		const newValue = new Uint8Array([
 			...new Uint8Array(existing),
-			...new Uint8Array(valueToAppend),
-		]).buffer;
+			...contents,
+		]);
 
 		return this.write(filePath, newValue);
 	}

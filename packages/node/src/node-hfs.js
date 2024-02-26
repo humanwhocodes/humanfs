@@ -129,7 +129,7 @@ export class NodeHfsImpl {
 	/**
 	 * Writes a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to write.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to write to the
+	 * @param {Uint8Array} contents The contents to write to the
 	 *   file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 *  written.
@@ -137,19 +137,7 @@ export class NodeHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		let value;
-
-		if (typeof contents === "string") {
-			value = contents;
-		} else if (contents instanceof ArrayBuffer) {
-			value = Buffer.from(contents);
-		} else if (ArrayBuffer.isView(contents)) {
-			const bytes = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-			value = Buffer.from(bytes);
-		}
+		const value = Buffer.from(contents);
 
 		return this.#retrier
 			.retry(() => this.#fsp.writeFile(filePath, value))
@@ -174,7 +162,7 @@ export class NodeHfsImpl {
 	/**
 	 * Appends a value to a file. If the value is a string, UTF-8 encoding is used.
 	 * @param {string|URL} filePath The path to the file to append to.
-	 * @param {string|ArrayBuffer|ArrayBufferView} contents The contents to append to the
+	 * @param {Uint8Array} contents The contents to append to the
 	 *  file.
 	 * @returns {Promise<void>} A promise that resolves when the file is
 	 * written.
@@ -182,19 +170,7 @@ export class NodeHfsImpl {
 	 * @throws {Error} If the file cannot be appended to.
 	 */
 	async append(filePath, contents) {
-		let value;
-
-		if (typeof contents === "string") {
-			value = contents;
-		} else if (contents instanceof ArrayBuffer) {
-			value = Buffer.from(contents);
-		} else if (ArrayBuffer.isView(contents)) {
-			const bytes = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-			value = Buffer.from(bytes);
-		}
+		const value = Buffer.from(contents);
 
 		return this.#retrier
 			.retry(() => this.#fsp.appendFile(filePath, value))

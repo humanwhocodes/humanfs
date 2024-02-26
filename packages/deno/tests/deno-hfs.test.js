@@ -33,6 +33,10 @@ const __filename = path.fromFileUrl(import.meta.url);
 const __dirname = path.dirname(__filename);
 const fixturesDir = path.resolve(__dirname, "fixtures");
 
+const encoder = new TextEncoder();
+const HELLO_WORLD = "Hello, world!";
+const HELLO_WORLD_BYTES = encoder.encode(HELLO_WORLD);
+
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
@@ -191,7 +195,7 @@ describe("DenoHfsImpl Customizations", () => {
 			let success = false;
 			const impl = new DenoHfsImpl({
 				deno: {
-					async writeTextFile() {
+					async writeFile() {
 						if (callCount === 0) {
 							callCount++;
 							const error = new Error(
@@ -206,7 +210,7 @@ describe("DenoHfsImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".hfs/foo", "Hello world!");
+			await impl.write(".hfs/foo", HELLO_WORLD_BYTES);
 			assert(success);
 		});
 
@@ -215,7 +219,7 @@ describe("DenoHfsImpl Customizations", () => {
 			let success = false;
 			const impl = new DenoHfsImpl({
 				deno: {
-					async writeTextFile() {
+					async writeFile() {
 						if (callCount === 0) {
 							callCount++;
 							const error = new Error(
@@ -230,7 +234,7 @@ describe("DenoHfsImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".hfs/foo", "Hello world!");
+			await impl.write(".hfs/foo", HELLO_WORLD_BYTES);
 			assert(success);
 		});
 
@@ -239,7 +243,7 @@ describe("DenoHfsImpl Customizations", () => {
 			let success = false;
 			const impl = new DenoHfsImpl({
 				deno: {
-					async writeTextFile() {
+					async writeFile() {
 						if (callCount < 3) {
 							callCount++;
 							const error = new Error(
@@ -254,20 +258,20 @@ describe("DenoHfsImpl Customizations", () => {
 				},
 			});
 
-			await impl.write(".hfs/foo", "Hello world!");
+			await impl.write(".hfs/foo", HELLO_WORLD_BYTES);
 			assert(success);
 		});
 
 		it("should rethrow an error that isn't ENFILE", async () => {
 			const impl = new DenoHfsImpl({
 				deno: {
-					async writeTextFile() {
+					async writeFile() {
 						throw new Error("Boom!");
 					},
 				},
 			});
 			await assertRejects(
-				() => impl.write(".hfs/foo", "Hello world!"),
+				() => impl.write(".hfs/foo", HELLO_WORLD_BYTES),
 				/Boom!/,
 			);
 		});
