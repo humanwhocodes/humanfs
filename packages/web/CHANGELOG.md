@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.11.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.10.0...web-v0.11.0) (2024-02-27)
+
+
+### Features
+
+* Add from() to Path; deprecate fromString() and fromURL() ([#94](https://github.com/humanwhocodes/humanfs/issues/94)) ([784f197](https://github.com/humanwhocodes/humanfs/commit/784f197e905fa70f4e346854a84a95ee0f36b564))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.14.0 to ^0.15.0
+
 ## [0.10.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.9.0...web-v0.10.0) (2024-02-27)
 
 
