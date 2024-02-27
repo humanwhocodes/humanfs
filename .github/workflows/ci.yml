@@ -57,20 +57,7 @@ jobs:
 
             - run: bun install
 
-            - name: Test Core Package
-              run: bun test
+            - run: bun run test
               working-directory: packages/core
-              env:
-                  CI: true
-
-            - name: Test Node.js Package
-              run: bun test
-              working-directory: packages/node
-              env:
-                  CI: true
-
-            - name: Test Memory Package
-              run: bun test
-              working-directory: packages/memory
               env:
                   CI: true
