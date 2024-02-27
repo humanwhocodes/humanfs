@@ -6,6 +6,20 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.13.0...core-v0.14.0) (2024-02-27)
+
+
+### Features
+
+* impl write() method only needs to handle Uint8Arrays ([#92](https://github.com/humanwhocodes/humanfs/issues/92)) ([68bcfb5](https://github.com/humanwhocodes/humanfs/commit/68bcfb59a6684b184c55f97536aad730636299b5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.11.0 to ^0.12.0
+
 ## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.12.0...core-v0.13.0) (2024-02-23)
 
 
