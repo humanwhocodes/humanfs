@@ -2,7 +2,7 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global navigator, URL */
+/* global navigator */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -49,11 +49,7 @@ async function findPath(
 		return root;
 	}
 
-	const path =
-		fileOrDirPath instanceof URL
-			? Path.fromURL(fileOrDirPath)
-			: Path.fromString(fileOrDirPath);
-
+	const path = Path.from(fileOrDirPath);
 	const steps = [...path];
 
 	if (returnParent) {
@@ -192,10 +188,7 @@ export class WebHfsImpl {
 		);
 
 		if (!handle) {
-			const path =
-				filePath instanceof URL
-					? Path.fromURL(filePath)
-					: Path.fromString(filePath);
+			const path = Path.from(filePath);
 			const name = path.name;
 			const parentHandle =
 				/** @type {FileSystemDirectoryHandle} */ (
@@ -279,10 +272,7 @@ export class WebHfsImpl {
 	 */
 	async createDirectory(dirPath) {
 		let handle = this.#root;
-		const path =
-			dirPath instanceof URL
-				? Path.fromURL(dirPath)
-				: Path.fromString(dirPath);
+		const path = Path.from(dirPath);
 
 		for (const name of path) {
 			handle = await handle.getDirectoryHandle(name, { create: true });
@@ -445,10 +435,7 @@ export class WebHfsImpl {
 
 		// @ts-ignore -- TS doesn't know about this yet
 		for await (const entry of this.list(fileOrDirPath)) {
-			const entryPath =
-				fileOrDirPath instanceof URL
-					? Path.fromURL(fileOrDirPath)
-					: Path.fromString(fileOrDirPath);
+			const entryPath = Path.from(fileOrDirPath);
 			entryPath.push(entry.name);
 
 			const date = await this.lastModified(entryPath.toString());
@@ -521,15 +508,8 @@ export class WebHfsImpl {
 			throw new NotFoundError(`copyAll '${source}' -> '${destination}'`);
 		}
 
-		const sourcePath =
-			source instanceof URL
-				? Path.fromURL(source)
-				: Path.fromString(source);
-
-		const destinationPath =
-			destination instanceof URL
-				? Path.fromURL(destination)
-				: Path.fromString(destination);
+		const sourcePath = Path.from(source);
+		const destinationPath = Path.from(destination);
 
 		// for directories, create the destination directory and copy each entry
 		await this.createDirectory(destination);
@@ -575,10 +555,7 @@ export class WebHfsImpl {
 		}
 
 		const fileHandle = /** @type {FileSystemFileHandle} */ (handle);
-		const destinationPath =
-			destination instanceof URL
-				? Path.fromURL(destination)
-				: Path.fromString(destination);
+		const destinationPath = Path.from(destination);
 		const destinationName = destinationPath.pop();
 		const destinationParent = await findPath(
 			this.#root,
@@ -627,10 +604,7 @@ export class WebHfsImpl {
 		const directoryHandle = /** @type {FileSystemDirectoryHandle} */ (
 			handle
 		);
-		const destinationPath =
-			destination instanceof URL
-				? Path.fromURL(destination)
-				: Path.fromString(destination);
+		const destinationPath = Path.from(destination);
 
 		// Chrome doesn't yet support move() on directories
 		// @ts-ignore -- TS doesn't know about this yet
@@ -646,10 +620,7 @@ export class WebHfsImpl {
 			return directoryHandle.move(destinationParent, destinationName);
 		}
 
-		const sourcePath =
-			source instanceof URL
-				? Path.fromURL(source)
-				: Path.fromString(source);
+		const sourcePath = Path.from(source);
 
 		// for directories, create the destination directory and move each entry
 		await this.createDirectory(destination);

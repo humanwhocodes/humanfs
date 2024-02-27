@@ -2,7 +2,6 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -46,10 +45,7 @@ function assertArrayBuffer(value) {
  * @returns {{object:object,key:string}|undefined} The file or directory found.
  */
 function findPath(volume, fileOrDirPath) {
-	const path =
-		fileOrDirPath instanceof URL
-			? Path.fromURL(fileOrDirPath)
-			: Path.fromString(fileOrDirPath);
+	const path = Path.from(fileOrDirPath);
 	const parts = [...path];
 
 	let object = volume;
@@ -92,10 +88,7 @@ function readPath(volume, fileOrDirPath) {
  * @returns {void}
  */
 function writePath(volume, fileOrDirPath, value) {
-	const path =
-		fileOrDirPath instanceof URL
-			? Path.fromURL(fileOrDirPath)
-			: Path.fromString(fileOrDirPath);
+	const path = Path.from(fileOrDirPath);
 	const name = path.pop();
 	let directory = volume;
 
@@ -546,15 +539,8 @@ export class MemoryHfsImpl {
 			throw new NotFoundError(`copyAll '${source}' -> '${destination}'`);
 		}
 
-		const sourcePath =
-			source instanceof URL
-				? Path.fromURL(source)
-				: Path.fromString(source);
-
-		const destinationPath =
-			destination instanceof URL
-				? Path.fromURL(destination)
-				: Path.fromString(destination);
+		const sourcePath = Path.from(source);
+		const destinationPath = Path.from(destination);
 
 		// for directories, create the destination directory and copy each entry
 		await this.createDirectory(destination);
@@ -625,15 +611,8 @@ export class MemoryHfsImpl {
 			throw new NotFoundError(`moveAll '${source}' -> '${destination}'`);
 		}
 
-		const sourcePath =
-			source instanceof URL
-				? Path.fromURL(source)
-				: Path.fromString(source);
-
-		const destinationPath =
-			destination instanceof URL
-				? Path.fromURL(destination)
-				: Path.fromString(destination);
+		const sourcePath = Path.from(source);
+		const destinationPath = Path.from(destination);
 
 		// for directories, create the destination directory and copy each entry
 		await this.createDirectory(destination);

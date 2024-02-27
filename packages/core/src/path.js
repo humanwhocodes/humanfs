@@ -3,6 +3,8 @@
  * @author Nicholas C. Zakas
  */
 
+/* globals URL */
+
 //-----------------------------------------------------------------------------
 // Types
 //-----------------------------------------------------------------------------
@@ -117,11 +119,19 @@ export class Path {
 	}
 
 	/**
+	 * Returns an iterator for steps in the path.
+	 * @returns {IterableIterator<string>} An iterator for the steps in the path.
+	 */
+	steps() {
+		return this.#steps.values();
+	}
+
+	/**
 	 * Returns an iterator for the steps in the path.
 	 * @returns {IterableIterator<string>} An iterator for the steps in the path.
 	 */
 	[Symbol.iterator]() {
-		return this.#steps.values();
+		return this.steps();
 	}
 
 	/**
@@ -158,9 +168,42 @@ export class Path {
 	}
 
 	/**
+	 * Creates a new path based on the argument type. If the argument is a string,
+	 * it is assumed to be a file or directory path and is converted to a Path
+	 * instance. If the argument is a URL, it is assumed to be a file URL and is
+	 * converted to a Path instance. If the argument is a Path instance, it is
+	 * copied into a new Path instance. If the argument is an array, it is assumed
+	 * to be the steps of a path and is used to create a new Path instance.
+	 * @param {string|URL|Path|Array<string>} pathish The value to convert to a Path instance.
+	 * @returns {Path} A new Path instance.
+	 * @throws {TypeError} When pathish is not a string, URL, Path, or Array.
+	 * @throws {TypeError} When pathish is a string and is empty.
+	 */
+	static from(pathish) {
+		if (typeof pathish === "string") {
+			if (!pathish) {
+				throw new TypeError("argument cannot be empty");
+			}
+
+			return Path.fromString(pathish);
+		}
+
+		if (pathish instanceof URL) {
+			return Path.fromURL(pathish);
+		}
+
+		if (pathish instanceof Path || Array.isArray(pathish)) {
+			return new Path(pathish);
+		}
+
+		throw new TypeError("argument must be a string, URL, Path, or Array");
+	}
+
+	/**
 	 * Creates a new Path instance from a string.
 	 * @param {string} fileOrDirPath The file or directory path to convert.
 	 * @returns {Path} A new Path instance.
+	 * @deprecated Use Path.from() instead.
 	 */
 	static fromString(fileOrDirPath) {
 		return new Path(normalizePath(fileOrDirPath).split("/"));
@@ -173,6 +216,7 @@ export class Path {
 	 * @throws {TypeError} When url is not a URL instance.
 	 * @throws {TypeError} When url.pathname is empty.
 	 * @throws {TypeError} When url.protocol is not "file:".
+	 * @deprecated Use Path.from() instead.
 	 */
 	static fromURL(url) {
 		if (!(url instanceof URL)) {

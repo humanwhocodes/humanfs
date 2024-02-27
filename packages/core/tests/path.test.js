@@ -2,7 +2,7 @@
  * @fileoverview Tests for the Path class.
  * @author Nicholas C. Zakas
  */
-/* global it, describe */
+/* global it, describe, URL */
 
 //------------------------------------------------------------------------------
 // Imports
@@ -363,32 +363,78 @@ describe("Path", () => {
 
 		it("should throw a TypeError when the URL is not a URL instance", () => {
 			const invalidUrl = "file:///c:/foo/bar";
-			assert.throws(
-				() => {
-					Path.fromURL(invalidUrl);
-				},
-				new TypeError("url must be a URL instance")
-			);
+			assert.throws(() => {
+				Path.fromURL(invalidUrl);
+			}, new TypeError("url must be a URL instance"));
 		});
 
 		it("should throw a TypeError when the URL pathname is empty", () => {
 			const url = new URL("file:///");
-			assert.throws(
-				() => {
-					Path.fromURL(url);
-				},
-				new TypeError("url.pathname cannot be empty")
-			);
+			assert.throws(() => {
+				Path.fromURL(url);
+			}, new TypeError("url.pathname cannot be empty"));
 		});
 
 		it("should throw a TypeError when the URL protocol is not 'file:'", () => {
 			const url = new URL("http://example.com/foo/bar");
-			assert.throws(
-				() => {
-					Path.fromURL(url);
-				},
-				new TypeError("url.protocol must be \"file:\"")
-			);
+			assert.throws(() => {
+				Path.fromURL(url);
+			}, new TypeError('url.protocol must be "file:"'));
+		});
+	});
+
+	describe("static from()", () => {
+		describe("string arguments", () => {
+			it("should create a new Path instance from a string", () => {
+				const path = Path.from("foo/bar");
+				assert.deepStrictEqual([...path], ["foo", "bar"]);
+			});
+
+			it("should throw a TypeError when the string is empty", () => {
+				assert.throws(() => {
+					Path.from("");
+				}, new TypeError("argument cannot be empty"));
+			});
+		});
+
+		describe("URL arguments", () => {
+			it("should create a new Path instance from a valid URL", () => {
+				const url = new URL("file:///c:/foo/bar");
+				const path = Path.from(url);
+				assert.deepStrictEqual([...path], ["foo", "bar"]);
+			});
+
+			it("should throw a TypeError when the URL pathname is empty", () => {
+				const url = new URL("file:///");
+				assert.throws(() => {
+					Path.from(url);
+				}, new TypeError("url.pathname cannot be empty"));
+			});
+
+			it("should throw a TypeError when the URL protocol is not 'file:'", () => {
+				const url = new URL("http://example.com/foo/bar");
+				assert.throws(() => {
+					Path.from(url);
+				}, new TypeError('url.protocol must be "file:"'));
+			});
+		});
+
+		describe("Path arguments", () => {
+			it("should create a new Path instance from a Path instance", () => {
+				const originalPath = new Path(["foo", "bar"]);
+				const path = Path.from(originalPath);
+				assert.ok(path instanceof Path);
+				assert.deepStrictEqual([...path], ["foo", "bar"]);
+				assert.notStrictEqual(path, originalPath);
+			});
+		});
+
+		describe("Array arguments", () => {
+			it("should create a new Path instance from an array of steps", () => {
+				const path = Path.from(["foo", "bar"]);
+				assert.ok(path instanceof Path);
+				assert.deepStrictEqual([...path], ["foo", "bar"]);
+			});
 		});
 	});
 });
