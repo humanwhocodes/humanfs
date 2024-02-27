@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.13.0...memory-v0.14.0) (2024-02-27)
+
+
+### Features
+
+* impl write() method only needs to handle Uint8Arrays ([#92](https://github.com/humanwhocodes/humanfs/issues/92)) ([68bcfb5](https://github.com/humanwhocodes/humanfs/commit/68bcfb59a6684b184c55f97536aad730636299b5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.13.0 to ^0.14.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.12.0 to ^0.13.0
+    * @humanfs/types bumped from ^0.11.0 to ^0.12.0
+
 ## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.12.0...memory-v0.13.0) (2024-02-23)
 
 
