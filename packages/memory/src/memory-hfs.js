@@ -7,8 +7,8 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef{import("@humanfs/types").HfsImpl} HfsImpl */
-/** @typedef{import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
+/** @typedef {import("@humanfs/types").HfsImpl} HfsImpl */
+/** @typedef {import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Imports
@@ -16,246 +16,27 @@
 
 import {
 	Hfs,
-	Path,
 	NotFoundError,
 	DirectoryError,
 	NotEmptyError,
 } from "@humanfs/core";
 
-//-----------------------------------------------------------------------------
-// Helpers
-//-----------------------------------------------------------------------------
-
-/**
- * Checks if a value is an ArrayBuffer.
- * @param {any} value The value to check.
- * @returns {void}
- * @throws {TypeError} If the value is not an ArrayBuffer.
- */
-function assertArrayBuffer(value) {
-	if (!(value instanceof ArrayBuffer)) {
-		throw new TypeError("Value must be an ArrayBuffer.");
-	}
-}
-
-/**
- * Finds a file or directory in the volume.
- * @param {object} volume The volume to search.
- * @param {string|URL} fileOrDirPath The path to the file or directory to find.
- * @returns {{object:object,key:string}|undefined} The file or directory found.
- */
-function findPath(volume, fileOrDirPath) {
-	const path = Path.from(fileOrDirPath);
-	const parts = [...path];
-
-	let object = volume;
-	let key = parts.shift();
-
-	while (object.get(key)) {
-		if (parts.length === 0) {
-			return { object, key };
-		}
-
-		object = object.get(key);
-		key = parts.shift();
-	}
-
-	return undefined;
-}
-
-/**
- * Finds a file or directory in the volume.
- * @param {MemoryHfsDirectory} volume The volume to search.
- * @param {string|URL} fileOrDirPath The path to the file or directory to find.
- * @returns {MemoryHfsDirectory|MemoryHfsFile|undefined} The file or directory found.
- */
-function readPath(volume, fileOrDirPath) {
-	const location = findPath(volume, fileOrDirPath);
-
-	if (!location) {
-		return undefined;
-	}
-
-	const { object, key } = location;
-	return object.get(key);
-}
-
-/**
- * Writes a file or directory to the volume.
- * @param {MemoryHfsDirectory} volume The volume to search.
- * @param {string|URL} fileOrDirPath The path to the file or directory to find.
- * @param {MemoryHfsDirectory|MemoryHfsFile|undefined} value The value to write.
- * @returns {void}
- */
-function writePath(volume, fileOrDirPath, value) {
-	const path = Path.from(fileOrDirPath);
-	const name = path.pop();
-	let directory = volume;
-
-	// create any missing directories
-	for (const step of path) {
-		let entry = directory.get(step);
-
-		if (!entry) {
-			entry = new MemoryHfsDirectory();
-			directory.set(step, entry);
-		}
-
-		directory = entry;
-	}
-
-	// we don't want to overwrite an existing directory
-	if (
-		directory &&
-		directory.get("name")?.kind === "directory" &&
-		value.kind === "directory"
-	) {
-		return;
-	}
-
-	directory.set(name, value);
-}
-
-//-----------------------------------------------------------------------------
-// Utility Classes
-//-----------------------------------------------------------------------------
-
-/**
- * A class representing a file in memory.
- */
-class MemoryHfsFile {
-	/**
-	 * The contents of the file.
-	 * @type {ArrayBuffer}
-	 */
-	#contents;
-
-	/**
-	 * The last modified date of the file.
-	 * @type {Date}
-	 */
-	lastModified = new Date();
-
-	/**
-	 * The kind of file system object.
-	 * @type {string}
-	 * @readonly
-	 */
-	kind = "file";
-
-	/**
-	 * The parent directory of the file.
-	 * @type {MemoryHfsDirectory|undefined}
-	 */
-	parent;
-
-	/**
-	 * Creates a new instance.
-	 * @param {ArrayBuffer} contents The contents of the file.
-	 * @throws {TypeError} If the contents are not an ArrayBuffer.
-	 */
-	constructor(contents) {
-		assertArrayBuffer(contents);
-		this.#contents = contents;
-	}
-
-	/**
-	 * Gets the contents of the file.
-	 * @type {ArrayBuffer}
-	 */
-	get contents() {
-		return this.#contents;
-	}
-
-	/**
-	 * Sets the contents of the file.
-	 * @param {ArrayBuffer} value The new contents of the file.
-	 * @throws {TypeError} If the contents are not an ArrayBuffer.
-	 * @returns {void}
-	 */
-	set contents(value) {
-		assertArrayBuffer(value);
-		this.#contents = value;
-		this.lastModified = new Date();
-
-		// now update each ancestor's last modified date
-		let current = this.parent;
-
-		while (current) {
-			current.lastModified = this.lastModified;
-			current = current.parent;
-		}
-	}
-}
-
-export class MemoryHfsDirectory extends Map {
-	/**
-	 * The last modified date of the directory.
-	 * @type {Date}
-	 */
-	lastModified = new Date();
-
-	/**
-	 * The kind of file system object.
-	 * @type {string}
-	 * @readonly
-	 */
-	kind = "directory";
-
-	/**
-	 * The parent directory of the directory.
-	 * @type {MemoryHfsDirectory|undefined}
-	 */
-	parent;
-
-	/**
-	 * Sets a value in the directory.
-	 * @param {string} key The key to set.
-	 * @param {MemoryHfsFile|MemoryHfsDirectory} entry The value to set.
-	 * @returns {this} The instance for chaining.
-	 */
-	set(key, entry) {
-		entry.lastModified = new Date();
-		entry.parent = this;
-		return super.set(key, entry);
-	}
-
-	/**
-	 * Deletes a value from the directory.
-	 * @param {string} key The key to delete.
-	 * @returns {boolean} True if the key was deleted, false if not.
-	 */
-	delete(key) {
-		this.lastModified = new Date();
-
-		if (this.has(key)) {
-			const entry = this.get(key);
-
-			if (entry.kind === "directory") {
-				entry.parent = undefined;
-			}
-
-			return super.delete(key);
-		}
-
-		return false;
-	}
-}
+import { MemoryHfsVolume } from "./memory-hfs-volume.js";
 
 //-----------------------------------------------------------------------------
 // Exports
 //-----------------------------------------------------------------------------
 
 /**
- * A class representing the Node.js implementation of Hfs.
+ * A class representing the in-memory implementation of Hfs.
  * @implements {HfsImpl}
  */
 export class MemoryHfsImpl {
 	/**
 	 * The in-memory file system volume to use.
-	 * @type {MemoryHfsDirectory}
+	 * @type {MemoryHfsVolume}
 	 */
-	#root = new MemoryHfsDirectory();
+	#volume = new MemoryHfsVolume();
 
 	/**
 	 * Reads a file and returns the contents as an Uint8Array.
@@ -266,14 +47,13 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async bytes(filePath) {
-		const entry = readPath(this.#root, filePath);
+		const contents = this.#volume.readFile(filePath);
 
-		if (entry?.kind !== "file") {
+		if (contents === undefined) {
 			return undefined;
 		}
 
-		const file = /** @type {MemoryHfsFile} */ (entry);
-		return file.contents ? new Uint8Array(file.contents) : undefined;
+		return new Uint8Array(contents);
 	}
 
 	/**
@@ -287,12 +67,12 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		let value = contents.buffer.slice(
+		const value = contents.buffer.slice(
 			contents.byteOffset,
 			contents.byteOffset + contents.byteLength,
 		);
 
-		return writePath(this.#root, filePath, new MemoryHfsFile(value));
+		this.#volume.writeFile(filePath, value);
 	}
 
 	/**
@@ -306,25 +86,22 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be appended to.
 	 */
 	async append(filePath, contents) {
-		const existing = /** @type {MemoryHfsFile} */ (
-			readPath(this.#root, filePath)
-		);
-
+		const existing = this.#volume.readFile(filePath);
 		if (!existing) {
-			return this.write(filePath, contents);
+			const value = contents.buffer.slice(
+				contents.byteOffset,
+				contents.byteOffset + contents.byteLength,
+			);
+
+			return this.#volume.writeFile(filePath, value);
 		}
 
-		const valueToAppend = contents.buffer.slice(
-			contents.byteOffset,
-			contents.byteOffset + contents.byteLength,
-		);
-
 		const newValue = new Uint8Array([
-			...new Uint8Array(existing.contents),
-			...new Uint8Array(valueToAppend),
+			...new Uint8Array(existing),
+			...contents,
 		]).buffer;
 
-		existing.contents = newValue;
+		this.#volume.writeFile(filePath, newValue);
 	}
 
 	/**
@@ -335,15 +112,13 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the file path is not a string.
 	 */
 	async isFile(filePath) {
-		const location = findPath(this.#root, filePath);
+		const entry = this.#volume.stat(filePath);
 
-		if (!location) {
+		if (!entry) {
 			return false;
 		}
 
-		const { object, key } = location;
-
-		return object.get(key).kind === "file";
+		return entry.kind === "file";
 	}
 
 	/**
@@ -354,14 +129,13 @@ export class MemoryHfsImpl {
 	 * @throws {TypeError} If the directory path is not a string.
 	 */
 	async isDirectory(dirPath) {
-		const location = findPath(this.#root, dirPath);
+		const entry = this.#volume.stat(dirPath);
 
-		if (!location) {
+		if (!entry) {
 			return false;
 		}
 
-		const { object, key } = location;
-		return object.get(key).kind === "directory";
+		return entry.kind === "directory";
 	}
 
 	/**
@@ -371,7 +145,7 @@ export class MemoryHfsImpl {
 	 *   created.
 	 */
 	async createDirectory(dirPath) {
-		writePath(this.#root, dirPath, new MemoryHfsDirectory());
+		this.#volume.mkdirp(dirPath);
 	}
 
 	/**
@@ -385,21 +159,22 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
-		const location = findPath(this.#root, fileOrDirPath);
+		const entry = this.#volume.stat(fileOrDirPath);
 
-		if (!location) {
+		if (!entry) {
 			throw new NotFoundError(`delete '${fileOrDirPath}'`);
 		}
 
-		const { object, key } = location;
+		// if the entry is directory, check to see if its empty with readDir
+		if (entry.kind === "directory") {
+			const entries = this.#volume.readdir(fileOrDirPath);
 
-		const entry = object.get(key);
-
-		if (entry.kind === "directory" && entry.size > 0) {
-			throw new NotEmptyError(`delete '${fileOrDirPath}'`);
+			if (entries.length > 0) {
+				throw new NotEmptyError(`delete '${fileOrDirPath}'`);
+			}
 		}
 
-		object.delete(key);
+		this.#volume.rm(fileOrDirPath);
 	}
 
 	/**
@@ -413,15 +188,13 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	async deleteAll(fileOrDirPath) {
-		const location = findPath(this.#root, fileOrDirPath);
+		const entry = this.#volume.stat(fileOrDirPath);
 
-		if (!location) {
+		if (!entry) {
 			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
 		}
 
-		const { object, key } = location;
-
-		object.delete(key);
+		this.#volume.rm(fileOrDirPath);
 	}
 
 	/**
@@ -431,29 +204,10 @@ export class MemoryHfsImpl {
 	 *   directory entries.
 	 */
 	async *list(dirPath) {
-		let target;
+		const entries = this.#volume.readdir(dirPath);
 
-		// Special case: if the path is ".", then we're listing the root
-		if (dirPath === ".") {
-			target = this.#root;
-		} else {
-			const location = findPath(this.#root, dirPath);
-
-			if (!location) {
-				throw new NotFoundError(`list '${dirPath}'`);
-			}
-
-			const { object, key } = location;
-			target = object.get(key);
-		}
-
-		for (const [name, value] of target.entries()) {
-			yield {
-				name,
-				isDirectory: value.kind === "directory",
-				isFile: value.kind === "file",
-				isSymlink: false,
-			};
+		for (const entry of entries) {
+			yield entry;
 		}
 	}
 
@@ -464,13 +218,13 @@ export class MemoryHfsImpl {
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */
 	async size(filePath) {
-		const entry = readPath(this.#root, filePath);
+		const entry = this.#volume.stat(filePath);
 
-		if (entry?.kind !== "file") {
+		if (!entry) {
 			return undefined;
 		}
 
-		return /** @type {MemoryHfsFile} */ (entry).contents.byteLength;
+		return entry.size;
 	}
 
 	/**
@@ -481,13 +235,13 @@ export class MemoryHfsImpl {
 	 * date of the file or directory, or undefined if the file doesn't exist.
 	 */
 	async lastModified(fileOrDirPath) {
-		const entry = readPath(this.#root, fileOrDirPath);
+		const entry = this.#volume.stat(fileOrDirPath);
 
 		if (!entry) {
 			return undefined;
 		}
 
-		return entry.lastModified;
+		return entry.mtime;
 	}
 
 	/**
@@ -500,7 +254,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the destination file is a directory.
 	 */
 	async copy(source, destination) {
-		const entry = readPath(this.#root, source);
+		const entry = this.#volume.stat(source);
 
 		if (!entry) {
 			throw new NotFoundError(`copy '${source}' -> '${destination}'`);
@@ -510,13 +264,7 @@ export class MemoryHfsImpl {
 			throw new DirectoryError(`copy '${source}' -> '${destination}'`);
 		}
 
-		if (await this.isDirectory(destination)) {
-			throw new DirectoryError(`copy '${source}' -> '${destination}'`);
-		}
-
-		const file = /** @type {MemoryHfsFile} */ (entry);
-
-		writePath(this.#root, destination, new MemoryHfsFile(file.contents));
+		this.#volume.cp(source, destination);
 	}
 
 	/**
@@ -529,41 +277,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the destination file or directory is a directory.
 	 */
 	async copyAll(source, destination) {
-		// for files use copy() and exit
-		if (await this.isFile(source)) {
-			return this.copy(source, destination);
-		}
-
-		// if the source isn't a directory then throw an error
-		if (!(await this.isDirectory(source))) {
-			throw new NotFoundError(`copyAll '${source}' -> '${destination}'`);
-		}
-
-		const sourcePath = Path.from(source);
-		const destinationPath = Path.from(destination);
-
-		// for directories, create the destination directory and copy each entry
-		await this.createDirectory(destination);
-
-		for await (const entry of this.list(source)) {
-			destinationPath.push(entry.name);
-			sourcePath.push(entry.name);
-
-			if (entry.isDirectory) {
-				await this.copyAll(
-					sourcePath.toString(),
-					destinationPath.toString(),
-				);
-			} else {
-				await this.copy(
-					sourcePath.toString(),
-					destinationPath.toString(),
-				);
-			}
-
-			destinationPath.pop();
-			sourcePath.pop();
-		}
+		this.#volume.cp(source, destination);
 	}
 
 	/**
@@ -576,7 +290,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be moved.
 	 */
 	async move(source, destination) {
-		const entry = readPath(this.#root, source);
+		const entry = this.#volume.stat(source);
 
 		if (!entry) {
 			throw new NotFoundError(`move '${source}' -> '${destination}'`);
@@ -586,9 +300,7 @@ export class MemoryHfsImpl {
 			throw new DirectoryError(`move '${source}' -> '${destination}'`);
 		}
 
-		writePath(this.#root, destination, entry);
-
-		this.delete(source);
+		this.#volume.mv(source, destination);
 	}
 
 	/**
@@ -601,43 +313,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file or directory cannot be moved.
 	 */
 	async moveAll(source, destination) {
-		// for files use move() and exit
-		if (await this.isFile(source)) {
-			return this.move(source, destination);
-		}
-
-		// if the source isn't a directory then throw an error
-		if (!(await this.isDirectory(source))) {
-			throw new NotFoundError(`moveAll '${source}' -> '${destination}'`);
-		}
-
-		const sourcePath = Path.from(source);
-		const destinationPath = Path.from(destination);
-
-		// for directories, create the destination directory and copy each entry
-		await this.createDirectory(destination);
-
-		for await (const entry of this.list(source)) {
-			destinationPath.push(entry.name);
-			sourcePath.push(entry.name);
-
-			if (entry.isDirectory) {
-				await this.moveAll(
-					sourcePath.toString(),
-					destinationPath.toString(),
-				);
-			} else {
-				await this.move(
-					sourcePath.toString(),
-					destinationPath.toString(),
-				);
-			}
-
-			destinationPath.pop();
-			sourcePath.pop();
-		}
-
-		this.delete(source);
+		this.#volume.mv(source, destination);
 	}
 }
 
