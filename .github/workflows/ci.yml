@@ -61,6 +61,7 @@ jobs:
                   deno-version: ${{ matrix.deno-version }}
 
             - name: bun install, build, and test
+              working-directory: packages/node
               run: |
                   bun install
                   bun run --bun test
