@@ -1,5 +1,11 @@
 # Changelog
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.14.0 to ^0.15.0
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.13.0...node-v0.14.0) (2024-02-27)
 
 
