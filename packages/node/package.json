@@ -3,11 +3,11 @@
   "version": "0.14.1",
   "description": "The Node.js bindings of the humanfs library.",
   "type": "module",
-  "types": "dist/node-hfs.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     "import": {
-      "types": "./dist/node-hfs.d.ts",
-      "default": "./src/node-hfs.js"
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [

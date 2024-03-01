@@ -1,5 +1,5 @@
 {
-  "files": ["src/node-hfs.js"],
+  "files": ["src/index.js"],
   "compilerOptions": {
     "declaration": true,
     "emitDeclarationOnly": true,
