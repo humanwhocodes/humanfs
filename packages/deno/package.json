@@ -3,11 +3,11 @@
   "version": "0.14.0",
   "description": "The Deno bindings of the humanfs library.",
   "type": "module",
-  "types": "dist/deno-hfs.d.ts",
+  "types": "dist/index.d.ts",
   "exports": {
     "import": {
-      "types": "./dist/deno-hfs.d.ts",
-      "default": "./src/deno-hfs.js"
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [

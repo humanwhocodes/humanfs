@@ -3,12 +3,12 @@
   "version": "0.11.0",
   "description": "The in-web bindings for the hfs library.",
   "type": "module",
-  "types": "dist/web-hfs.d.ts",
-  "main": "dist/web-hfs.js",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
   "exports": {
     "import": {
-      "types": "./dist/web-hfs.d.ts",
-      "default": "./src/web-hfs.js"
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.js"
     }
   },
   "files": [

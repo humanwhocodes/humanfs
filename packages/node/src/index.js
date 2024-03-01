@@ -3,5 +3,5 @@
  * @author Nicholas C. Zakas
  */
 
-export * from "./memory-hfs.js";
+export * from "./node-hfs.js";
 export { Hfs } from "@humanfs/core";
