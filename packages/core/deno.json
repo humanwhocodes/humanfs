@@ -1,0 +1,5 @@
+{
+  "name": "@humanfs/core",
+  "version": "0.15.0",
+  "exports": "./src/index.js"
+}

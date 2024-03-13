@@ -4,7 +4,14 @@
   "bump-minor-pre-major": true,
   "packages": {
     "packages/core": {
-      "release-type": "node"
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]
     },
     "packages/node": {
       "release-type": "node"
@@ -20,7 +27,14 @@
       ]      
     },
     "packages/memory": {
-      "release-type": "node"
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]
     },
     "packages/web": {
       "release-type": "node"

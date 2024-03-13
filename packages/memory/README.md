@@ -41,14 +41,14 @@ import { hfs } from "@humanfs/memory";
 
 ### Deno
 
-For Deno, set up a `deno.json` file like this:
+Install using [JSR](https://jsr.io):
 
-```json
-{
-	"imports": {
-		"@humanfs/memory": "npm:@humanfs/memory@latest"
-	}
-}
+```shell
+deno add @humanfs/memory
+
+# or
+
+jsr add @humanfs/memory
 ```
 
 Then you can import the `Hfs` class like this:

@@ -1,0 +1,5 @@
+{
+  "name": "@humanfs/memory",
+  "version": "0.16.0",
+  "exports": "./src/memory-hfs.js"
+}

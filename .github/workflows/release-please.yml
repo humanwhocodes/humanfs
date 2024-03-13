@@ -36,15 +36,24 @@ jobs:
             - run: npm ci
               if: ${{ steps.release.outputs.releases_created }}
 
+            #-----------------------------------------------------------------------------
+            # @humanfs/core
+            #-----------------------------------------------------------------------------
+
             - name: Publish @humanfs/core package to npm
               run: npm publish -w packages/core
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-              #-----------------------------------------------------------------------------
-              # @humanfs/node
-              #-----------------------------------------------------------------------------
+            - name: Publish @humanfs/core package to JSR
+              run: npx jsr publish
+              working-directory: packages/core
+              if: ${{ steps.release.outputs['packages/core--release_created'] }}
+
+            #-----------------------------------------------------------------------------
+            # @humanfs/node
+            #-----------------------------------------------------------------------------
 
             - name: Publish @humanfs/node package to npm
               run: npm publish -w packages/node
@@ -52,9 +61,9 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-              #-----------------------------------------------------------------------------
-              # @humanfs/deno
-              #-----------------------------------------------------------------------------
+            #-----------------------------------------------------------------------------
+            # @humanfs/deno
+            #-----------------------------------------------------------------------------
 
             - name: Publish @humanfs/deno package to npm
               run: npm publish -w packages/deno
@@ -67,9 +76,9 @@ jobs:
               working-directory: packages/deno
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
 
-              #-----------------------------------------------------------------------------
-              # @humanfs/memory
-              #-----------------------------------------------------------------------------
+            #-----------------------------------------------------------------------------
+            # @humanfs/memory
+            #-----------------------------------------------------------------------------
 
             - name: Publish @humanfs/memory package to npm
               run: npm publish -w packages/memory
@@ -77,9 +86,14 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-              #-----------------------------------------------------------------------------
-              # @humanfs/web
-              #-----------------------------------------------------------------------------
+            - name: Publish @humanfs/memory package to JSR
+              run: npx jsr publish
+              working-directory: packages/memory
+              if: ${{ steps.release.outputs['packages/memory--release_created'] }}
+
+            #-----------------------------------------------------------------------------
+            # @humanfs/web
+            #-----------------------------------------------------------------------------
 
             - name: Publish @humanfs/web package to npm
               run: npm publish -w packages/web
@@ -87,9 +101,9 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-              #-----------------------------------------------------------------------------
-              # @humanfs/types
-              #-----------------------------------------------------------------------------
+            #-----------------------------------------------------------------------------
+            # @humanfs/types
+            #-----------------------------------------------------------------------------
 
             - name: Publish @humanfs/types package to npm
               run: npm publish -w packages/types
@@ -97,9 +111,9 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
-              #-----------------------------------------------------------------------------
-              # @humanfs/test
-              #-----------------------------------------------------------------------------
+            #-----------------------------------------------------------------------------
+            # @humanfs/test
+            #-----------------------------------------------------------------------------
 
             - name: Publish @humanfs/test package to npm
               run: npm publish -w packages/test
