@@ -6,6 +6,13 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.15.0...core-v0.16.0) (2024-03-13)
+
+
+### Features
+
+* Add JSR packages ([83c3d9b](https://github.com/humanwhocodes/humanfs/commit/83c3d9b48cdcf961386dad768248bf3c6dade18b))
+
 ## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.14.0...core-v0.15.0) (2024-02-27)
 
 

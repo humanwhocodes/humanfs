@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.0...deno-v0.15.1) (2024-03-13)
+
+
+### Bug Fixes
+
+* package.json/deno.json conflict ([1a6f13b](https://github.com/humanwhocodes/humanfs/commit/1a6f13b4d58c1458e726b036868018428314b232))
+
 ## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.14.0...deno-v0.15.0) (2024-03-13)
 
 
