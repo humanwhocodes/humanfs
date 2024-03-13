@@ -13,14 +13,14 @@ The humanfs bindings for use in Node.js and Node.js-compatible runtimes.
 
 ## Installation
 
-Set up a `deno.json` file like this:
+Install using [JSR](https://jsr.io):
 
-```json
-{
-	"imports": {
-		"@humanfs/deno": "npm:@humanfs/deno@latest"
-	}
-}
+```shell
+deno add @humanfs/deno
+
+# or
+
+jsr add @humanfs/deno
 ```
 
 ## Usage

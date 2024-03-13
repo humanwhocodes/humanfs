@@ -10,7 +10,14 @@
       "release-type": "node"
     },
     "packages/deno": {
-      "release-type": "node"
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]      
     },
     "packages/memory": {
       "release-type": "node"
