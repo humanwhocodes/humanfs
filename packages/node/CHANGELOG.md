@@ -6,6 +6,13 @@
   * dependencies
     * @humanfs/core bumped from ^0.14.0 to ^0.15.0
 
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.14.1...node-v0.15.0) (2024-03-13)
+
+
+### Features
+
+* Export Hfs from runtime packages ([#98](https://github.com/humanwhocodes/humanfs/issues/98)) ([4c55f85](https://github.com/humanwhocodes/humanfs/commit/4c55f853b930f6341e17c77ae85351a3ff33dc4e))
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.13.0...node-v0.14.0) (2024-02-27)
 
 
