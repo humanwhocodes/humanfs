@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.16.0...memory-v0.17.0) (2024-03-13)
+
+
+### Features
+
+* Add JSR packages ([83c3d9b](https://github.com/humanwhocodes/humanfs/commit/83c3d9b48cdcf961386dad768248bf3c6dade18b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.15.0 to ^0.16.0
+
 ## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.15.0...memory-v0.16.0) (2024-03-13)
 
 

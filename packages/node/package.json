@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/node",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "The Node.js bindings of the humanfs library.",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -51,6 +51,6 @@
   },
   "dependencies": {
     "@humanwhocodes/retry": "^0.1.2",
-    "@humanfs/core": "^0.15.0"
+    "@humanfs/core": "^0.16.0"
   }
 }
