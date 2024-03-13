@@ -4,7 +4,6 @@
   "exports": "./src/index.js",
   "imports": {
     "@humanfs/core": "../core/src/hfs.js",
-    "@humanfs/types": "../types/src/hfs-types.ts",
-    "@humanwhocodes/retry": "npm:@humanwhocodes/retry@latest"
+    "@humanfs/types": "../types/src/hfs-types.ts"
   }
 }
