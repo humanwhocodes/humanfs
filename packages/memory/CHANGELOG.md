@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.15.0...memory-v0.16.0) (2024-03-13)
+
+
+### Features
+
+* Export Hfs from runtime packages ([#98](https://github.com/humanwhocodes/humanfs/issues/98)) ([4c55f85](https://github.com/humanwhocodes/humanfs/commit/4c55f853b930f6341e17c77ae85351a3ff33dc4e))
+
 ## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.14.0...memory-v0.15.0) (2024-02-27)
 
 

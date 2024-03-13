@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/node",
-  "version": "0.14.1",
+  "version": "0.15.0",
   "description": "The Node.js bindings of the humanfs library.",
   "type": "module",
   "types": "dist/index.d.ts",
