@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.2](https://github.com/humanwhocodes/humanfs/compare/web-v0.12.1...web-v0.12.2) (2024-03-14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.0 to ^0.16.1
+
 ## [0.12.1](https://github.com/humanwhocodes/humanfs/compare/web-v0.12.0...web-v0.12.1) (2024-03-13)
 
 

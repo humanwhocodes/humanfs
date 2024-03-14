@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.1](https://github.com/humanwhocodes/humanfs/compare/memory-v0.17.0...memory-v0.17.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **build:** Ensure correct JSR configs ([21c6a1b](https://github.com/humanwhocodes/humanfs/commit/21c6a1b94d086a469a823779456e7ad929993c6d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.0 to ^0.16.1
+
 ## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.16.0...memory-v0.17.0) (2024-03-13)
 
 

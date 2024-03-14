@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.2](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.1...deno-v0.15.2) (2024-03-14)
+
+
+### Bug Fixes
+
+* **build:** Ensure correct JSR configs ([21c6a1b](https://github.com/humanwhocodes/humanfs/commit/21c6a1b94d086a469a823779456e7ad929993c6d))
+
 ## [0.15.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.0...deno-v0.15.1) (2024-03-13)
 
 

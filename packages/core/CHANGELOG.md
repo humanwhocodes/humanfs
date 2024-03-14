@@ -6,6 +6,13 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.16.0...core-v0.16.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **build:** Ensure correct JSR configs ([21c6a1b](https://github.com/humanwhocodes/humanfs/commit/21c6a1b94d086a469a823779456e7ad929993c6d))
+
 ## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.15.0...core-v0.16.0) (2024-03-13)
 
 
