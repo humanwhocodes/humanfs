@@ -47,7 +47,9 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             - name: Publish @humanfs/core package to JSR
-              run: npx jsr publish
+              run: |
+                npm run build
+                npx jsr publish
               working-directory: packages/core
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
 
@@ -72,7 +74,9 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             - name: Publish @humanfs/deno package to JSR
-              run: npx jsr publish
+              run: |
+                npm run build
+                npx jsr publish
               working-directory: packages/deno
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
 
@@ -87,7 +91,9 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             - name: Publish @humanfs/memory package to JSR
-              run: npx jsr publish
+              run: |
+                npm run build
+                npx jsr publish
               working-directory: packages/memory
               if: ${{ steps.release.outputs['packages/memory--release_created'] }}
 

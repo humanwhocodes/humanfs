@@ -5,5 +5,10 @@
   "imports": {
     "@humanfs/core": "../core/src/hfs.js",
     "@humanfs/types": "../types/src/hfs-types.ts"
+  },
+  "publish": {
+    "exclude": [
+      "!dist"
+    ]
   }
 }
