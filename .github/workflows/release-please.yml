@@ -97,7 +97,7 @@ jobs:
               run: |
                 npm run build
                 deno task install-deps
-                npx jsr publish
+                npx jsr publish --allow-dirty
               working-directory: packages/deno
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
 
