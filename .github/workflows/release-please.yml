@@ -54,6 +54,26 @@ jobs:
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
 
             #-----------------------------------------------------------------------------
+            # @humanfs/test
+            #-----------------------------------------------------------------------------
+
+            - name: Publish @humanfs/test package to npm
+              run: npm publish -w packages/test
+              if: ${{ steps.release.outputs['packages/test--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+            #-----------------------------------------------------------------------------
+            # @humanfs/types
+            #-----------------------------------------------------------------------------
+
+            - name: Publish @humanfs/types package to npm
+              run: npm publish -w packages/types
+              if: ${{ steps.release.outputs['packages/types--release_created'] }}
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+            #-----------------------------------------------------------------------------
             # @humanfs/node
             #-----------------------------------------------------------------------------
 
@@ -76,6 +96,7 @@ jobs:
             - name: Publish @humanfs/deno package to JSR
               run: |
                 npm run build
+                deno task install-deps
                 npx jsr publish
               working-directory: packages/deno
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
@@ -104,25 +125,5 @@ jobs:
             - name: Publish @humanfs/web package to npm
               run: npm publish -w packages/web
               if: ${{ steps.release.outputs['packages/web--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-            #-----------------------------------------------------------------------------
-            # @humanfs/types
-            #-----------------------------------------------------------------------------
-
-            - name: Publish @humanfs/types package to npm
-              run: npm publish -w packages/types
-              if: ${{ steps.release.outputs['packages/types--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
-            #-----------------------------------------------------------------------------
-            # @humanfs/test
-            #-----------------------------------------------------------------------------
-
-            - name: Publish @humanfs/test package to npm
-              run: npm publish -w packages/test
-              if: ${{ steps.release.outputs['packages/test--release_created'] }}
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}

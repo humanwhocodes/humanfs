@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/deno",
-  "version": "0.15.2",
+  "version": "0.15.1",
   "exports": "./src/index.js",
   "imports": {
     "@humanfs/core": "../core/src/hfs.js",
@@ -10,5 +10,8 @@
     "exclude": [
       "!dist"
     ]
+  },
+  "tasks": {
+    "install-deps": "deno run --allow-read --allow-write --allow-env --allow-run ./scripts/install-deps.js"
   }
 }
