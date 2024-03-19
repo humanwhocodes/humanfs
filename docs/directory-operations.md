@@ -48,7 +48,15 @@ await hfs.moveAll("/path/to/source", "/path/to/destination");
 To delete an empty directory, call the `hfs.delete(dirPath)` method. For example:
 
 ```js
-await hfs.delete("/path/to/directories");
+await hfs.delete("/path/to/directory");
+```
+
+This method doesn't throw an error if the path doesn't exist. If you want to know whether or not an existing file was deleted, you can use the return value: `true` if the file was actually deleted or `false` if the file didn't exist:
+
+```js
+if (await hfs.delete("/path/to/directory")) {
+	console.log("Directory existed and was deleted.");
+}
 ```
 
 To delete a non-empty directory recursively, call the `hfs.deleteAll(dirPath)` method. For example:
@@ -56,6 +64,8 @@ To delete a non-empty directory recursively, call the `hfs.deleteAll(dirPath)` m
 ```js
 await hfs.deleteAll("/path/to/directories");
 ```
+
+This method also returns a boolean indicating if the directory existed or not.
 
 > [!IMPORTANT]
 > The `deleteAll()` method acts like `rm -rf`, so it will delete directories that aren't empty. Use with caution.

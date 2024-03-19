@@ -152,17 +152,17 @@ export class MemoryHfsImpl {
 	 * Deletes a file or empty directory.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
 		const entry = this.#volume.stat(fileOrDirPath);
 
 		if (!entry) {
-			throw new NotFoundError(`delete '${fileOrDirPath}'`);
+			return false;
 		}
 
 		// if the entry is directory, check to see if its empty with readDir
@@ -175,26 +175,28 @@ export class MemoryHfsImpl {
 		}
 
 		this.#volume.rm(fileOrDirPath);
+		return true;
 	}
 
 	/**
 	 * Deletes a file or directory recursively.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	async deleteAll(fileOrDirPath) {
 		const entry = this.#volume.stat(fileOrDirPath);
 
 		if (!entry) {
-			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
+			return false;
 		}
 
 		this.#volume.rm(fileOrDirPath);
+		return true;
 	}
 
 	/**
