@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.2...deno-v0.16.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Bug Fixes
+
+* Deno runtime package JSR deploy ([ea2d8f3](https://github.com/humanwhocodes/humanfs/commit/ea2d8f399b385735b1d36e7796767b4518b44a2f))
+
 ## [0.15.2](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.1...deno-v0.15.2) (2024-03-14)
 
 

@@ -6,6 +6,27 @@
   * dependencies
     * @humanfs/core bumped from ^0.14.0 to ^0.15.0
 
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.15.2...node-v0.16.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.1 to ^0.17.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.13.0 to ^0.14.0
+    * @humanfs/types bumped from ^0.12.0 to ^0.13.0
+
 ## [0.15.2](https://github.com/humanwhocodes/humanfs/compare/node-v0.15.1...node-v0.15.2) (2024-03-14)
 
 
