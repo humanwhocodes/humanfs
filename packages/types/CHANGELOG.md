@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.12.0...types-v0.13.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
 ## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.11.0...types-v0.12.0) (2024-02-27)
 
 

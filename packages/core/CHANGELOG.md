@@ -6,6 +6,24 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.16.1...core-v0.17.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.12.0 to ^0.13.0
+
 ## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.16.0...core-v0.16.1) (2024-03-14)
 
 
