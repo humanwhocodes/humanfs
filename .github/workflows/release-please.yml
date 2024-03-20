@@ -33,6 +33,11 @@ jobs:
               with:
                   node-version: lts/*
                   registry-url: "https://registry.npmjs.org"
+
+            - uses: denoland/setup-deno@v1
+              with:
+                  deno-version: 1.x
+
             - run: npm ci
               if: ${{ steps.release.outputs.releases_created }}
 
