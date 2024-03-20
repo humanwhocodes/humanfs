@@ -587,55 +587,57 @@ export class HfsImplTester {
 
 					it("should delete a file", async () => {
 						const filePath = dirPath + "/subdir/subsubdir/test.txt";
-						await impl.delete(filePath);
+						const result = await impl.delete(filePath);
 
 						assert.strictEqual(await impl.isFile(filePath), false);
+						assert.strictEqual(result, true);
 					});
 
 					it("should delete a file at the file URL", async () => {
 						const filePath = dirPath + "/subdir/subsubdir/test.txt";
 						const fileUrl = filePathToUrl(filePath);
-						await impl.delete(fileUrl);
+						const result = await impl.delete(fileUrl);
 
 						assert.strictEqual(await impl.isFile(filePath), false);
+						assert.strictEqual(result, true);
 					});
 
 					it("should delete an empty directory", async () => {
 						const emptySubdirPath = dirPath + "/empty-subdir";
-						await impl.delete(emptySubdirPath);
+						const result = await impl.delete(emptySubdirPath);
 
 						assert.strictEqual(
 							await impl.isDirectory(emptySubdirPath),
 							false,
 						);
+						assert.strictEqual(result, true);
 					});
 
 					it("should delete an empty directory at the file URL", async () => {
 						const emptySubdirPath = dirPath + "/empty-subdir";
 						const emptySubdirUrl = filePathToUrl(emptySubdirPath);
-						await impl.delete(emptySubdirUrl);
+						const result = await impl.delete(emptySubdirUrl);
 
 						assert.strictEqual(
 							await impl.isDirectory(emptySubdirPath),
 							false,
 						);
+						assert.strictEqual(result, true);
 					});
 
-					it("should reject a promise when the file doesn't exist", async () => {
+					it("should return false when the file doesn't exist", async () => {
 						const filePath = dirPath + "/nonexistent.txt";
-						await assert.rejects(
-							() => impl.delete(filePath),
-							/ENOENT/,
-						);
+						const result = await impl.delete(filePath);
+
+						assert.strictEqual(result, false);
 					});
 
-					it("should reject a promise when the file doesn't exist at the file URL", async () => {
+					it("should return false when the file doesn't exist at the file URL", async () => {
 						const filePath = dirPath + "/nonexistent.txt";
 						const fileUrl = filePathToUrl(filePath);
-						await assert.rejects(
-							() => impl.delete(fileUrl),
-							/ENOENT/,
-						);
+						const result = await impl.delete(fileUrl);
+
+						assert.strictEqual(result, false);
 					});
 
 					it("should reject a promise when path is a nonempty directory", async () => {
@@ -677,78 +679,82 @@ export class HfsImplTester {
 
 				it("should delete a file", async () => {
 					const filePath = dirPath + "/subdir/subsubdir/test.txt";
-					await impl.deleteAll(filePath);
+					const result = await impl.deleteAll(filePath);
 
 					assert.strictEqual(await impl.isFile(filePath), false);
+					assert.strictEqual(result, true);
 				});
 
 				it("should delete a file at the file URL", async () => {
 					const filePath = dirPath + "/subdir/subsubdir/test.txt";
 					const fileUrl = filePathToUrl(filePath);
-					await impl.deleteAll(fileUrl);
+					const result = await impl.deleteAll(fileUrl);
 
 					assert.strictEqual(await impl.isFile(filePath), false);
+					assert.strictEqual(result, true);
 				});
 
 				it("should delete a directory", async () => {
 					const subsubdirPath = dirPath + "/subdir/subsubdir";
-					await impl.deleteAll(subsubdirPath);
+					const result = await impl.deleteAll(subsubdirPath);
 
 					assert.strictEqual(
 						await impl.isDirectory(subsubdirPath),
 						false,
 					);
+					assert.strictEqual(result, true);
 				});
 
 				it("should delete a directory at the file URL", async () => {
 					const subsubdirPath = dirPath + "/subdir/subsubdir";
 					const subsubdirUrl = filePathToUrl(subsubdirPath);
-					await impl.deleteAll(subsubdirUrl);
+					const result = await impl.deleteAll(subsubdirUrl);
 
 					assert.strictEqual(
 						await impl.isDirectory(subsubdirPath),
 						false,
 					);
+					assert.strictEqual(result, true);
 				});
 
 				it("should delete a directory recursively", async () => {
 					const subdirPath = dirPath + "/subdir";
-					await impl.deleteAll(subdirPath);
+					const result = await impl.deleteAll(subdirPath);
 
 					assert.strictEqual(
 						await impl.isDirectory(subdirPath),
 						false,
 					);
+					assert.strictEqual(result, true);
 				});
 
 				it("should delete a directory recursively at the file URL", async () => {
 					const subdirPath = dirPath + "/subdir";
 					const subdirUrl = filePathToUrl(subdirPath);
-					await impl.deleteAll(subdirUrl);
+					const result = await impl.deleteAll(subdirUrl);
 
 					assert.strictEqual(
 						await impl.isDirectory(subdirPath),
 						false,
 					);
+					assert.strictEqual(result, true);
 				});
 
-				it("should reject a promise when the file doesn't exist", async () => {
+				it("should return false when the file doesn't exist", async () => {
 					const filePath = dirPath + "/nonexistent.txt";
 					assert.strictEqual(await impl.isFile(filePath), false);
-					await assert.rejects(
-						() => impl.deleteAll(filePath),
-						/ENOENT/,
-					);
+
+					const result = await impl.deleteAll(filePath);
+					assert.strictEqual(result, false);
 				});
 
-				it("should reject a promise when the file doesn't exist at the file URL", async () => {
+				it("should return false when the file doesn't exist at the file URL", async () => {
 					const filePath = dirPath + "/nonexistent.txt";
 					const fileUrl = filePathToUrl(filePath);
 					assert.strictEqual(await impl.isFile(filePath), false);
-					await assert.rejects(
-						() => impl.deleteAll(fileUrl),
-						/ENOENT/,
-					);
+
+					const result = await impl.deleteAll(fileUrl);
+					assert.strictEqual(result, false);
 				});
 			});
 

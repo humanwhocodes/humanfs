@@ -283,11 +283,11 @@ export class WebHfsImpl {
 	 * Deletes a file or empty directory.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	async delete(fileOrDirPath) {
 		const handle = await findPath(this.#root, fileOrDirPath);
@@ -299,7 +299,7 @@ export class WebHfsImpl {
 			) ?? this.#root;
 
 		if (!handle) {
-			throw new NotFoundError(`delete '${fileOrDirPath}'`);
+			return false;
 		}
 
 		// nonempty directories must not be deleted
@@ -313,23 +313,24 @@ export class WebHfsImpl {
 		}
 
 		parentHandle.removeEntry(handle.name);
+		return true;
 	}
 
 	/**
 	 * Deletes a file or directory recursively.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	async deleteAll(fileOrDirPath) {
 		const handle = await findPath(this.#root, fileOrDirPath);
 
 		if (!handle) {
-			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
+			return false;
 		}
 
 		/*
@@ -344,7 +345,7 @@ export class WebHfsImpl {
 		if (handle.remove) {
 			// @ts-ignore -- only supported by Chrome right now
 			await handle.remove({ recursive: true });
-			return;
+			return true;
 		}
 
 		const parentHandle =
@@ -358,6 +359,7 @@ export class WebHfsImpl {
 			throw new NotFoundError(`deleteAll '${fileOrDirPath}'`);
 		}
 		parentHandle.removeEntry(handle.name, { recursive: true });
+		return true;
 	}
 
 	/**

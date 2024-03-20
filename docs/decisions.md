@@ -1,3 +1,21 @@
+# 2024-03-19 `delete()` and `deleteAll()` should not throw errors on missing items
+
+## Background
+
+Most of the runtime APIs for files throw an error when you attempt to delete a file that doesn't exist (an `ENOENT` error).
+
+## Decision
+
+The `delete()` and `deleteAll()` methods should not throw an error when the specified path doesn't exist. They should return `false` in that case, or `true` if the path did exist and wasn't deleted.
+
+## Rationale
+
+In most cases, humanfs suppresses `ENOENT` errors but didn't with `delete()` and `deleteAll()`. Logically, you typically only care that the specified path no longer exists, not whether it actually existed in the first place. If you actually care about that, then checking the return value of `delete()` and `deleteAll()` is a nicer way to handle it.
+
+## Related
+
+* https://github.com/humanwhocodes/humanfs/discussions/104
+
 # 2024-02-22 Impls only need to implement `write()` and `append()` to accept `Uint8Array`.
 
 ## Background

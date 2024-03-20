@@ -246,34 +246,50 @@ export class NodeHfsImpl {
 	 * Deletes a file or empty directory.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	delete(fileOrDirPath) {
-		return this.#fsp.rm(fileOrDirPath).catch(error => {
-			if (error.code === "ERR_FS_EISDIR") {
-				return this.#fsp.rmdir(fileOrDirPath);
-			}
+		return this.#fsp
+			.rm(fileOrDirPath)
+			.then(() => true)
+			.catch(error => {
+				if (error.code === "ERR_FS_EISDIR") {
+					return this.#fsp.rmdir(fileOrDirPath).then(() => true);
+				}
 
-			throw error;
-		});
+				if (error.code === "ENOENT") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**
 	 * Deletes a file or directory recursively.
 	 * @param {string|URL} fileOrDirPath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	deleteAll(fileOrDirPath) {
-		return this.#fsp.rm(fileOrDirPath, { recursive: true });
+		return this.#fsp
+			.rm(fileOrDirPath, { recursive: true })
+			.then(() => true)
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**

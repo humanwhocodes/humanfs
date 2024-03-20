@@ -112,6 +112,14 @@ To delete files, call the `hfs.delete(filePath)` method. For example:
 await hfs.delete("/path/to/file.txt");
 ```
 
+This method doesn't throw an error if the path doesn't exist. If you want to know whether or not an existing file was deleted, you can use the return value: `true` if the file was actually deleted or `false` if the file didn't exist:
+
+```js
+if (await hfs.delete("/path/to/file.txt")) {
+	console.log("File existed and was deleted.");
+}
+```
+
 ## Retrieving File Size
 
 To get the size of a file in bytes, call the `hfs.size(filePath)` method. This method returns the size in bytes of the file if found and `undefined` if not found. Here's an example:

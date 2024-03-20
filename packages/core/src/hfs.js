@@ -473,9 +473,11 @@ export class Hfs {
 	}
 
 	/**
-	 * Deletes the given file.
+	 * Deletes the given file or empty directory.
 	 * @param {string|URL} filePath The file to delete.
-	 * @returns {Promise<void>} A promise that resolves when the file is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the file path is not a non-empty string.
 	 */
@@ -485,9 +487,11 @@ export class Hfs {
 	}
 
 	/**
-	 * Deletes the given directory.
+	 * Deletes the given file or directory recursively.
 	 * @param {string|URL} dirPath The directory to delete.
-	 * @returns {Promise<void>} A promise that resolves when the directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {NoSuchMethodError} When the method does not exist on the current implementation.
 	 * @throws {TypeError} When the directory path is not a non-empty string.
 	 */

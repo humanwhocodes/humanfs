@@ -1250,6 +1250,32 @@ describe("Hfs", () => {
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
+
+		it("should return true when the impl method returns true", async () => {
+			const hfs = new Hfs({
+				impl: {
+					delete() {
+						return true;
+					},
+				},
+			});
+
+			const result = await hfs.delete("/path/to/file.txt");
+			assert.strictEqual(result, true);
+		});
+
+		it("should return false when the impl method returns false", async () => {
+			const hfs = new Hfs({
+				impl: {
+					delete() {
+						return false;
+					},
+				},
+			});
+
+			const result = await hfs.delete("/path/to/file.txt");
+			assert.strictEqual(result, false);
+		});
 	});
 
 	describe("deleteAll()", () => {
@@ -1316,6 +1342,32 @@ describe("Hfs", () => {
 				hfs.deleteAll(""),
 				/Path must be a non-empty string./,
 			);
+		});
+
+		it("should return true when the impl method returns true", async () => {
+			const hfs = new Hfs({
+				impl: {
+					deleteAll() {
+						return true;
+					},
+				},
+			});
+
+			const result = await hfs.deleteAll("/path/to/directory");
+			assert.strictEqual(result, true);
+		});
+
+		it("should return false when the impl method returns false", async () => {
+			const hfs = new Hfs({
+				impl: {
+					deleteAll() {
+						return false;
+					},
+				},
+			});
+
+			const result = await hfs.deleteAll("/path/to/directory");
+			assert.strictEqual(result, false);
 		});
 	});
 
