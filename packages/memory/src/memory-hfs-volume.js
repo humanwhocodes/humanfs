@@ -7,7 +7,12 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Path, NotFoundError, DirectoryError } from "@humanfs/core";
+import {
+	Path,
+	NotFoundError,
+	DirectoryError,
+	PermissionError,
+} from "@humanfs/core";
 
 //-----------------------------------------------------------------------------
 // Data
@@ -214,6 +219,12 @@ export class MemoryHfsDirectory extends Map {
 	#id = `dir-${objectId++}`;
 
 	/**
+	 * A map of names to objects.
+	 * @type {WeakMap<MemoryHfsFile|MemoryHfsDirectory, string>}
+	 */
+	#names = new WeakMap();
+
+	/**
 	 * The last modified date of the directory.
 	 * @type {Date}
 	 */
@@ -260,6 +271,10 @@ export class MemoryHfsDirectory extends Map {
 
 		entry.lastModified = new Date();
 		parents.set(entry, this);
+
+		// save the name
+		this.#names.set(entry, key);
+
 		return super.set(key, entry);
 	}
 
@@ -278,10 +293,21 @@ export class MemoryHfsDirectory extends Map {
 				parents.delete(entry);
 			}
 
+			this.#names.delete(entry);
+
 			return super.delete(key);
 		}
 
 		return false;
+	}
+
+	/**
+	 * Retrieves the name of an entry.
+	 * @param {MemoryHfsFile|MemoryHfsDirectory} entry The entry to retrieve the name of.
+	 * @returns {string|undefined} The name of the entry or undefined if not found.
+	 */
+	nameOf(entry) {
+		return this.#names.get(entry);
 	}
 
 	/**
@@ -318,6 +344,10 @@ export class MemoryHfsVolume {
 	 */
 	#root = new MemoryHfsDirectory();
 
+	//-----------------------------------------------------------------------------
+	// ID-Based Methods
+	//-----------------------------------------------------------------------------
+
 	/**
 	 * Retrieves an object by its ID.
 	 * @param {string} id The ID of the object to retrieve.
@@ -331,6 +361,41 @@ export class MemoryHfsVolume {
 
 		return this.#objects.get(id);
 	}
+
+	/**
+	 * Retrieves an object by its path.
+	 * @param {string|URL} path The path to the object to retrieve.
+	 * @returns {MemoryHfsFile|MemoryHfsDirectory|undefined} The object or undefined if not found.
+	 * @throws {TypeError} If the path is not a string or URL.
+	 */
+	getObjectFromPath(path) {
+		return findPath(this.#root, Path.from(path));
+	}
+
+	/**
+	 * Deletes an object by its ID.
+	 * @param {string} id The ID of the object to delete.
+	 * @returns {void}
+	 */
+	deleteObject(id) {
+		// throw an error if the object doesn't exist
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			throw new NotFoundError(`deleteObject ${id}`);
+		}
+
+		// remove the object from the tree
+		const name = object.parent.nameOf(object);
+		object.parent.delete(name);
+
+		// remove the object from the map
+		this.#objects.delete(id);
+	}
+
+	//-----------------------------------------------------------------------------
+	// Path-Based Methods
+	//-----------------------------------------------------------------------------
 
 	/**
 	 * Reads the contents of a file.
@@ -391,8 +456,11 @@ export class MemoryHfsVolume {
 			throw new DirectoryError(`cp ${source} ${destination}`);
 		}
 
-		// do the actual copying
-		object.parent.set(destPath.name, object.clone());
+		const name = destPath.pop();
+		const destDir = /** @type {MemoryHfsDirectory} */ (
+			findPath(this.#root, destPath)
+		);
+		destDir.set(name, object.clone());
 	}
 
 	/**
@@ -486,7 +554,7 @@ export class MemoryHfsVolume {
 		}
 
 		if (object.kind !== "directory") {
-			throw new DirectoryError(`readdir ${dirPath}`);
+			throw new PermissionError(`readdir ${dirPath}`);
 		}
 
 		const directory = /** @type {MemoryHfsDirectory} */ (object);
