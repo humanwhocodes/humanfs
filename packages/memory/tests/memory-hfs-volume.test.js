@@ -9,11 +9,7 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import {
-	MemoryHfsDirectory,
-	MemoryHfsFile,
-	MemoryHfsVolume,
-} from "../src/memory-hfs-volume.js";
+import { MemoryHfsVolume } from "../src/memory-hfs-volume.js";
 import assert from "node:assert";
 
 //------------------------------------------------------------------------------
@@ -25,6 +21,7 @@ function toBuffer(str) {
 }
 
 const HELLO_WORLD = toBuffer("Hello, world!");
+const GOODBYE_WORLD = toBuffer("Goodbye, world!");
 
 //------------------------------------------------------------------------------
 // Tests
@@ -252,58 +249,42 @@ describe("MemoryHfsVolume", () => {
 		});
 	});
 
-	describe("getObjectFromPath()", () => {
-		it("should return a directory object when passed a directory path", () => {
+	describe("getObjectIdFromPath()", () => {
+		it("should return the ID of a directory object when passed a directory path", () => {
 			volume.mkdirp("dir");
-			const object = volume.getObjectFromPath("dir");
-			assert.strictEqual(object instanceof MemoryHfsDirectory, true);
-			assert.strictEqual(object.id.startsWith("dir-"), true);
+			const id = volume.getObjectIdFromPath("dir");
+			assert.strictEqual(id.startsWith("dir-"), true);
 		});
 
-		it("should return a file object when passed a file path", () => {
+		it("should return the ID of a file object when passed a file path", () => {
 			volume.writeFile("file.txt", HELLO_WORLD);
-			const object = volume.getObjectFromPath("file.txt");
-			assert.strictEqual(object instanceof MemoryHfsFile, true);
-			assert.strictEqual(object.id.startsWith("file-"), true);
+			const id = volume.getObjectIdFromPath("file.txt");
+			assert.strictEqual(id.startsWith("file-"), true);
 		});
 
 		it("should return undefined when the path doesn't exist", () => {
-			const object = volume.getObjectFromPath("file.txt");
-			assert.strictEqual(object, undefined);
-		});
-	});
-
-	describe("getObject()", () => {
-		it("should return a directory object when passed a directory ID", () => {
-			volume.mkdirp("dir");
-			const objectFromPath = volume.getObjectFromPath("dir");
-			const objectFromId = volume.getObject(objectFromPath.id);
-			assert.strictEqual(objectFromPath, objectFromId);
-			assert.strictEqual(
-				objectFromId instanceof MemoryHfsDirectory,
-				true,
-			);
+			const id = volume.getObjectIdFromPath("file.txt");
+			assert.strictEqual(id, undefined);
 		});
 
-		it("should return a file object when passed a file ID", () => {
-			volume.writeFile("file.txt", HELLO_WORLD);
-			const objectFromPath = volume.getObjectFromPath("file.txt");
-			const objectFromId = volume.getObject(objectFromPath.id);
-			assert.strictEqual(objectFromPath, objectFromId);
-			assert.strictEqual(objectFromId instanceof MemoryHfsFile, true);
+		it("should return the ID of a file in a subdirectory", () => {
+			volume.writeFile("dir/file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("dir/file.txt");
+			assert.strictEqual(id.startsWith("file-"), true);
 		});
 
-		it("should return undefined when the ID doesn't exist", () => {
-			const object = volume.getObject("file-1");
-			assert.strictEqual(object, undefined);
+		it("should return the ID of a directory in a subdirectory", () => {
+			volume.mkdirp("dir/subdir");
+			const id = volume.getObjectIdFromPath("dir/subdir");
+			assert.strictEqual(id.startsWith("dir-"), true);
 		});
 	});
 
 	describe("deleteObject()", () => {
 		it("should delete a directory object", () => {
 			volume.mkdirp("dir");
-			const object = volume.getObjectFromPath("dir");
-			volume.deleteObject(object.id);
+			const id = volume.getObjectIdFromPath("dir");
+			volume.deleteObject(id);
 
 			const stat = volume.stat("dir");
 			assert.strictEqual(stat, undefined);
@@ -311,8 +292,8 @@ describe("MemoryHfsVolume", () => {
 
 		it("should delete a file object", () => {
 			volume.writeFile("file.txt", HELLO_WORLD);
-			const object = volume.getObjectFromPath("file.txt");
-			volume.deleteObject(object.id);
+			const id = volume.getObjectIdFromPath("file.txt");
+			volume.deleteObject(id);
 
 			const stat = volume.stat("file.txt");
 			assert.strictEqual(stat, undefined);
@@ -320,8 +301,8 @@ describe("MemoryHfsVolume", () => {
 
 		it("should delete a file in a subdirectory", () => {
 			volume.writeFile("dir/file.txt", HELLO_WORLD);
-			const object = volume.getObjectFromPath("dir/file.txt");
-			volume.deleteObject(object.id);
+			const id = volume.getObjectIdFromPath("dir/file.txt");
+			volume.deleteObject(id);
 
 			const stat = volume.stat("dir/file.txt");
 			assert.strictEqual(stat, undefined);
@@ -329,6 +310,169 @@ describe("MemoryHfsVolume", () => {
 
 		it("should throw an error when the ID doesn't exist", () => {
 			assert.throws(() => volume.deleteObject("file-1"), /ENOENT/);
+		});
+	});
+
+	describe("readFileObject()", () => {
+		it("should return undefined when the ID doesn't exist", () => {
+			const object = volume.readFileObject("file-1");
+			assert.strictEqual(object, undefined);
+		});
+
+		it("should return a file object", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("file.txt");
+			const contents = volume.readFileObject(id);
+			assert.deepStrictEqual(contents, HELLO_WORLD);
+		});
+
+		it("should throw an error when the ID is a directory", () => {
+			volume.mkdirp("dir");
+			const id = volume.getObjectIdFromPath("dir");
+			assert.throws(() => volume.readFileObject(id), /EISDIR/);
+		});
+	});
+
+	describe("writeFileObject()", () => {
+		it("should write a file object", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("file.txt");
+			volume.writeFileObject(id, GOODBYE_WORLD);
+			const contents = volume.readFile("file.txt");
+
+			assert.deepStrictEqual(contents, GOODBYE_WORLD);
+		});
+
+		it("should throw an error when the ID is a directory", () => {
+			volume.mkdirp("dir");
+			const id = volume.getObjectIdFromPath("dir");
+			assert.throws(
+				() => volume.writeFileObject(id, GOODBYE_WORLD),
+				/EISDIR/,
+			);
+		});
+
+		it("should throw an error when the ID doesn't exist", () => {
+			assert.throws(
+				() => volume.writeFileObject("file-1", GOODBYE_WORLD),
+				/ENOENT/,
+			);
+		});
+	});
+
+	describe("createFileObject()", () => {
+		it("should create a file object", () => {
+			volume.mkdirp("dir");
+			const parentId = volume.getObjectIdFromPath("dir");
+			const id = volume.createFileObject(
+				"file.txt",
+				parentId,
+				HELLO_WORLD,
+			);
+
+			const contents = volume.readFileObject(id);
+			assert.deepStrictEqual(contents, HELLO_WORLD);
+
+			const stat = volume.stat("dir/file.txt");
+			assert.strictEqual(stat.kind, "file");
+		});
+
+		it("should throw an error when the parent ID is a file", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const parentId = volume.getObjectIdFromPath("file.txt");
+			assert.throws(
+				() =>
+					volume.createFileObject("file.txt", parentId, HELLO_WORLD),
+				/EISDIR/,
+			);
+		});
+
+		it("should throw an error when the parent ID doesn't exist", () => {
+			assert.throws(
+				() =>
+					volume.createFileObject("file.txt", "file-1", HELLO_WORLD),
+				/ENOENT/,
+			);
+		});
+	});
+
+	describe("createDirectoryObject()", () => {
+		it("should create a directory object", () => {
+			volume.mkdirp("dir");
+			const parentId = volume.getObjectIdFromPath("dir");
+			volume.createDirectoryObject("subdir", parentId);
+
+			const stat = volume.stat("dir/subdir");
+			assert.strictEqual(stat.kind, "directory");
+		});
+
+		it("should create a directory object that a file can be added to", () => {
+			volume.mkdirp("dir");
+			const parentId = volume.getObjectIdFromPath("dir");
+			const id = volume.createDirectoryObject("subdir", parentId);
+			volume.createFileObject("file.txt", id, HELLO_WORLD);
+
+			const contents = volume.readFileObject(
+				volume.getObjectIdFromPath("dir/subdir/file.txt"),
+			);
+			assert.deepStrictEqual(contents, HELLO_WORLD);
+		});
+
+		it("should throw an error when the parent ID is a file", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const parentId = volume.getObjectIdFromPath("file.txt");
+			assert.throws(
+				() => volume.createDirectoryObject("dir", parentId),
+				/EISDIR/,
+			);
+		});
+
+		it("should throw an error when the parent ID doesn't exist", () => {
+			assert.throws(
+				() => volume.createDirectoryObject("dir", "file-1"),
+				/ENOENT/,
+			);
+		});
+	});
+
+	describe("readDirectoryObject()", () => {
+		it("should throw an error when the ID doesn't exist", () => {
+			assert.throws(() => volume.readDirectoryObject("file-1"), /ENOENT/);
+		});
+
+		it("should return an empty array when reading an empty directory", () => {
+			volume.mkdirp("dir");
+			const id = volume.getObjectIdFromPath("dir");
+			const dir = volume.readDirectoryObject(id);
+			assert.deepStrictEqual(dir, []);
+		});
+
+		it("should return an array of files when reading a directory with files", () => {
+			volume.writeFile("dir/file1.txt", HELLO_WORLD);
+			volume.writeFile("dir/file2.txt", HELLO_WORLD);
+
+			const id = volume.getObjectIdFromPath("dir");
+			const dir = volume.readDirectoryObject(id);
+			assert.deepStrictEqual(dir, [
+				{
+					name: "file1.txt",
+					isDirectory: false,
+					isFile: true,
+					isSymlink: false,
+				},
+				{
+					name: "file2.txt",
+					isDirectory: false,
+					isFile: true,
+					isSymlink: false,
+				},
+			]);
+		});
+
+		it("should throw an error when the ID is a file", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("file.txt");
+			assert.throws(() => volume.readDirectoryObject(id), /EISDIR/);
 		});
 	});
 });
