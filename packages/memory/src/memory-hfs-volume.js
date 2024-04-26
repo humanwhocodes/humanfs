@@ -583,6 +583,70 @@ export class MemoryHfsVolume {
 		}));
 	}
 
+	/**
+	 * Moves an object to a new parent.
+	 * @param {string} id The ID of the object to move.
+	 * @param {string} parentId The ID of the new parent directory.
+	 * @returns {void}
+	 * @throws {NotFoundError} If the object or parent is not found.
+	 * @throws {DirectoryError} If the parent is not a directory.
+	 */
+	moveObject(id, parentId) {
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			throw new NotFoundError(`moveObject ${id}`);
+		}
+
+		const parent = this.#objects.get(parentId);
+
+		if (!parent) {
+			throw new NotFoundError(`moveObject ${parentId}`);
+		}
+
+		if (parent.kind !== "directory") {
+			throw new DirectoryError(`moveObject ${parentId}`);
+		}
+
+		const directory = /** @type {MemoryHfsDirectory} */ (parent);
+
+		object.parent.delete(object.name);
+		directory.add(object);
+	}
+
+	/**
+	 * Copies an object to a new parent.
+	 * @param {string} id The ID of the object to copy.
+	 * @param {string} parentId The ID of the new parent directory.
+	 * @returns {void}
+	 * @throws {NotFoundError} If the object or parent is not found.
+	 * @throws {DirectoryError} If the parent is not a directory.
+	 * @throws {DirectoryError} If the parent is a file.
+	 */
+	copyObject(id, parentId) {
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			throw new NotFoundError(`copyObject ${id}`);
+		}
+
+		const parent = this.#objects.get(parentId);
+
+		if (!parent) {
+			throw new NotFoundError(`copyObject ${parentId}`);
+		}
+
+		if (parent.kind !== "directory") {
+			throw new DirectoryError(`copyObject ${parentId}`);
+		}
+
+		const directory = /** @type {MemoryHfsDirectory} */ (parent);
+		const copy = object.clone();
+
+		directory.add(copy);
+		this.#objects.set(copy.id, copy);
+	}
+
 	//-----------------------------------------------------------------------------
 	// Path-Based Methods
 	//-----------------------------------------------------------------------------

@@ -475,4 +475,94 @@ describe("MemoryHfsVolume", () => {
 			assert.throws(() => volume.readDirectoryObject(id), /EISDIR/);
 		});
 	});
+
+	describe("moveObject()", () => {
+		it("should move a file to a new location", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			volume.mkdirp("dir");
+
+			const id = volume.getObjectIdFromPath("file.txt");
+			const parentId = volume.getObjectIdFromPath("dir");
+			volume.moveObject(id, parentId);
+
+			const file = volume.readFile("dir/file.txt");
+			assert.deepEqual(file, HELLO_WORLD);
+		});
+
+		it("should move a directory to a new location", () => {
+			volume.mkdirp("dir");
+			volume.mkdirp("dir2");
+
+			const id = volume.getObjectIdFromPath("dir");
+			const parentId = volume.getObjectIdFromPath("dir2");
+			volume.moveObject(id, parentId);
+
+			const stat = volume.stat("dir2/dir");
+			assert.strictEqual(stat.kind, "directory");
+		});
+
+		it("should throw an error when the ID doesn't exist", () => {
+			assert.throws(() => volume.moveObject("file-1", "dir-1"), /ENOENT/);
+		});
+
+		it("should throw an error when the parent ID doesn't exist", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("file.txt");
+			assert.throws(() => volume.moveObject(id, "dir-1"), /ENOENT/);
+		});
+
+		it("should throw an error when the parent ID is a file", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			volume.writeFile("file2.txt", HELLO_WORLD);
+
+			const id = volume.getObjectIdFromPath("file.txt");
+			const parentId = volume.getObjectIdFromPath("file2.txt");
+			assert.throws(() => volume.moveObject(id, parentId), /EISDIR/);
+		});
+	});
+
+	describe("copyObject()", () => {
+		it("should copy a file to a new location", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			volume.mkdirp("dir");
+
+			const id = volume.getObjectIdFromPath("file.txt");
+			const parentId = volume.getObjectIdFromPath("dir");
+			volume.copyObject(id, parentId);
+
+			const file = volume.readFile("dir/file.txt");
+			assert.deepEqual(file, HELLO_WORLD);
+		});
+
+		it("should copy a directory to a new location", () => {
+			volume.mkdirp("dir");
+			volume.mkdirp("dir2");
+
+			const id = volume.getObjectIdFromPath("dir");
+			const parentId = volume.getObjectIdFromPath("dir2");
+			volume.copyObject(id, parentId);
+
+			const stat = volume.stat("dir2/dir");
+			assert.strictEqual(stat.kind, "directory");
+		});
+
+		it("should throw an error when the ID doesn't exist", () => {
+			assert.throws(() => volume.copyObject("file-1", "dir-1"), /ENOENT/);
+		});
+
+		it("should throw an error when the parent ID doesn't exist", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			const id = volume.getObjectIdFromPath("file.txt");
+			assert.throws(() => volume.copyObject(id, "dir-1"), /ENOENT/);
+		});
+
+		it("should throw an error when the parent ID is a file", () => {
+			volume.writeFile("file.txt", HELLO_WORLD);
+			volume.writeFile("file2.txt", HELLO_WORLD);
+
+			const id = volume.getObjectIdFromPath("file.txt");
+			const parentId = volume.getObjectIdFromPath("file2.txt");
+			assert.throws(() => volume.copyObject(id, parentId), /EISDIR/);
+		});
+	});
 });
