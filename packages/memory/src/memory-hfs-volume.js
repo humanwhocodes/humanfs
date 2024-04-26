@@ -7,7 +7,18 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Path, NotFoundError, DirectoryError } from "@humanfs/core";
+import {
+	Path,
+	NotFoundError,
+	DirectoryError,
+	PermissionError,
+} from "@humanfs/core";
+
+//-----------------------------------------------------------------------------
+// Types
+//-----------------------------------------------------------------------------
+
+/** @typedef {import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
 
 //-----------------------------------------------------------------------------
 // Data
@@ -48,12 +59,12 @@ function findPath(root, fileOrDirPath) {
 	let object = root;
 	let key = parts.shift();
 
-	while (object.get(key)) {
+	while (object.find(key)) {
 		if (parts.length === 0) {
-			return object.get(key);
+			return object.find(key);
 		}
 
-		object = object.get(key);
+		object = /** @type {MemoryHfsDirectory} */ (object.find(key));
 		key = parts.shift();
 	}
 
@@ -64,11 +75,11 @@ function findPath(root, fileOrDirPath) {
  * Writes a file or directory to the volume.
  * @param {MemoryHfsDirectory} volume The volume to search.
  * @param {string|URL} fileOrDirPath The path to the file or directory to find.
- * @param {MemoryHfsDirectory|MemoryHfsFile|undefined} value The value to write.
+ * @param {MemoryHfsDirectory|MemoryHfsFile|undefined} entry The value to write.
  * @returns {Array<MemoryHfsDirectory|MemoryHfsFile>} The files and directories created,
  *    including `value`, or undefined if the directory already exists.
  */
-function writePath(volume, fileOrDirPath, value) {
+function writePath(volume, fileOrDirPath, entry) {
 	const path = Path.from(fileOrDirPath);
 	const name = path.pop();
 	let directory = volume;
@@ -76,28 +87,31 @@ function writePath(volume, fileOrDirPath, value) {
 
 	// create any missing directories
 	for (const step of path) {
-		let entry = directory.get(step);
+		let entry = directory.find(step);
 
 		if (!entry) {
-			entry = new MemoryHfsDirectory();
-			directory.set(step, entry);
+			entry = new MemoryHfsDirectory({
+				name: step,
+			});
+			directory.add(entry);
 			created.push(entry);
 		}
 
-		directory = entry;
+		directory = /** @type {MemoryHfsDirectory} */ (entry);
 	}
 
 	// we don't want to overwrite an existing directory
 	if (
 		directory &&
-		directory.get("name")?.kind === "directory" &&
-		value.kind === "directory"
+		directory.find(name)?.kind === "directory" &&
+		entry.kind === "directory"
 	) {
-		return;
+		return [];
 	}
 
-	directory.set(name, value);
-	created.push(value);
+	entry.name = name;
+	directory.add(entry);
+	created.push(entry);
 
 	return created;
 }
@@ -137,13 +151,22 @@ export class MemoryHfsFile {
 	kind = "file";
 
 	/**
+	 * The name of the file.
+	 * @type {string}
+	 */
+	name;
+
+	/**
 	 * Creates a new instance.
-	 * @param {ArrayBuffer} contents The contents of the file.
+	 * @param {object} options The options for the file.
+	 * @param {string} [options.name] The name of the file.
+	 * @param {ArrayBuffer} options.contents The contents of the file.
 	 * @throws {TypeError} If the contents are not an ArrayBuffer.
 	 */
-	constructor(contents) {
+	constructor({ name, contents }) {
 		assertArrayBuffer(contents);
 		this.#contents = contents;
+		this.name = name;
 	}
 
 	/**
@@ -197,7 +220,10 @@ export class MemoryHfsFile {
 	 * @returns {MemoryHfsFile} The new file.
 	 */
 	clone() {
-		return new MemoryHfsFile(this.#contents.slice(0));
+		return new MemoryHfsFile({
+			name: this.name,
+			contents: this.#contents.slice(0),
+		});
 	}
 }
 
@@ -205,13 +231,26 @@ export class MemoryHfsFile {
  * A class representing a directory in memory.
  * It extends Map to provide the functionality of a directory.
  */
-export class MemoryHfsDirectory extends Map {
+export class MemoryHfsDirectory {
 	/**
 	 * The unique identifier for the directory.
 	 * @type {string}
 	 * @readonly
 	 */
 	#id = `dir-${objectId++}`;
+
+	/**
+	 * The entries in the directory.
+	 * @type {Array<MemoryHfsFile|MemoryHfsDirectory>}
+	 * @readonly
+	 */
+	#entries;
+
+	/**
+	 * The name of the directory.
+	 * @type {string}
+	 */
+	name;
 
 	/**
 	 * The last modified date of the directory.
@@ -225,6 +264,17 @@ export class MemoryHfsDirectory extends Map {
 	 * @readonly
 	 */
 	kind = "directory";
+
+	/**
+	 * Creates a new instance.
+	 * @param {Object} [options] The options for the directory.
+	 * @param {string} [options.name] The name of the directory.
+	 * @param {Array<MemoryHfsFile|MemoryHfsDirectory>} [options.entries] The entries in the directory.
+	 */
+	constructor({ name, entries = [] } = {}) {
+		this.name = name;
+		this.#entries = entries;
+	}
 
 	/**
 	 * The unique identifier for the file.
@@ -245,40 +295,56 @@ export class MemoryHfsDirectory extends Map {
 	}
 
 	/**
-	 * Sets a value in the directory.
-	 * @param {string} key The key to set.
+	 * Finds an entry with the given name in the directory.
+	 * @param {string} name The name of the entry to find.
+	 * @returns {MemoryHfsFile|MemoryHfsDirectory|undefined} The entry found or undefined if not found.
+	 */
+	find(name) {
+		return this.#entries.find(entry => entry.name === name);
+	}
+
+	/**
+	 * Adds an entry in the directory.
 	 * @param {MemoryHfsFile|MemoryHfsDirectory} entry The value to set.
 	 * @returns {this} The instance for chaining.
 	 */
-	set(key, entry) {
-		const existing = this.get(key);
+	add(entry) {
+		const existing = this.find(entry.name);
 
 		// if there's already an entry in this name then delete it from the tree
 		if (existing) {
 			parents.delete(existing);
+
+			const index = this.#entries.indexOf(existing);
+			this.#entries.splice(index, 1);
 		}
 
+		this.#entries.push(entry);
 		entry.lastModified = new Date();
 		parents.set(entry, this);
-		return super.set(key, entry);
+
+		return this;
 	}
 
 	/**
-	 * Deletes a value from the directory.
-	 * @param {string} key The key to delete.
+	 * Deletes an entry from the directory.
+	 * @param {string} name The name of the entry to delete.
 	 * @returns {boolean} True if the key was deleted, false if not.
 	 */
-	delete(key) {
+	delete(name) {
 		this.lastModified = new Date();
 
-		if (this.has(key)) {
-			const entry = this.get(key);
+		const entry = this.find(name);
 
+		if (entry) {
 			if (entry.kind === "directory") {
 				parents.delete(entry);
 			}
 
-			return super.delete(key);
+			const index = this.#entries.indexOf(entry);
+			this.#entries.splice(index, 1);
+
+			return true;
 		}
 
 		return false;
@@ -289,12 +355,20 @@ export class MemoryHfsDirectory extends Map {
 	 * @returns {MemoryHfsDirectory} The new directory.
 	 */
 	clone() {
-		return new MemoryHfsDirectory(
-			Array.from(this.entries()).map(([key, value]) => [
-				key,
-				value.clone(),
-			]),
-		);
+		return new MemoryHfsDirectory({
+			name: this.name,
+			entries: this.#entries.map(entry => entry.clone()),
+		});
+	}
+
+	/**
+	 * Returns an iterator over the entries in the directory.
+	 * @returns {IterableIterator<[string, MemoryHfsFile|MemoryHfsDirectory]>} The iterator.
+	 */
+	*entries() {
+		for (const entry of this.#entries) {
+			yield [entry.name, entry];
+		}
 	}
 }
 
@@ -316,7 +390,11 @@ export class MemoryHfsVolume {
 	 * The root directory of the volume.
 	 * @type {MemoryHfsDirectory}
 	 */
-	#root = new MemoryHfsDirectory();
+	#root = new MemoryHfsDirectory({ name: "." });
+
+	//-----------------------------------------------------------------------------
+	// ID-Based Methods
+	//-----------------------------------------------------------------------------
 
 	/**
 	 * Retrieves an object by its ID.
@@ -324,13 +402,190 @@ export class MemoryHfsVolume {
 	 * @returns {MemoryHfsFile|MemoryHfsDirectory|undefined} The object or undefined if not found.
 	 * @throws {TypeError} If the ID is not a string.
 	 */
-	getObject(id) {
+	#getObject(id) {
 		if (typeof id !== "string") {
 			throw new TypeError("ID must be a string.");
 		}
 
 		return this.#objects.get(id);
 	}
+
+	/**
+	 * Retrieves an object by its path.
+	 * @param {string|URL} path The path to the object to retrieve.
+	 * @returns {MemoryHfsFile|MemoryHfsDirectory|undefined} The object or undefined if not found.
+	 * @throws {TypeError} If the path is not a string or URL.
+	 */
+	#getObjectFromPath(path) {
+		return findPath(this.#root, Path.from(path));
+	}
+
+	/**
+	 * Retrieves the ID of an object by its path.
+	 * @param {string|URL} path The path to the object to retrieve.
+	 * @returns {string|undefined} The ID of the object or undefined if not found.
+	 * @throws {TypeError} If the path is not a string or URL.
+	 */
+	getObjectIdFromPath(path) {
+		const object = findPath(this.#root, Path.from(path));
+		return object ? object.id : undefined;
+	}
+
+	/**
+	 * Deletes an object by its ID.
+	 * @param {string} id The ID of the object to delete.
+	 * @returns {void}
+	 */
+	deleteObject(id) {
+		// throw an error if the object doesn't exist
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			throw new NotFoundError(`deleteObject ${id}`);
+		}
+
+		// remove the object from the tree
+		object.parent.delete(object.name);
+
+		// remove the object from the map
+		this.#objects.delete(id);
+	}
+
+	/**
+	 * Creates a file.
+	 * @param {string} name The name of the file.
+	 * @param {string} parentId The ID of the parent directory.
+	 * @param {ArrayBuffer} contents The contents of the file.
+	 * @returns {string} The ID of the file.
+	 * @throws {DirectoryError} If the parent ID is not a directory.
+	 * @throws {NotFoundError} If the parent ID is not found.
+	 * @throws {TypeError} If the contents are not an ArrayBuffer.
+	 */
+	createFileObject(name, parentId, contents) {
+		const parent = this.#objects.get(parentId);
+
+		if (!parent) {
+			throw new NotFoundError(`createObject ${parentId}`);
+		}
+
+		if (parent.kind !== "directory") {
+			throw new DirectoryError(`createObject ${parentId}`);
+		}
+
+		const directory = /** @type {MemoryHfsDirectory} */ (parent);
+		const file = new MemoryHfsFile({ name, contents });
+
+		directory.add(file);
+		this.#objects.set(file.id, file);
+
+		return file.id;
+	}
+
+	/**
+	 * Creates a directory.
+	 * @param {string} name The name of the directory.
+	 * @param {string} parentId The ID of the parent directory.
+	 * @returns {string} The ID of the directory.
+	 * @throws {DirectoryError} If the parent ID is not a directory.
+	 * @throws {NotFoundError} If the parent ID is not found.
+	 */
+	createDirectoryObject(name, parentId) {
+		const parent = this.#objects.get(parentId);
+
+		if (!parent) {
+			throw new NotFoundError(`createObject ${parentId}`);
+		}
+
+		if (parent.kind !== "directory") {
+			throw new DirectoryError(`createObject ${parentId}`);
+		}
+
+		const directory = /** @type {MemoryHfsDirectory} */ (parent);
+		const newDirectory = new MemoryHfsDirectory({ name });
+
+		directory.add(newDirectory);
+		this.#objects.set(newDirectory.id, newDirectory);
+
+		return newDirectory.id;
+	}
+
+	/**
+	 * Reads the contents of a file.
+	 * @param {string} id The ID of the file to read.
+	 * @returns {ArrayBuffer|undefined} The contents of the file or
+	 * undefined if not found.
+	 * @throws {NotFoundError} If the file is not found.
+	 * @throws {DirectoryError} If the ID is not a file.
+	 */
+	readFileObject(id) {
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			return undefined;
+		}
+
+		if (object.kind !== "file") {
+			throw new DirectoryError(`readObject ${id}`);
+		}
+
+		return /** @type {MemoryHfsFile} */ (object).contents;
+	}
+
+	/**
+	 * Writes the contents of a file.
+	 * @param {string} id The ID of the file to write.
+	 * @param {ArrayBuffer} contents The contents to write.
+	 * @returns {void}
+	 * @throws {NotFoundError} If the file is not found.
+	 * @throws {DirectoryError} If the ID is not a file.
+	 * @throws {TypeError} If the contents are not an ArrayBuffer.
+	 */
+	writeFileObject(id, contents) {
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			throw new NotFoundError(`writeObject ${id}`);
+		}
+
+		if (object.kind !== "file") {
+			throw new DirectoryError(`writeObject ${id}`);
+		}
+
+		const file = /** @type {MemoryHfsFile} */ (object);
+		file.contents = contents;
+	}
+
+	/**
+	 * Reads the contents of a directory.
+	 * @param {string} id The ID of the directory to read.
+	 * @returns {Array<HfsDirectoryEntry>} The names of the files and directories in the directory.
+	 * @throws {NotFoundError} If the directory is not found.
+	 * @throws {DirectoryError} If the ID is not a directory.
+	 */
+	readDirectoryObject(id) {
+		const object = this.#objects.get(id);
+
+		if (!object) {
+			throw new NotFoundError(`readObject ${id}`);
+		}
+
+		if (object.kind !== "directory") {
+			throw new DirectoryError(`readObject ${id}`);
+		}
+
+		const directory = /** @type {MemoryHfsDirectory} */ (object);
+
+		return Array.from(directory.entries()).map(([name, object]) => ({
+			isFile: object.kind === "file",
+			isDirectory: object.kind === "directory",
+			isSymlink: false,
+			name: name,
+		}));
+	}
+
+	//-----------------------------------------------------------------------------
+	// Path-Based Methods
+	//-----------------------------------------------------------------------------
 
 	/**
 	 * Reads the contents of a file.
@@ -361,7 +616,7 @@ export class MemoryHfsVolume {
 		for (const entry of writePath(
 			this.#root,
 			filePath,
-			new MemoryHfsFile(contents),
+			new MemoryHfsFile({ contents }),
 		)) {
 			this.#objects.set(entry.id, entry);
 		}
@@ -391,8 +646,14 @@ export class MemoryHfsVolume {
 			throw new DirectoryError(`cp ${source} ${destination}`);
 		}
 
-		// do the actual copying
-		object.parent.set(destPath.name, object.clone());
+		const name = destPath.pop();
+		const destDir = /** @type {MemoryHfsDirectory} */ (
+			findPath(this.#root, destPath)
+		);
+
+		const newObject = object.clone();
+		newObject.name = name;
+		destDir.add(newObject);
 	}
 
 	/**
@@ -424,7 +685,9 @@ export class MemoryHfsVolume {
 		const destDir = /** @type {MemoryHfsDirectory} */ (
 			findPath(this.#root, destPath)
 		);
-		destDir.set(name, object.clone());
+		const newObject = object.clone();
+		newObject.name = name;
+		destDir.add(newObject);
 
 		// remove the original
 		object.parent.delete(srcPath.name);
@@ -486,7 +749,7 @@ export class MemoryHfsVolume {
 		}
 
 		if (object.kind !== "directory") {
-			throw new DirectoryError(`readdir ${dirPath}`);
+			throw new PermissionError(`readdir ${dirPath}`);
 		}
 
 		const directory = /** @type {MemoryHfsDirectory} */ (object);
@@ -512,7 +775,7 @@ export class MemoryHfsVolume {
 			findPath(this.#root, path)
 		);
 
-		if (!object || !object.has(name)) {
+		if (!object || !object.find(name)) {
 			throw new NotFoundError(`rm ${fileOrDirPath}`);
 		}
 
