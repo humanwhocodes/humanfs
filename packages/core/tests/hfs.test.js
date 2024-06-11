@@ -1432,6 +1432,263 @@ describe("Hfs", () => {
 		});
 	});
 
+	describe.only("walk()", () => {
+		const data = [
+			[
+				{
+					name: "subdir1",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+				{
+					name: "subdir2",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+				{
+					name: "file1.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file2.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file3.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+			[
+				{
+					name: "subdir3",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+				{
+					name: "file4.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file5.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+			[
+				{
+					name: "file6.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+			[
+
+				{
+
+					name: "file7.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+		];
+
+		const traversed = [
+			{
+				path: 'subdir1',
+				name: 'subdir1',
+				isFile: false,
+				isDirectory: true,
+				isSymlink: false
+			},
+			{
+				path: 'subdir1/subdir3',
+				name: 'subdir3',
+				isFile: false,
+				isDirectory: true,
+				isSymlink: false
+			},
+			{
+				path: 'subdir1/subdir3/file6.txt',
+				name: 'file6.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			},
+			{
+				path: 'subdir1/file4.txt',
+				name: 'file4.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			},
+			{
+				path: 'subdir1/file5.txt',
+				name: 'file5.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			},
+			{
+				path: 'subdir2',
+				name: 'subdir2',
+				isFile: false,
+				isDirectory: true,
+				isSymlink: false
+			},
+			{
+				path: 'subdir2/file7.txt',
+				name: 'file7.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			},
+			{
+				path: 'file1.txt',
+				name: 'file1.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			},
+			{
+				path: 'file2.txt',
+				name: 'file2.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			},
+			{
+				path: 'file3.txt',
+				name: 'file3.txt',
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false
+			}
+		];
+
+		let hfs;
+
+		beforeEach(() => {
+			let callCount = 0;
+			hfs = new Hfs({
+				impl: {
+					list() {
+						return data[callCount++];
+					},
+				},
+			});
+		});
+
+		it("should return the list of files and directories", async () => {
+
+			const result = await hfs.walk("/path/to/dir");
+			assert.ok(
+				result[Symbol.asyncIterator],
+				"walk() should return an AsyncIterable.",
+			);
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(entries, traversed);
+
+		});
+
+		it("should return only files when the entryFilter filters on isFile synchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				entryFilter(entry) {
+					return entry.isFile;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(entries, traversed.filter(entry => entry.isFile));
+		});
+
+		it("should return only files when the entryFilter filters on isFile asynchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				async entryFilter(entry) {
+					return entry.isFile;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(entries, traversed.filter(entry => entry.isFile));
+		});
+
+		it("should return only the top-level entries when the directoryFilter return false synchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				directoryFilter() {
+					return false;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.filter(entry => data[0].find(e => e.name === entry.name));
+			assert.deepStrictEqual(entries, expected);
+		});
+
+		it("should return only the top-level entries when the directoryFilter return false asynchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				async directoryFilter() {
+					return false;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.filter(entry => data[0].find(e => e.name === entry.name));
+			assert.deepStrictEqual(entries, expected);
+		});
+
+		it.only("should skip subdir3 only when the directoryFilter return false synchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				directoryFilter(entry) {
+					return entry.name !== "subdir3";
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+console.log(entries)
+			const expected = traversed.filter(entry => !entry.path.includes("subdir3/"));
+			assert.deepStrictEqual(entries, expected);
+		});
+
+	});
+
 	describe("size()", () => {
 		it("should return the size of the file", async () => {
 			const hfs = new Hfs({

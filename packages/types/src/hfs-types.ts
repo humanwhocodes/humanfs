@@ -147,7 +147,7 @@ export interface HfsImpl {
 }
 
 //------------------------------------------------------------------------------
-// HfsDirEnt
+// HfsDirectoryEntry
 //------------------------------------------------------------------------------
 
 export interface HfsDirectoryEntry {
@@ -172,4 +172,16 @@ export interface HfsDirectoryEntry {
 	 */
 	isSymlink: boolean;
 
+}
+
+//------------------------------------------------------------------------------
+// HfsWalkEntry
+//------------------------------------------------------------------------------
+
+export interface HfsWalkEntry extends HfsDirectoryEntry {
+
+	/**
+	 * The path of the entry relative to the directory that was walked.
+	 */
+	path: string;
 }
