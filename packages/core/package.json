@@ -3,6 +3,7 @@
   "version": "0.18.0",
   "description": "The core of the humanfs library.",
   "type": "module",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     "import": {

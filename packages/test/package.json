@@ -3,6 +3,7 @@
   "version": "0.14.0",
   "description": "Testing utilities for hfs",
   "type": "module",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     "import": {

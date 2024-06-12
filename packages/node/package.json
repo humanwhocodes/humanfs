@@ -3,6 +3,7 @@
   "version": "0.16.1",
   "description": "The Node.js bindings of the humanfs library.",
   "type": "module",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     "import": {
