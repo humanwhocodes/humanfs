@@ -4,5 +4,4 @@
  */
 
 export * from "./memory-hfs.js";
-export { MemoryHfsVolume } from "./memory-hfs-volume.js";
 export { Hfs } from "@humanfs/core";
