@@ -6,6 +6,22 @@
   * dependencies
     * @humanfs/core bumped from ^0.14.0 to ^0.15.0
 
+## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.0...node-v0.16.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @humanwhocodes/retry to ^0.3.0 ([#113](https://github.com/humanwhocodes/humanfs/issues/113)) ([c6b42f5](https://github.com/humanwhocodes/humanfs/commit/c6b42f5063ef90459daa4dd1d19bcefc7d9a0e86))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.17.0 to ^0.18.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.13.0 to ^0.14.0
+
 ## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.15.2...node-v0.16.0) (2024-03-20)
 
 

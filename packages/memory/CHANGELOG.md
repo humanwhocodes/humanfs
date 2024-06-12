@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.18.0...memory-v0.19.0) (2024-06-12)
+
+
+### Features
+
+* Add ID-based methods to MemoryHfsVolume + tests ([#114](https://github.com/humanwhocodes/humanfs/issues/114)) ([bb7045e](https://github.com/humanwhocodes/humanfs/commit/bb7045e7c277928d1d6fd78d687c14e8d801e690))
+* Expose MemoryHfsVolume, add copyObject and moveObject ([#116](https://github.com/humanwhocodes/humanfs/issues/116)) ([ad00da4](https://github.com/humanwhocodes/humanfs/commit/ad00da42d4a34dacbc6cb429b3f82c4e10baae67))
+
+
+### Bug Fixes
+
+* Don't expose MemoryHfsVolume (yet) ([8ed5e2f](https://github.com/humanwhocodes/humanfs/commit/8ed5e2f7a459e937b9bb1967eee25b4c400f6e9d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.17.0 to ^0.18.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.13.0 to ^0.14.0
+
 ## [0.18.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.17.1...memory-v0.18.0) (2024-03-20)
 
 

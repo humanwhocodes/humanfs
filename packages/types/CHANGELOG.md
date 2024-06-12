@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.13.0...types-v0.14.0) (2024-06-12)
+
+
+### Features
+
+* Implement Hfs#walk() method ([#119](https://github.com/humanwhocodes/humanfs/issues/119)) ([2aeade0](https://github.com/humanwhocodes/humanfs/commit/2aeade0ffbef886103dc38d16694e9b63191a8df))
+
 ## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.12.0...types-v0.13.0) (2024-03-20)
 
 

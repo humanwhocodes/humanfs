@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.0...deno-v0.16.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @humanwhocodes/retry to ^0.3.0 ([#113](https://github.com/humanwhocodes/humanfs/issues/113)) ([c6b42f5](https://github.com/humanwhocodes/humanfs/commit/c6b42f5063ef90459daa4dd1d19bcefc7d9a0e86))
+
 ## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.2...deno-v0.16.0) (2024-03-20)
 
 
