@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/core",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "exports": "./src/index.js",
   "publish": {
     "exclude": [

@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/web",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "The in-web bindings for the hfs library.",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -47,7 +47,7 @@
   },
   "devDependencies": {
     "@humanfs/test": "^0.14.0",
-    "@humanfs/types": "^0.13.0",
+    "@humanfs/types": "^0.14.0",
     "@wdio/browser-runner": "^8.38.3",
     "@wdio/cli": "^8.38.2",
     "@wdio/mocha-framework": "^8.38.2",
@@ -57,6 +57,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@humanfs/core": "^0.17.0"
+    "@humanfs/core": "^0.18.0"
   }
 }
