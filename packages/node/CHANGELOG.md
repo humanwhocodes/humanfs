@@ -6,6 +6,22 @@
   * dependencies
     * @humanfs/core bumped from ^0.14.0 to ^0.15.0
 
+## [0.16.2](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.1...node-v0.16.2) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.0 to ^0.18.1
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.0 to ^0.14.1
+
 ## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.0...node-v0.16.1) (2024-06-12)
 
 

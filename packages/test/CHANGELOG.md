@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/humanwhocodes/humanfs/compare/test-v0.14.0...test-v0.14.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.13.0...test-v0.14.0) (2024-03-20)
 
 
