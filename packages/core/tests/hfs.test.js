@@ -2,7 +2,7 @@
  * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
-/* global it, describe, URL, TextEncoder */
+/* global it, describe, beforeEach, URL, TextEncoder */
 
 //------------------------------------------------------------------------------
 // Imports
@@ -1429,6 +1429,352 @@ describe("Hfs", () => {
 				assert.strictEqual(item.isFile, entry.isFile);
 				assert.strictEqual(item.isSymlink, entry.isSymlink);
 			}
+		});
+	});
+
+	describe("walk()", () => {
+		const data = {
+			"/path/to/dir": [
+				{
+					name: "subdir1",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+				{
+					name: "subdir2",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+				{
+					name: "file1.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file2.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file3.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+			"/path/to/dir/subdir1": [
+				{
+					name: "subdir3",
+					isFile: false,
+					isDirectory: true,
+					isSymlink: false,
+				},
+				{
+					name: "file4.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+				{
+					name: "file5.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+			"/path/to/dir/subdir1/subdir3": [
+				{
+					name: "file6.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+			"/path/to/dir/subdir2": [
+				{
+					name: "file7.txt",
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				},
+			],
+		};
+
+		const traversed = [
+			{
+				path: "subdir1",
+				name: "subdir1",
+				isFile: false,
+				isDirectory: true,
+				isSymlink: false,
+			},
+			{
+				path: "subdir1/subdir3",
+				name: "subdir3",
+				isFile: false,
+				isDirectory: true,
+				isSymlink: false,
+			},
+			{
+				path: "subdir1/subdir3/file6.txt",
+				name: "file6.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+			{
+				path: "subdir1/file4.txt",
+				name: "file4.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+			{
+				path: "subdir1/file5.txt",
+				name: "file5.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+			{
+				path: "subdir2",
+				name: "subdir2",
+				isFile: false,
+				isDirectory: true,
+				isSymlink: false,
+			},
+			{
+				path: "subdir2/file7.txt",
+				name: "file7.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+			{
+				path: "file1.txt",
+				name: "file1.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+			{
+				path: "file2.txt",
+				name: "file2.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+			{
+				path: "file3.txt",
+				name: "file3.txt",
+				isFile: true,
+				isDirectory: false,
+				isSymlink: false,
+			},
+		];
+
+		let hfs;
+
+		beforeEach(() => {
+			hfs = new Hfs({
+				impl: {
+					list(dirPath) {
+						if (dirPath instanceof URL) {
+							dirPath = dirPath.pathname;
+						}
+
+						if (dirPath.endsWith("/")) {
+							dirPath = dirPath.slice(0, -1);
+						}
+
+						return data[dirPath] ?? [];
+					},
+				},
+			});
+		});
+
+		it("should log the method call", async () => {
+			hfs.logStart("walk");
+			const directoryFilter = () => false;
+			const entryFilter = () => false;
+
+			// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+			for await (const entry of hfs.walk("/path/to/dir", {
+				directoryFilter,
+				entryFilter,
+			}));
+			const logs = hfs.logEnd("walk").map(normalizeLogEntry);
+			assert.deepStrictEqual(logs, [
+				{
+					type: "call",
+					data: {
+						methodName: "walk",
+						args: [
+							"/path/to/dir",
+							{ directoryFilter, entryFilter },
+						],
+					},
+				},
+			]);
+		});
+
+		it("should reject a promise when the directory path is not a string", () => {
+			return assert.rejects(
+				// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+				async () => {
+					for await (const entry of hfs.walk(123));
+				},
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should reject a promise when the directory path is empty", () => {
+			return assert.rejects(
+				// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+				async () => {
+					for await (const entry of hfs.walk(""));
+				},
+				new TypeError("Path must be a non-empty string or URL."),
+			);
+		});
+
+		it("should return the list of files and directories", async () => {
+			const result = await hfs.walk("/path/to/dir");
+			assert.ok(
+				result[Symbol.asyncIterator],
+				"walk() should return an AsyncIterable.",
+			);
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(entries, traversed);
+		});
+
+		it("should return the list of files and directories when passed a URL without a trailing slash", async () => {
+			const result = await hfs.walk(new URL("file:///path/to/dir"));
+			assert.ok(
+				result[Symbol.asyncIterator],
+				"walk() should return an AsyncIterable.",
+			);
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(entries, traversed);
+		});
+
+		it("should return the list of files and directories when passed a URL with a trailing slash", async () => {
+			const result = await hfs.walk(new URL("file:///path/to/dir/"));
+			assert.ok(
+				result[Symbol.asyncIterator],
+				"walk() should return an AsyncIterable.",
+			);
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(entries, traversed);
+		});
+
+		it("should return only files when the entryFilter filters on isFile synchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				entryFilter(entry) {
+					return entry.isFile;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(
+				entries,
+				traversed.filter(entry => entry.isFile),
+			);
+		});
+
+		it("should return only files when the entryFilter filters on isFile asynchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				async entryFilter(entry) {
+					return entry.isFile;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			assert.deepStrictEqual(
+				entries,
+				traversed.filter(entry => entry.isFile),
+			);
+		});
+
+		it("should return only the top-level entries when the directoryFilter return false synchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				directoryFilter() {
+					return false;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.filter(entry =>
+				data["/path/to/dir"].find(e => e.name === entry.name),
+			);
+			assert.deepStrictEqual(entries, expected);
+		});
+
+		it("should return only the top-level entries when the directoryFilter return false asynchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				async directoryFilter() {
+					return false;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.filter(entry =>
+				data["/path/to/dir"].find(e => e.name === entry.name),
+			);
+			assert.deepStrictEqual(entries, expected);
+		});
+
+		it("should skip subdir3 only when the directoryFilter return false synchronously", async () => {
+			const result = await hfs.walk("/path/to/dir", {
+				directoryFilter(entry) {
+					return entry.name !== "subdir3";
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.filter(
+				entry => !entry.path.includes("subdir3/"),
+			);
+			assert.deepStrictEqual(entries, expected);
 		});
 	});
 

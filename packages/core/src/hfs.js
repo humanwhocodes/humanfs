@@ -9,8 +9,9 @@
 // Types
 //-----------------------------------------------------------------------------
 
-/** @typedef{import("@humanfs/types").HfsImpl} HfsImpl */
-/** @typedef{import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
+/** @typedef {import("@humanfs/types").HfsImpl} HfsImpl */
+/** @typedef {import("@humanfs/types").HfsDirectoryEntry} HfsDirectoryEntry */
+/** @typedef {import("@humanfs/types").HfsWalkEntry} HfsWalkEntry */
 
 //-----------------------------------------------------------------------------
 // Helpers
@@ -511,6 +512,98 @@ export class Hfs {
 	async *list(dirPath) {
 		assertValidFileOrDirPath(dirPath);
 		yield* await this.#callImplMethod("list", dirPath);
+	}
+
+	/**
+	 * Walks a directory using a depth-first traversal and returns the entries
+	 * from the traversal.
+	 * @param {string|URL} dirPath The path to the directory to walk.
+	 * @param {Object} [options] The options for the walk.
+	 * @param {(entry:HfsWalkEntry) => Promise<boolean>|boolean} [options.directoryFilter] A filter function to determine
+	 * 	if a directory's entries should be included in the walk.
+	 * @param {(entry:HfsWalkEntry) => Promise<boolean>|boolean} [options.entryFilter] A filter function to determine if
+	 * 	an entry should be included in the walk.
+	 * @returns {AsyncIterable<HfsWalkEntry>} A promise that resolves with the
+	 * 	directory entries.
+	 * @throws {TypeError} If the directory path is not a string or URL.
+	 * @throws {Error} If the directory cannot be read.
+	 */
+	async *walk(
+		dirPath,
+		{ directoryFilter = () => true, entryFilter = () => true } = {},
+	) {
+		assertValidFileOrDirPath(dirPath);
+		this.#log("walk", dirPath, { directoryFilter, entryFilter });
+
+		// inner function for recursion without additional logging
+		const walk = async function* (
+			dirPath,
+			{ directoryFilter, entryFilter },
+		) {
+			for await (const entry of this.#callImplMethodWithoutLog(
+				"list",
+				dirPath,
+			)) {
+				const walkEntry = {
+					path: entry.name,
+					...entry,
+				};
+
+				// first emit the entry but only if the entry filter returns true
+				let shouldEmitEntry = entryFilter(walkEntry);
+				if (shouldEmitEntry.then) {
+					shouldEmitEntry = await shouldEmitEntry;
+				}
+
+				if (shouldEmitEntry) {
+					yield walkEntry;
+				}
+
+				// if it's a directory then yield the entry and walk the directory
+				if (entry.isDirectory) {
+					// if the directory filter returns false, skip the directory
+					let shouldWalkDirectory = directoryFilter(walkEntry);
+					if (shouldWalkDirectory.then) {
+						shouldWalkDirectory = await shouldWalkDirectory;
+					}
+
+					if (!shouldWalkDirectory) {
+						continue;
+					}
+
+					// make sure there's a trailing slash on the directory path before appending
+					const directoryPath =
+						dirPath instanceof URL
+							? new URL(
+									entry.name,
+									dirPath.href.endsWith("/")
+										? dirPath.href
+										: `${dirPath.href}/`,
+								)
+							: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${entry.name}`;
+
+					for await (const dirEntry of walk(directoryPath, {
+						directoryFilter,
+						entryFilter,
+					})) {
+						// we need to update the path to include the directory
+						dirEntry.path = `${entry.name}/${dirEntry.path}`;
+
+						// only yield the entry if the entry filter returns true
+						let shouldEmitDirEntry = entryFilter(dirEntry);
+						if (shouldEmitDirEntry.then) {
+							shouldEmitDirEntry = await shouldEmitDirEntry;
+						}
+
+						if (shouldEmitDirEntry) {
+							yield dirEntry;
+						}
+					}
+				}
+			}
+		}.bind(this);
+
+		yield* walk(dirPath, { directoryFilter, entryFilter });
 	}
 
 	/**
