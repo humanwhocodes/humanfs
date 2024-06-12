@@ -46,13 +46,13 @@
     "node": ">=18.18.0"
   },
   "devDependencies": {
-    "@wdio/browser-runner": "^8.29.1",
-    "@wdio/cli": "^8.29.1",
-    "@wdio/mocha-framework": "^8.29.1",
-    "@wdio/spec-reporter": "^8.29.1",
-    "chai": "^5.0.0",
     "@humanfs/test": "^0.14.0",
     "@humanfs/types": "^0.13.0",
+    "@wdio/browser-runner": "^8.38.3",
+    "@wdio/cli": "^8.38.2",
+    "@wdio/mocha-framework": "^8.38.2",
+    "@wdio/spec-reporter": "^8.38.2",
+    "chai": "^5.0.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"
   },
