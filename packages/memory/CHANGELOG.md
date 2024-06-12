@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.19.1](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.0...memory-v0.19.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.0 to ^0.18.1
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.0 to ^0.14.1
+
 ## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.18.0...memory-v0.19.0) (2024-06-12)
 
 

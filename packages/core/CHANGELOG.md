@@ -6,6 +6,13 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.18.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.0...core-v0.18.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
 ## [0.18.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.17.0...core-v0.18.0) (2024-06-12)
 
 
