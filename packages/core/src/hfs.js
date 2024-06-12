@@ -528,51 +528,82 @@ export class Hfs {
 	 * @throws {TypeError} If the directory path is not a string or URL.
 	 * @throws {Error} If the directory cannot be read.
 	 */
-	async *walk(dirPath, { directoryFilter = () => true, entryFilter = () => true } = {}) {
+	async *walk(
+		dirPath,
+		{ directoryFilter = () => true, entryFilter = () => true } = {},
+	) {
 		assertValidFileOrDirPath(dirPath);
+		this.#log("walk", dirPath, { directoryFilter, entryFilter });
 
-		let workingPath = [];
+		// inner function for recursion without additional logging
+		const walk = async function* (
+			dirPath,
+			{ directoryFilter, entryFilter },
+		) {
+			for await (const entry of this.#callImplMethodWithoutLog(
+				"list",
+				dirPath,
+			)) {
+				const walkEntry = {
+					path: entry.name,
+					...entry,
+				};
 
-		for await (const entry of this.#callImplMethod("list", dirPath)) {
-			
-			workingPath.push(entry.name);
-			const path = workingPath.join("/");
-			workingPath.pop();
-
-			const walkEntry = {
-				path,
-				...entry
-			};
-
-			// first emit the entry but only if the entry filter returns true
-			if (await entryFilter(walkEntry)) {
-				yield walkEntry;
-			}
-
-			// if it's a directory then yield the entry and walk the directory
-			if (entry.isDirectory) {
-
-				// if the directory filter returns false, skip the directory
-				if (!await directoryFilter(walkEntry)) {
-					continue;
+				// first emit the entry but only if the entry filter returns true
+				let shouldEmitEntry = entryFilter(walkEntry);
+				if (shouldEmitEntry.then) {
+					shouldEmitEntry = await shouldEmitEntry;
 				}
 
-				const directoryPath = dirPath instanceof URL
-					? new URL(path, dirPath)
-					: path;
+				if (shouldEmitEntry) {
+					yield walkEntry;
+				}
 
-				for await (const dirEntry of this.walk(directoryPath)) {
+				// if it's a directory then yield the entry and walk the directory
+				if (entry.isDirectory) {
+					// if the directory filter returns false, skip the directory
+					let shouldWalkDirectory = directoryFilter(walkEntry);
+					if (shouldWalkDirectory.then) {
+						shouldWalkDirectory = await shouldWalkDirectory;
+					}
 
-					// we need to update the path to include the directory
-					dirEntry.path = `${path}/${dirEntry.path}`;
+					if (!shouldWalkDirectory) {
+						continue;
+					}
 
-					if (await entryFilter(dirEntry)) {
-						yield dirEntry;
+					// make sure there's a trailing slash on the directory path before appending
+					const directoryPath =
+						dirPath instanceof URL
+							? new URL(
+									entry.name,
+									dirPath.href.endsWith("/")
+										? dirPath.href
+										: `${dirPath.href}/`,
+								)
+							: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${entry.name}`;
+
+					for await (const dirEntry of walk(directoryPath, {
+						directoryFilter,
+						entryFilter,
+					})) {
+						// we need to update the path to include the directory
+						dirEntry.path = `${entry.name}/${dirEntry.path}`;
+
+						// only yield the entry if the entry filter returns true
+						let shouldEmitDirEntry = entryFilter(dirEntry);
+						if (shouldEmitDirEntry.then) {
+							shouldEmitDirEntry = await shouldEmitDirEntry;
+						}
+
+						if (shouldEmitDirEntry) {
+							yield dirEntry;
+						}
 					}
 				}
 			}
+		}.bind(this);
 
-		}
+		yield* walk(dirPath, { directoryFilter, entryFilter });
 	}
 
 	/**

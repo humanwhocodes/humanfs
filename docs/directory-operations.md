@@ -86,6 +86,62 @@ for await (const entry of hfs.list("/path/to/directory")) {
 
 Each entry in the async iterator implements the [`HfsDirectoryEntry` interface](../packages/types/src/@humanfs/types.ts).
 
+## Reading Directory Entries Recursively
+
+To recursively read all of the entries in a given directory, use the `hfs.walk()` method. This method returns an async iterable and is meant to be used with the `for await-of` statement:
+
+```js
+for await (const entry of hfs.walk("/path/to/directory")) {
+	console.log(entry.path);	// path from /path/to/directory
+
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+Each entry in the async iterator implements the [`HfsWalkEntry` interface](../packages/types/src/@humanfs/types.ts).
+
+You can determine whether or not to walk into a subdirectory by providing the `directoryFilter` option. This function receives the entry and returns `true` to indicate that the subdirectory should be walked or `false` to indicate the subdirectory should be skipped:
+
+```js
+// skip the directory named "skip-me"
+const directoryFilter = entry => entry.name !== "skip-me";
+
+for await (const entry of hfs.walk("/path/to/directory", { directoryFilter })) {
+	console.log(entry.path);	// path from /path/to/directory
+
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+Similarly, you can determine which entries are emitted from the async iterable by providing an `entryFilter` option. This function also receives the entry and returns `true` to include the entry or `false` to omit it:
+
+```js
+// only return files
+const entryFilter = entry => entry.isFile;
+
+for await (const entry of hfs.walk("/path/to/directory", { entryFilter })) {
+	console.log(entry.path);	// path from /path/to/directory
+
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+**Note:** Both `directoryFilter` and `entryFilter` may return a promise.
+
+Each entry in the async iterator implements the [`HfsWalkEntry` interface](../packages/types/src/@humanfs/types.ts).
+
 ## Retrieving Directory Modification Time
 
 To get the datetime when a directory was last modified, call the `hfs.lastModified(dirPath)` method. This method returns a `Date` object or `undefined` if the directory isn't found. Here's an example:
