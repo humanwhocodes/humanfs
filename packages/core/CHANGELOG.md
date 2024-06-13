@@ -6,6 +6,13 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.18.2](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.1...core-v0.18.2) (2024-06-13)
+
+
+### Bug Fixes
+
+* Hfs#walk() entry paths ([#122](https://github.com/humanwhocodes/humanfs/issues/122)) ([ab2155f](https://github.com/humanwhocodes/humanfs/commit/ab2155f5afc8ee6230d9ad2faedc93067471dbf9))
+
 ## [0.18.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.0...core-v0.18.1) (2024-06-12)
 
 
