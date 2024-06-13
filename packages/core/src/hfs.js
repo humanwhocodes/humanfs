@@ -538,16 +538,20 @@ export class Hfs {
 		// inner function for recursion without additional logging
 		const walk = async function* (
 			dirPath,
-			{ directoryFilter, entryFilter },
+			{ directoryFilter, entryFilter, parentPath = "" },
 		) {
-			for await (const entry of this.#callImplMethodWithoutLog(
+			for await (const listEntry of this.#callImplMethodWithoutLog(
 				"list",
 				dirPath,
 			)) {
 				const walkEntry = {
-					path: entry.name,
-					...entry,
+					path: listEntry.name,
+					...listEntry,
 				};
+
+				if (parentPath) {
+					walkEntry.path = `${parentPath}/${walkEntry.path}`;
+				}
 
 				// first emit the entry but only if the entry filter returns true
 				let shouldEmitEntry = entryFilter(walkEntry);
@@ -560,7 +564,7 @@ export class Hfs {
 				}
 
 				// if it's a directory then yield the entry and walk the directory
-				if (entry.isDirectory) {
+				if (listEntry.isDirectory) {
 					// if the directory filter returns false, skip the directory
 					let shouldWalkDirectory = directoryFilter(walkEntry);
 					if (shouldWalkDirectory.then) {
@@ -575,30 +579,18 @@ export class Hfs {
 					const directoryPath =
 						dirPath instanceof URL
 							? new URL(
-									entry.name,
+									listEntry.name,
 									dirPath.href.endsWith("/")
 										? dirPath.href
 										: `${dirPath.href}/`,
 								)
-							: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${entry.name}`;
+							: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${listEntry.name}`;
 
-					for await (const dirEntry of walk(directoryPath, {
+					yield* walk(directoryPath, {
 						directoryFilter,
 						entryFilter,
-					})) {
-						// we need to update the path to include the directory
-						dirEntry.path = `${entry.name}/${dirEntry.path}`;
-
-						// only yield the entry if the entry filter returns true
-						let shouldEmitDirEntry = entryFilter(dirEntry);
-						if (shouldEmitDirEntry.then) {
-							shouldEmitDirEntry = await shouldEmitDirEntry;
-						}
-
-						if (shouldEmitDirEntry) {
-							yield dirEntry;
-						}
-					}
+						parentPath: walkEntry.path,
+					});
 				}
 			}
 		}.bind(this);

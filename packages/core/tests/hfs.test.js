@@ -1624,20 +1624,14 @@ describe("Hfs", () => {
 
 		it("should reject a promise when the directory path is not a string", () => {
 			return assert.rejects(
-				// eslint-disable-next-line no-unused-vars -- Needed for async iteration
-				async () => {
-					for await (const entry of hfs.walk(123));
-				},
+				async () => hfs.walk(123).next(),
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
 
 		it("should reject a promise when the directory path is empty", () => {
 			return assert.rejects(
-				// eslint-disable-next-line no-unused-vars -- Needed for async iteration
-				async () => {
-					for await (const entry of hfs.walk(""));
-				},
+				async () => hfs.walk("").next(),
 				new TypeError("Path must be a non-empty string or URL."),
 			);
 		});
@@ -1775,6 +1769,44 @@ describe("Hfs", () => {
 				entry => !entry.path.includes("subdir3/"),
 			);
 			assert.deepStrictEqual(entries, expected);
+		});
+
+		it("should pass deep entries to the directoryFilter", async () => {
+			const deepEntries = [];
+			const result = await hfs.walk("/path/to/dir", {
+				directoryFilter(entry) {
+					deepEntries.push(entry.path);
+					return true;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed
+				.filter(entry => entry.isDirectory)
+				.map(entry => entry.path);
+			assert.deepStrictEqual(deepEntries, expected);
+		});
+
+		it("should pass deep entries to the entryFilter", async () => {
+			const deepEntries = [];
+			const result = await hfs.walk("/path/to/dir", {
+				entryFilter(entry) {
+					deepEntries.push(entry.path);
+					return true;
+				},
+			});
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.map(entry => entry.path);
+			assert.deepStrictEqual(deepEntries, expected);
 		});
 	});
 
