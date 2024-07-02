@@ -1636,6 +1636,64 @@ describe("Hfs", () => {
 			);
 		});
 
+		it("should reject a promise when entryFilter throws an error", () => {
+			const error = new Error("Error in entryFilter");
+			return assert.rejects(
+				async () =>
+					hfs
+						.walk("/path/to/dir", {
+							entryFilter() {
+								throw error;
+							},
+						})
+						.next(),
+				error,
+			);
+		});
+
+		it("should reject a promise when entryFilter rejects an error", () => {
+			const error = new Error("Error in entryFilter");
+			return assert.rejects(
+				async () =>
+					hfs
+						.walk("/path/to/dir", {
+							async entryFilter() {
+								throw error;
+							},
+						})
+						.next(),
+				error,
+			);
+		});
+
+		it("should reject a promise when directoryFilter throws an error", () => {
+			const error = new Error("Error in directoryFilter");
+			return assert.rejects(async () => {
+				const walk = hfs.walk("/path/to/dir", {
+					directoryFilter() {
+						throw error;
+					},
+				});
+
+				await walk.next();
+				await walk.next();
+			}, error);
+		});
+
+		it("should reject a promise when directoryFilter rejects an error", () => {
+			const error = new Error("Error in directoryFilter");
+			return assert.rejects(async () => {
+				const walk = hfs.walk("/path/to/dir", {
+					async directoryFilter() {
+						throw error;
+					},
+				});
+
+				await walk.next();
+				await walk.next();
+			}, error);
+		});
+
 		it("should return the list of files and directories", async () => {
 			const result = await hfs.walk("/path/to/dir");
 			assert.ok(
