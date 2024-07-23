@@ -2,14 +2,14 @@
   "version": "3",
   "packages": {
     "specifiers": {
-      "npm:@humanwhocodes/retry@^0.1.2": "npm:@humanwhocodes/retry@0.1.2",
+      "npm:@humanwhocodes/retry@^0.3.0": "npm:@humanwhocodes/retry@0.3.0",
       "npm:@types/node": "npm:@types/node@18.16.19",
       "npm:@types/node@^20.9.4": "npm:@types/node@20.10.4",
       "npm:typescript@^5.2.2": "npm:typescript@5.4.2"
     },
     "npm": {
-      "@humanwhocodes/retry@0.1.2": {
-        "integrity": "sha512-JNWGHkYfWI0+YgRHOwkFKjOuelfypQtp0GSx0lsOP9jU1Tj4f8k0x4dcaJSEZTp61THZJ+f9PJRh1GzYlQqHOQ==",
+      "@humanwhocodes/retry@0.3.0": {
+        "integrity": "sha512-d2CGZR2o7fS6sWB7DG/3a95bGKQyHMACZ5aW8qGkkqQpUoZV6C0X7Pc7l4ZNMZkfNBf4VWNe9E1jRsf0G146Ew==",
         "dependencies": {}
       },
       "@types/node@18.16.19": {
@@ -156,7 +156,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@humanwhocodes/retry@^0.1.2",
+        "npm:@humanwhocodes/retry@^0.3.0",
         "npm:@types/node@^20.9.4",
         "npm:typescript@^5.2.2"
       ]
