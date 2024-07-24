@@ -3,6 +3,16 @@
   "plugins": ["node-workspace"],
   "bump-minor-pre-major": true,
   "packages": {
+    "packages/box": {
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
     "packages/core": {
       "release-type": "node",
       "extra-files": [
