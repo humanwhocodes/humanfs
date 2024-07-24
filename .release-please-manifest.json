@@ -1,10 +1,10 @@
 {
-  "packages/box": "0.0.1",
+  "packages/box": "0.1.0",
   "packages/types": "0.14.0",
-  "packages/test": "0.14.1",
+  "packages/test": "0.15.0",
   "packages/core": "0.18.2",
-  "packages/node": "0.16.3",
-  "packages/deno": "0.16.2",
-  "packages/memory": "0.19.2",
-  "packages/web": "0.13.3"
+  "packages/node": "0.16.4",
+  "packages/deno": "0.17.0",
+  "packages/memory": "0.19.3",
+  "packages/web": "0.13.4"
 }

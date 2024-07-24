@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/box",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "The Box API bindings for the hfs library.",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -43,8 +43,8 @@
     "node": ">=18.18.0"
   },
   "devDependencies": {
-    "@humanfs/memory": "^0.18.0",
-    "@humanfs/test": "^0.14.0",
+    "@humanfs/memory": "^0.19.3",
+    "@humanfs/test": "^0.15.0",
     "@humanfs/types": "^0.13.0",
     "@humanwhocodes/object-store": "^0.2.0",
     "@types/node": "^20.9.4",

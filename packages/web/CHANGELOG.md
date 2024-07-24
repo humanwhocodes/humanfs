@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.13.4](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.3...web-v0.13.4) (2024-07-24)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.1 to ^0.15.0
+
 ## [0.13.3](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.2...web-v0.13.3) (2024-06-13)
 
 
