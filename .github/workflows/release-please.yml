@@ -59,7 +59,7 @@ jobs:
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
 
             - name: Tweet Release Announcement
-              run: npx @humanwhocodes/tweet "humanfs/core v${{ steps.release.outputs['packages/core--major'] }}.${{ steps.release.outputs['packages/core--minor'] }}.${{ steps.release.outputs['packages/core--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/core--tag_name'] }}"
+              run: npx @humanwhocodes/tweet "humanfs/core v${{ steps.release.outputs['packages/core--major'] }}.${{ steps.release.outputs['packages/core--minor'] }}.${{ steps.release.outputs['packages/core--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/core--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
               env:
                 TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
@@ -68,7 +68,7 @@ jobs:
                 TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
             
             - name: Toot Release Announcement
-              run: npx @humanwhocodes/toot "humanfs/core v${{ steps.release.outputs['packages/core--major'] }}.${{ steps.release.outputs['packages/core--minor'] }}.${{ steps.release.outputs['packages/core--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/core--tag_name'] }}"
+              run: npx @humanwhocodes/toot "humanfs/core v${{ steps.release.outputs['packages/core--major'] }}.${{ steps.release.outputs['packages/core--minor'] }}.${{ steps.release.outputs['packages/core--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/core--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
               env:
                 MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
@@ -105,7 +105,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             - name: Tweet Release Announcement
-              run: npx @humanwhocodes/tweet "humanfs/node v${{ steps.release.outputs['packages/node--major'] }}.${{ steps.release.outputs['packages/node--minor'] }}.${{ steps.release.outputs['packages/node--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/node--tag_name'] }}"
+              run: npx @humanwhocodes/tweet "humanfs/node v${{ steps.release.outputs['packages/node--major'] }}.${{ steps.release.outputs['packages/node--minor'] }}.${{ steps.release.outputs['packages/node--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/node--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/node--release_created'] }}
               env:
                 TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
@@ -114,7 +114,7 @@ jobs:
                 TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
             
             - name: Toot Release Announcement
-              run: npx @humanwhocodes/toot "humanfs/node v${{ steps.release.outputs['packages/node--major'] }}.${{ steps.release.outputs['packages/node--minor'] }}.${{ steps.release.outputs['packages/node--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/node--tag_name'] }}"
+              run: npx @humanwhocodes/toot "humanfs/node v${{ steps.release.outputs['packages/node--major'] }}.${{ steps.release.outputs['packages/node--minor'] }}.${{ steps.release.outputs['packages/node--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/node--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/node--release_created'] }}
               env:
                 MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
@@ -138,7 +138,7 @@ jobs:
               if: ${{ steps.release.outputs['packages/memory--release_created'] }}
 
             - name: Tweet Release Announcement
-              run: npx @humanwhocodes/tweet "humanfs/memory v${{ steps.release.outputs['packages/memory--major'] }}.${{ steps.release.outputs['packages/memory--minor'] }}.${{ steps.release.outputs['packages/memory--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/memory--tag_name'] }}"
+              run: npx @humanwhocodes/tweet "humanfs/memory v${{ steps.release.outputs['packages/memory--major'] }}.${{ steps.release.outputs['packages/memory--minor'] }}.${{ steps.release.outputs['packages/memory--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/memory--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/memory--release_created'] }}
               env:
                 TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
@@ -147,7 +147,7 @@ jobs:
                 TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
             
             - name: Toot Release Announcement
-              run: npx @humanwhocodes/toot "humanfs/memory v${{ steps.release.outputs['packages/memory--major'] }}.${{ steps.release.outputs['packages/memory--minor'] }}.${{ steps.release.outputs['packages/memory--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/memory--tag_name'] }}"
+              run: npx @humanwhocodes/toot "humanfs/memory v${{ steps.release.outputs['packages/memory--major'] }}.${{ steps.release.outputs['packages/memory--minor'] }}.${{ steps.release.outputs['packages/memory--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/memory--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/memory--release_created'] }}
               env:
                 MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
@@ -164,7 +164,7 @@ jobs:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             - name: Tweet Release Announcement
-              run: npx @humanwhocodes/tweet "humanfs/web v${{ steps.release.outputs['packages/web--major'] }}.${{ steps.release.outputs['packages/web--minor'] }}.${{ steps.release.outputs['packages/web--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/web--tag_name'] }}"
+              run: npx @humanwhocodes/tweet "humanfs/web v${{ steps.release.outputs['packages/web--major'] }}.${{ steps.release.outputs['packages/web--minor'] }}.${{ steps.release.outputs['packages/web--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/web--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/web--release_created'] }}
               env:
                 TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
@@ -173,7 +173,7 @@ jobs:
                 TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
             
             - name: Toot Release Announcement
-              run: npx @humanwhocodes/toot "humanfs/web v${{ steps.release.outputs['packages/web--major'] }}.${{ steps.release.outputs['packages/web--minor'] }}.${{ steps.release.outputs['packages/web--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/web--tag_name'] }}"
+              run: npx @humanwhocodes/toot "humanfs/web v${{ steps.release.outputs['packages/web--major'] }}.${{ steps.release.outputs['packages/web--minor'] }}.${{ steps.release.outputs['packages/web--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/web--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/web--release_created'] }}
               env:
                 MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
@@ -197,7 +197,7 @@ jobs:
               if: ${{ steps.release.outputs['packages/box--release_created'] }}
 
             - name: Tweet Release Announcement
-              run: npx @humanwhocodes/tweet "humanfs/box v${{ steps.release.outputs['packages/box--major'] }}.${{ steps.release.outputs['packages/box--minor'] }}.${{ steps.release.outputs['packages/box--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/box--tag_name'] }}"
+              run: npx @humanwhocodes/tweet "humanfs/box v${{ steps.release.outputs['packages/box--major'] }}.${{ steps.release.outputs['packages/box--minor'] }}.${{ steps.release.outputs['packages/box--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/box--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/box--release_created'] }}
               env:
                 TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
@@ -206,7 +206,7 @@ jobs:
                 TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
             
             - name: Toot Release Announcement
-              run: npx @humanwhocodes/toot "humanfs/box v${{ steps.release.outputs['packages/box--major'] }}.${{ steps.release.outputs['packages/box--minor'] }}.${{ steps.release.outputs['packages/box--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/box--tag_name'] }}"
+              run: npx @humanwhocodes/toot "humanfs/box v${{ steps.release.outputs['packages/box--major'] }}.${{ steps.release.outputs['packages/box--minor'] }}.${{ steps.release.outputs['packages/box--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/box--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/box--release_created'] }}
               env:
                 MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
@@ -231,7 +231,7 @@ jobs:
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
 
             - name: Tweet Release Announcement
-              run: npx @humanwhocodes/tweet "humanfs/deno v${{ steps.release.outputs['packages/deno--major'] }}.${{ steps.release.outputs['packages/deno--minor'] }}.${{ steps.release.outputs['packages/deno--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/deno--tag_name'] }}"
+              run: npx @humanwhocodes/tweet "humanfs/deno v${{ steps.release.outputs['packages/deno--major'] }}.${{ steps.release.outputs['packages/deno--minor'] }}.${{ steps.release.outputs['packages/deno--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/deno--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
               env:
                 TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}
@@ -240,7 +240,7 @@ jobs:
                 TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
             
             - name: Toot Release Announcement
-              run: npx @humanwhocodes/toot "humanfs/deno v${{ steps.release.outputs['packages/deno--major'] }}.${{ steps.release.outputs['packages/deno--minor'] }}.${{ steps.release.outputs['packages/deno--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/v${{ steps.release.outputs['packages/deno--tag_name'] }}"
+              run: npx @humanwhocodes/toot "humanfs/deno v${{ steps.release.outputs['packages/deno--major'] }}.${{ steps.release.outputs['packages/deno--minor'] }}.${{ steps.release.outputs['packages/deno--patch'] }} has been released!\n\n${{ github.event.repository.html_url }}/releases/tag/${{ steps.release.outputs['packages/deno--tag_name'] }}"
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
               env:
                 MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
