@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.2...deno-v0.17.0) (2024-07-24)
+
+
+### Features
+
+* Add Box package ([#125](https://github.com/humanwhocodes/humanfs/issues/125)) ([6da89d1](https://github.com/humanwhocodes/humanfs/commit/6da89d17933cd097d9780690af082377d5533faf))
+
 ## [0.16.2](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.1...deno-v0.16.2) (2024-06-12)
 
 

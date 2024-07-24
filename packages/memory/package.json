@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/memory",
-  "version": "0.19.2",
+  "version": "0.19.3",
   "description": "The in-memory bindings for the hfs library.",
   "type": "module",
   "main": "dist/memory-hfs.js",
@@ -47,7 +47,7 @@
     "@types/node": "^20.9.4",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2",
-    "@humanfs/test": "^0.14.1",
+    "@humanfs/test": "^0.15.0",
     "@humanfs/types": "^0.14.0"
   },
   "dependencies": {

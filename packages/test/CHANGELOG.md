@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/test-v0.14.1...test-v0.15.0) (2024-07-24)
+
+
+### Features
+
+* Add Box package ([#125](https://github.com/humanwhocodes/humanfs/issues/125)) ([6da89d1](https://github.com/humanwhocodes/humanfs/commit/6da89d17933cd097d9780690af082377d5533faf))
+
 ## [0.14.1](https://github.com/humanwhocodes/humanfs/compare/test-v0.14.0...test-v0.14.1) (2024-06-12)
 
 
