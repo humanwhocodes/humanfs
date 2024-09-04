@@ -48,10 +48,10 @@
   "devDependencies": {
     "@humanfs/test": "^0.15.0",
     "@humanfs/types": "^0.14.0",
-    "@wdio/browser-runner": "^8.38.3",
-    "@wdio/cli": "^8.38.2",
-    "@wdio/mocha-framework": "^8.38.2",
-    "@wdio/spec-reporter": "^8.38.2",
+    "@wdio/browser-runner": "^9.0.7",
+    "@wdio/cli": "^9.0.7",
+    "@wdio/mocha-framework": "^9.0.6",
+    "@wdio/spec-reporter": "^9.0.7",
     "chai": "^5.0.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"
