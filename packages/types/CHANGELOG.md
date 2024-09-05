@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.14.0...types-v0.15.0) (2024-09-05)
+
+
+### Features
+
+* Add depth to HfsWalkEntry ([#130](https://github.com/humanwhocodes/humanfs/issues/130)) ([a633452](https://github.com/humanwhocodes/humanfs/commit/a63345260562b798e73c2ea63612e6fe95ac400d))
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.13.0...types-v0.14.0) (2024-06-12)
 
 
