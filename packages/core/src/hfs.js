@@ -538,7 +538,7 @@ export class Hfs {
 		// inner function for recursion without additional logging
 		const walk = async function* (
 			dirPath,
-			{ directoryFilter, entryFilter, parentPath = "" },
+			{ directoryFilter, entryFilter, parentPath = "", depth = 1 },
 		) {
 			for await (const listEntry of this.#callImplMethodWithoutLog(
 				"list",
@@ -546,6 +546,7 @@ export class Hfs {
 			)) {
 				const walkEntry = {
 					path: listEntry.name,
+					depth,
 					...listEntry,
 				};
 
@@ -590,6 +591,7 @@ export class Hfs {
 						directoryFilter,
 						entryFilter,
 						parentPath: walkEntry.path,
+						depth: depth + 1,
 					});
 				}
 			}

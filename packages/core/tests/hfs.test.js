@@ -1508,6 +1508,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir1",
 				name: "subdir1",
+				depth: 1,
 				isFile: false,
 				isDirectory: true,
 				isSymlink: false,
@@ -1515,6 +1516,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir1/subdir3",
 				name: "subdir3",
+				depth: 2,
 				isFile: false,
 				isDirectory: true,
 				isSymlink: false,
@@ -1522,6 +1524,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir1/subdir3/file6.txt",
 				name: "file6.txt",
+				depth: 3,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
@@ -1529,6 +1532,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir1/file4.txt",
 				name: "file4.txt",
+				depth: 2,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
@@ -1536,6 +1540,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir1/file5.txt",
 				name: "file5.txt",
+				depth: 2,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
@@ -1543,6 +1548,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir2",
 				name: "subdir2",
+				depth: 1,
 				isFile: false,
 				isDirectory: true,
 				isSymlink: false,
@@ -1550,6 +1556,7 @@ describe("Hfs", () => {
 			{
 				path: "subdir2/file7.txt",
 				name: "file7.txt",
+				depth: 2,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
@@ -1557,6 +1564,7 @@ describe("Hfs", () => {
 			{
 				path: "file1.txt",
 				name: "file1.txt",
+				depth: 1,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
@@ -1564,6 +1572,7 @@ describe("Hfs", () => {
 			{
 				path: "file2.txt",
 				name: "file2.txt",
+				depth: 1,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
@@ -1571,6 +1580,7 @@ describe("Hfs", () => {
 			{
 				path: "file3.txt",
 				name: "file3.txt",
+				depth: 1,
 				isFile: true,
 				isDirectory: false,
 				isSymlink: false,
