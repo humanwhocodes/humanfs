@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.14.0...types-v0.15.0) (2024-09-05)
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.14.0...types-v0.15.0) (2024-09-09)
 
 
 ### Features

@@ -6,7 +6,7 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
-## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.2...core-v0.19.0) (2024-09-05)
+## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.2...core-v0.19.0) (2024-09-09)
 
 
 ### Features
