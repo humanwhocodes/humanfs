@@ -6,6 +6,20 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.2...core-v0.19.0) (2024-09-05)
+
+
+### Features
+
+* Add depth to HfsWalkEntry ([#130](https://github.com/humanwhocodes/humanfs/issues/130)) ([a633452](https://github.com/humanwhocodes/humanfs/commit/a63345260562b798e73c2ea63612e6fe95ac400d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.14.0 to ^0.15.0
+
 ## [0.18.2](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.1...core-v0.18.2) (2024-06-13)
 
 

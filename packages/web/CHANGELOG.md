@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.4...web-v0.14.0) (2024-09-05)
+
+
+### Features
+
+* Add depth to HfsWalkEntry ([#130](https://github.com/humanwhocodes/humanfs/issues/130)) ([a633452](https://github.com/humanwhocodes/humanfs/commit/a63345260562b798e73c2ea63612e6fe95ac400d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.2 to ^0.19.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.14.0 to ^0.15.0
+
 ## [0.13.4](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.3...web-v0.13.4) (2024-07-24)
 
 
