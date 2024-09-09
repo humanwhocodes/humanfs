@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.19.4](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.3...memory-v0.19.4) (2024-09-05)
+## [0.19.4](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.3...memory-v0.19.4) (2024-09-09)
 
 
 ### Dependencies

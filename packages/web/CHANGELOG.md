@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.4...web-v0.14.0) (2024-09-05)
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.4...web-v0.14.0) (2024-09-09)
 
 
 ### Features

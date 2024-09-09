@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.1](https://github.com/humanwhocodes/humanfs/compare/box-v0.1.0...box-v0.1.1) (2024-09-05)
+## [0.1.1](https://github.com/humanwhocodes/humanfs/compare/box-v0.1.0...box-v0.1.1) (2024-09-09)
 
 
 ### Dependencies
