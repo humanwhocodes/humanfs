@@ -14,6 +14,7 @@ import {
 	ImplAlreadySetError,
 	MethodNotSupportedError,
 } from "../src/hfs.js";
+import { NotFoundError } from "../src/errors.js";
 import assert from "node:assert";
 
 //-----------------------------------------------------------------------------
@@ -1875,6 +1876,40 @@ describe("Hfs", () => {
 
 			const expected = traversed.map(entry => entry.path);
 			assert.deepStrictEqual(deepEntries, expected);
+		});
+
+		it("should silently skip directories when list() throws ENONENT", async () => {
+			const hfs = new Hfs({
+				impl: {
+					list(dirPath) {
+						if (dirPath instanceof URL) {
+							dirPath = dirPath.pathname;
+						}
+
+						if (dirPath.endsWith("/")) {
+							dirPath = dirPath.slice(0, -1);
+						}
+
+						if (dirPath === "/path/to/dir/subdir1") {
+							throw new NotFoundError("dirPath");
+						}
+
+						return data[dirPath] ?? [];
+					},
+				},
+			});
+
+			const result = await hfs.walk("/path/to/dir");
+
+			const entries = [];
+			for await (const entry of result) {
+				entries.push(entry);
+			}
+
+			const expected = traversed.filter(
+				entry => !entry.path.includes("subdir1/"),
+			);
+			assert.deepStrictEqual(entries, expected);
 		});
 	});
 

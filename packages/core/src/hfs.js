@@ -540,10 +540,24 @@ export class Hfs {
 			dirPath,
 			{ directoryFilter, entryFilter, parentPath = "", depth = 1 },
 		) {
-			for await (const listEntry of this.#callImplMethodWithoutLog(
-				"list",
-				dirPath,
-			)) {
+			let dirEntries;
+
+			try {
+				dirEntries = await this.#callImplMethodWithoutLog(
+					"list",
+					dirPath,
+				);
+			} catch (error) {
+				// if the directory does not exist then return an empty array
+				if (error.code === "ENOENT") {
+					return;
+				}
+
+				// otherwise, rethrow the error
+				throw error;
+			}
+
+			for await (const listEntry of dirEntries) {
 				const walkEntry = {
 					path: listEntry.name,
 					depth,
