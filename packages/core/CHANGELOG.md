@@ -6,6 +6,13 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.19.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.19.0...core-v0.19.1) (2024-10-18)
+
+
+### Bug Fixes
+
+* Ensure walk() doesn't error out on directory ENOENT ([#135](https://github.com/humanwhocodes/humanfs/issues/135)) ([05873f8](https://github.com/humanwhocodes/humanfs/commit/05873f8f5dc38a675c3bf13091906bb56bffffc6))
+
 ## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.2...core-v0.19.0) (2024-09-09)
 
 
