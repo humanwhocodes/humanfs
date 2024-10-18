@@ -1,5 +1,121 @@
 # Changelog
 
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.4...web-v0.14.0) (2024-09-09)
+
+
+### Features
+
+* Add depth to HfsWalkEntry ([#130](https://github.com/humanwhocodes/humanfs/issues/130)) ([a633452](https://github.com/humanwhocodes/humanfs/commit/a63345260562b798e73c2ea63612e6fe95ac400d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.2 to ^0.19.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.14.0 to ^0.15.0
+
+## [0.13.4](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.3...web-v0.13.4) (2024-07-24)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.1 to ^0.15.0
+
+## [0.13.3](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.2...web-v0.13.3) (2024-06-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.1 to ^0.18.2
+
+## [0.13.2](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.1...web-v0.13.2) (2024-06-12)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.0 to ^0.18.1
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.0 to ^0.14.1
+
+## [0.13.1](https://github.com/humanwhocodes/humanfs/compare/web-v0.13.0...web-v0.13.1) (2024-06-12)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.17.0 to ^0.18.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.13.0 to ^0.14.0
+
+## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.12.2...web-v0.13.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.1 to ^0.17.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.13.0 to ^0.14.0
+    * @humanfs/types bumped from ^0.12.0 to ^0.13.0
+
+## [0.12.2](https://github.com/humanwhocodes/humanfs/compare/web-v0.12.1...web-v0.12.2) (2024-03-14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.0 to ^0.16.1
+
+## [0.12.1](https://github.com/humanwhocodes/humanfs/compare/web-v0.12.0...web-v0.12.1) (2024-03-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.15.0 to ^0.16.0
+
+## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.11.0...web-v0.12.0) (2024-03-13)
+
+
+### Features
+
+* Export Hfs from runtime packages ([#98](https://github.com/humanwhocodes/humanfs/issues/98)) ([4c55f85](https://github.com/humanwhocodes/humanfs/commit/4c55f853b930f6341e17c77ae85351a3ff33dc4e))
+
+## [0.11.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.10.0...web-v0.11.0) (2024-02-27)
+
+
+### Features
+
+* Add from() to Path; deprecate fromString() and fromURL() ([#94](https://github.com/humanwhocodes/humanfs/issues/94)) ([784f197](https://github.com/humanwhocodes/humanfs/commit/784f197e905fa70f4e346854a84a95ee0f36b564))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.14.0 to ^0.15.0
+
 ## [0.10.0](https://github.com/humanwhocodes/humanfs/compare/web-v0.9.0...web-v0.10.0) (2024-02-27)
 
 

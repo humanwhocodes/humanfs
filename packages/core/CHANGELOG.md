@@ -6,6 +6,87 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.2...core-v0.19.0) (2024-09-09)
+
+
+### Features
+
+* Add depth to HfsWalkEntry ([#130](https://github.com/humanwhocodes/humanfs/issues/130)) ([a633452](https://github.com/humanwhocodes/humanfs/commit/a63345260562b798e73c2ea63612e6fe95ac400d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.14.0 to ^0.15.0
+
+## [0.18.2](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.1...core-v0.18.2) (2024-06-13)
+
+
+### Bug Fixes
+
+* Hfs#walk() entry paths ([#122](https://github.com/humanwhocodes/humanfs/issues/122)) ([ab2155f](https://github.com/humanwhocodes/humanfs/commit/ab2155f5afc8ee6230d9ad2faedc93067471dbf9))
+
+## [0.18.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.18.0...core-v0.18.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
+## [0.18.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.17.0...core-v0.18.0) (2024-06-12)
+
+
+### Features
+
+* Implement Hfs#walk() method ([#119](https://github.com/humanwhocodes/humanfs/issues/119)) ([2aeade0](https://github.com/humanwhocodes/humanfs/commit/2aeade0ffbef886103dc38d16694e9b63191a8df))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.13.0 to ^0.14.0
+
+## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.16.1...core-v0.17.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/types bumped from ^0.12.0 to ^0.13.0
+
+## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.16.0...core-v0.16.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **build:** Ensure correct JSR configs ([21c6a1b](https://github.com/humanwhocodes/humanfs/commit/21c6a1b94d086a469a823779456e7ad929993c6d))
+
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.15.0...core-v0.16.0) (2024-03-13)
+
+
+### Features
+
+* Add JSR packages ([83c3d9b](https://github.com/humanwhocodes/humanfs/commit/83c3d9b48cdcf961386dad768248bf3c6dade18b))
+
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.14.0...core-v0.15.0) (2024-02-27)
+
+
+### Features
+
+* Add from() to Path; deprecate fromString() and fromURL() ([#94](https://github.com/humanwhocodes/humanfs/issues/94)) ([784f197](https://github.com/humanwhocodes/humanfs/commit/784f197e905fa70f4e346854a84a95ee0f36b564))
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.13.0...core-v0.14.0) (2024-02-27)
 
 

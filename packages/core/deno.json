@@ -1,0 +1,10 @@
+{
+  "name": "@humanfs/core",
+  "version": "0.19.0",
+  "exports": "./src/index.js",
+  "publish": {
+    "exclude": [
+      "!dist"
+    ]
+  }
+}

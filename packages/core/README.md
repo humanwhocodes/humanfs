@@ -43,14 +43,14 @@ import { Hfs, Path } from "@humanfs/core";
 
 ### Deno
 
-For Deno, set up a `deno.json` file like this:
+Install using [JSR](https://jsr.io):
 
-```json
-{
-	"imports": {
-		"@humanfs/core": "npm:@humanfs/core@latest"
-	}
-}
+```shell
+deno add @humanfs/core
+
+# or
+
+jsr add @humanfs/core
 ```
 
 Then you can import the `Hfs` class like this:

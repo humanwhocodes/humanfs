@@ -1,5 +1,142 @@
 # Changelog
 
+## [0.19.4](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.3...memory-v0.19.4) (2024-09-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.2 to ^0.19.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.14.0 to ^0.15.0
+
+## [0.19.3](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.2...memory-v0.19.3) (2024-07-24)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.1 to ^0.15.0
+
+## [0.19.2](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.1...memory-v0.19.2) (2024-06-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.1 to ^0.18.2
+
+## [0.19.1](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.0...memory-v0.19.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.0 to ^0.18.1
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.0 to ^0.14.1
+
+## [0.19.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.18.0...memory-v0.19.0) (2024-06-12)
+
+
+### Features
+
+* Add ID-based methods to MemoryHfsVolume + tests ([#114](https://github.com/humanwhocodes/humanfs/issues/114)) ([bb7045e](https://github.com/humanwhocodes/humanfs/commit/bb7045e7c277928d1d6fd78d687c14e8d801e690))
+* Expose MemoryHfsVolume, add copyObject and moveObject ([#116](https://github.com/humanwhocodes/humanfs/issues/116)) ([ad00da4](https://github.com/humanwhocodes/humanfs/commit/ad00da42d4a34dacbc6cb429b3f82c4e10baae67))
+
+
+### Bug Fixes
+
+* Don't expose MemoryHfsVolume (yet) ([8ed5e2f](https://github.com/humanwhocodes/humanfs/commit/8ed5e2f7a459e937b9bb1967eee25b4c400f6e9d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.17.0 to ^0.18.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.13.0 to ^0.14.0
+
+## [0.18.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.17.1...memory-v0.18.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.1 to ^0.17.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.13.0 to ^0.14.0
+    * @humanfs/types bumped from ^0.12.0 to ^0.13.0
+
+## [0.17.1](https://github.com/humanwhocodes/humanfs/compare/memory-v0.17.0...memory-v0.17.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **build:** Ensure correct JSR configs ([21c6a1b](https://github.com/humanwhocodes/humanfs/commit/21c6a1b94d086a469a823779456e7ad929993c6d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.0 to ^0.16.1
+
+## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.16.0...memory-v0.17.0) (2024-03-13)
+
+
+### Features
+
+* Add JSR packages ([83c3d9b](https://github.com/humanwhocodes/humanfs/commit/83c3d9b48cdcf961386dad768248bf3c6dade18b))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.15.0 to ^0.16.0
+
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.15.0...memory-v0.16.0) (2024-03-13)
+
+
+### Features
+
+* Export Hfs from runtime packages ([#98](https://github.com/humanwhocodes/humanfs/issues/98)) ([4c55f85](https://github.com/humanwhocodes/humanfs/commit/4c55f853b930f6341e17c77ae85351a3ff33dc4e))
+
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.14.0...memory-v0.15.0) (2024-02-27)
+
+
+### Features
+
+* Add from() to Path; deprecate fromString() and fromURL() ([#94](https://github.com/humanwhocodes/humanfs/issues/94)) ([784f197](https://github.com/humanwhocodes/humanfs/commit/784f197e905fa70f4e346854a84a95ee0f36b564))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.14.0 to ^0.15.0
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/memory-v0.13.0...memory-v0.14.0) (2024-02-27)
 
 

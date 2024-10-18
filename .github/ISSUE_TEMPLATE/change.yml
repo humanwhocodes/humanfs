@@ -8,6 +8,8 @@ body:
       attributes:
           label: Which packages would you like to change?
           options:
+              - label: "`@humanfs/box`"
+                required: false
               - label: "`@humanfs/core`"
                 required: false
               - label: "`@humanfs/node`"

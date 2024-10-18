@@ -3,17 +3,48 @@
   "plugins": ["node-workspace"],
   "bump-minor-pre-major": true,
   "packages": {
+    "packages/box": {
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]
+    },
     "packages/core": {
-      "release-type": "node"
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]
     },
     "packages/node": {
       "release-type": "node"
     },
     "packages/deno": {
-      "release-type": "node"
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]      
     },
     "packages/memory": {
-      "release-type": "node"
+      "release-type": "node",
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ]
     },
     "packages/web": {
       "release-type": "node"

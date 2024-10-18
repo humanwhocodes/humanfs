@@ -1,0 +1,10 @@
+{
+  "name": "@humanfs/box",
+  "version": "0.0.1",
+  "exports": "./src/index.js",
+  "publish": {
+    "exclude": [
+      "!dist"
+    ]
+  }
+}

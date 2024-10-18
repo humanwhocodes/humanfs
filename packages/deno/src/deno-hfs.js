@@ -194,28 +194,47 @@ export class DenoHfsImpl {
 	 * Deletes a file or empty directory.
 	 * @param {string|URL} filePath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
-	 * @throws {Error} If the file or directory is not found.
 	 */
 	delete(filePath) {
-		return this.#deno.remove(filePath);
+		return this.#deno
+			.remove(filePath)
+			.then(() => true)
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**
 	 * Deletes a file or directory recursively.
 	 * @param {string|URL} filePath The path to the file or directory to
 	 *   delete.
-	 * @returns {Promise<void>} A promise that resolves when the file or
-	 *   directory is deleted.
+	 * @returns {Promise<boolean>} A promise that resolves when the file or
+	 *   directory is deleted, true if the file or directory is deleted, false
+	 *   if the file or directory does not exist.
 	 * @throws {TypeError} If the file or directory path is not a string.
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 * @throws {Error} If the file or directory is not found.
 	 */
 	deleteAll(filePath) {
-		return this.#deno.remove(filePath, { recursive: true });
+		return this.#deno
+			.remove(filePath, { recursive: true })
+			.then(() => true)
+			.catch(error => {
+				if (error.code === "ENOENT") {
+					return false;
+				}
+
+				throw error;
+			});
 	}
 
 	/**

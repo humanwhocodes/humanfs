@@ -1,5 +1,64 @@
 # Changelog
 
+## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.2...deno-v0.17.0) (2024-07-24)
+
+
+### Features
+
+* Add Box package ([#125](https://github.com/humanwhocodes/humanfs/issues/125)) ([6da89d1](https://github.com/humanwhocodes/humanfs/commit/6da89d17933cd097d9780690af082377d5533faf))
+
+## [0.16.2](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.1...deno-v0.16.2) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
+## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.0...deno-v0.16.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @humanwhocodes/retry to ^0.3.0 ([#113](https://github.com/humanwhocodes/humanfs/issues/113)) ([c6b42f5](https://github.com/humanwhocodes/humanfs/commit/c6b42f5063ef90459daa4dd1d19bcefc7d9a0e86))
+
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.2...deno-v0.16.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Bug Fixes
+
+* Deno runtime package JSR deploy ([ea2d8f3](https://github.com/humanwhocodes/humanfs/commit/ea2d8f399b385735b1d36e7796767b4518b44a2f))
+
+## [0.15.2](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.1...deno-v0.15.2) (2024-03-14)
+
+
+### Bug Fixes
+
+* **build:** Ensure correct JSR configs ([21c6a1b](https://github.com/humanwhocodes/humanfs/commit/21c6a1b94d086a469a823779456e7ad929993c6d))
+
+## [0.15.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.15.0...deno-v0.15.1) (2024-03-13)
+
+
+### Bug Fixes
+
+* package.json/deno.json conflict ([1a6f13b](https://github.com/humanwhocodes/humanfs/commit/1a6f13b4d58c1458e726b036868018428314b232))
+
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.14.0...deno-v0.15.0) (2024-03-13)
+
+
+### Features
+
+* Add JSR package ([#100](https://github.com/humanwhocodes/humanfs/issues/100)) ([7718643](https://github.com/humanwhocodes/humanfs/commit/7718643d8bc7eb8c4777b597837e135352e6b32b))
+* Export Hfs from runtime packages ([#98](https://github.com/humanwhocodes/humanfs/issues/98)) ([4c55f85](https://github.com/humanwhocodes/humanfs/commit/4c55f853b930f6341e17c77ae85351a3ff33dc4e))
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.13.0...deno-v0.14.0) (2024-02-27)
 
 

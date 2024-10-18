@@ -1,5 +1,118 @@
 # Changelog
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.14.0 to ^0.15.0
+
+## [0.16.5](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.4...node-v0.16.5) (2024-09-09)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.2 to ^0.19.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.14.0 to ^0.15.0
+
+## [0.16.4](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.3...node-v0.16.4) (2024-07-24)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.1 to ^0.15.0
+
+## [0.16.3](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.2...node-v0.16.3) (2024-06-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.1 to ^0.18.2
+
+## [0.16.2](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.1...node-v0.16.2) (2024-06-12)
+
+
+### Bug Fixes
+
+* Add main entry to package.json files ([1092847](https://github.com/humanwhocodes/humanfs/commit/1092847563ef1f42e9625b3a98b537694f83ea62))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.18.0 to ^0.18.1
+  * devDependencies
+    * @humanfs/test bumped from ^0.14.0 to ^0.14.1
+
+## [0.16.1](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.0...node-v0.16.1) (2024-06-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @humanwhocodes/retry to ^0.3.0 ([#113](https://github.com/humanwhocodes/humanfs/issues/113)) ([c6b42f5](https://github.com/humanwhocodes/humanfs/commit/c6b42f5063ef90459daa4dd1d19bcefc7d9a0e86))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.17.0 to ^0.18.0
+  * devDependencies
+    * @humanfs/types bumped from ^0.13.0 to ^0.14.0
+
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.15.2...node-v0.16.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.1 to ^0.17.0
+  * devDependencies
+    * @humanfs/test bumped from ^0.13.0 to ^0.14.0
+    * @humanfs/types bumped from ^0.12.0 to ^0.13.0
+
+## [0.15.2](https://github.com/humanwhocodes/humanfs/compare/node-v0.15.1...node-v0.15.2) (2024-03-14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.16.0 to ^0.16.1
+
+## [0.15.1](https://github.com/humanwhocodes/humanfs/compare/node-v0.15.0...node-v0.15.1) (2024-03-13)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.15.0 to ^0.16.0
+
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.14.1...node-v0.15.0) (2024-03-13)
+
+
+### Features
+
+* Export Hfs from runtime packages ([#98](https://github.com/humanwhocodes/humanfs/issues/98)) ([4c55f85](https://github.com/humanwhocodes/humanfs/commit/4c55f853b930f6341e17c77ae85351a3ff33dc4e))
+
 ## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/node-v0.13.0...node-v0.14.0) (2024-02-27)
 
 

@@ -61,18 +61,20 @@ export interface HfsImpl {
 	/**
 	 * Deletes the given file or empty directory.
 	 * @param fileOrDirPath The file or directory to delete.
-	 * @returns A promise that resolves when the file or directory is deleted.
+	 * @returns A promise that resolves when the file or directory is deleted,
+	 * 	true if the file or directory was deleted, false if it did not exist.
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
-	delete?(fileOrDirPath: string|URL): Promise<void>;
+	delete?(fileOrDirPath: string|URL): Promise<boolean>;
 
 	/**
 	 * Deletes the given file or directory recursively.
 	 * @param fileOrDirPath The file or directory to delete.
-	 * @returns A promise that resolves when the file or directory is deleted.
+	 * @returns A promise that resolves when the file or directory is deleted,
+	 * 	true if the file or directory was deleted, false if it did not exist.
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
-	deleteAll?(fileOrDirPath: string|URL): Promise<void>;
+	deleteAll?(fileOrDirPath: string|URL): Promise<boolean>;
 
 	/**
 	 * Returns a list of directory entries for the given path.
@@ -145,7 +147,7 @@ export interface HfsImpl {
 }
 
 //------------------------------------------------------------------------------
-// HfsDirEnt
+// HfsDirectoryEntry
 //------------------------------------------------------------------------------
 
 export interface HfsDirectoryEntry {
@@ -170,4 +172,21 @@ export interface HfsDirectoryEntry {
 	 */
 	isSymlink: boolean;
 
+}
+
+//------------------------------------------------------------------------------
+// HfsWalkEntry
+//------------------------------------------------------------------------------
+
+export interface HfsWalkEntry extends HfsDirectoryEntry {
+
+	/**
+	 * The path of the entry relative to the directory that was walked.
+	 */
+	path: string;
+
+	/**
+	 * The depth of the entry in the directory tree from the directory that was walked.
+	 */
+	depth: number;
 }

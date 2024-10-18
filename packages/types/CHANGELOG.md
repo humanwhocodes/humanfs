@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.14.0...types-v0.15.0) (2024-09-09)
+
+
+### Features
+
+* Add depth to HfsWalkEntry ([#130](https://github.com/humanwhocodes/humanfs/issues/130)) ([a633452](https://github.com/humanwhocodes/humanfs/commit/a63345260562b798e73c2ea63612e6fe95ac400d))
+
+## [0.14.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.13.0...types-v0.14.0) (2024-06-12)
+
+
+### Features
+
+* Implement Hfs#walk() method ([#119](https://github.com/humanwhocodes/humanfs/issues/119)) ([2aeade0](https://github.com/humanwhocodes/humanfs/commit/2aeade0ffbef886103dc38d16694e9b63191a8df))
+
+## [0.13.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.12.0...types-v0.13.0) (2024-03-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105))
+
+### Features
+
+* delete/deleteAll should not throw on ENOENT ([#105](https://github.com/humanwhocodes/humanfs/issues/105)) ([b508df1](https://github.com/humanwhocodes/humanfs/commit/b508df19845f7a914895c13cfe47707c0cd1a7c7))
+
 ## [0.12.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.11.0...types-v0.12.0) (2024-02-27)
 
 

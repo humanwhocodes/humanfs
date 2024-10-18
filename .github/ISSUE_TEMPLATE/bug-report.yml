@@ -9,6 +9,8 @@ body:
       attributes:
           label: Which packages are affected?
           options:
+              - label: "`@humanfs/box`"
+                required: false
               - label: "`@humanfs/core`"
                 required: false
               - label: "`@humanfs/node`"

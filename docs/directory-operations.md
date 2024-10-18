@@ -48,7 +48,15 @@ await hfs.moveAll("/path/to/source", "/path/to/destination");
 To delete an empty directory, call the `hfs.delete(dirPath)` method. For example:
 
 ```js
-await hfs.delete("/path/to/directories");
+await hfs.delete("/path/to/directory");
+```
+
+This method doesn't throw an error if the path doesn't exist. If you want to know whether or not an existing file was deleted, you can use the return value: `true` if the file was actually deleted or `false` if the file didn't exist:
+
+```js
+if (await hfs.delete("/path/to/directory")) {
+	console.log("Directory existed and was deleted.");
+}
 ```
 
 To delete a non-empty directory recursively, call the `hfs.deleteAll(dirPath)` method. For example:
@@ -56,6 +64,8 @@ To delete a non-empty directory recursively, call the `hfs.deleteAll(dirPath)` m
 ```js
 await hfs.deleteAll("/path/to/directories");
 ```
+
+This method also returns a boolean indicating if the directory existed or not.
 
 > [!IMPORTANT]
 > The `deleteAll()` method acts like `rm -rf`, so it will delete directories that aren't empty. Use with caution.
@@ -75,6 +85,62 @@ for await (const entry of hfs.list("/path/to/directory")) {
 ```
 
 Each entry in the async iterator implements the [`HfsDirectoryEntry` interface](../packages/types/src/@humanfs/types.ts).
+
+## Reading Directory Entries Recursively
+
+To recursively read all of the entries in a given directory, use the `hfs.walk()` method. This method returns an async iterable and is meant to be used with the `for await-of` statement:
+
+```js
+for await (const entry of hfs.walk("/path/to/directory")) {
+	console.log(entry.path);	// path from /path/to/directory
+
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+Each entry in the async iterator implements the [`HfsWalkEntry` interface](../packages/types/src/@humanfs/types.ts).
+
+You can determine whether or not to walk into a subdirectory by providing the `directoryFilter` option. This function receives the entry and returns `true` to indicate that the subdirectory should be walked or `false` to indicate the subdirectory should be skipped:
+
+```js
+// skip the directory named "skip-me"
+const directoryFilter = entry => entry.name !== "skip-me";
+
+for await (const entry of hfs.walk("/path/to/directory", { directoryFilter })) {
+	console.log(entry.path);	// path from /path/to/directory
+
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+Similarly, you can determine which entries are emitted from the async iterable by providing an `entryFilter` option. This function also receives the entry and returns `true` to include the entry or `false` to omit it:
+
+```js
+// only return files
+const entryFilter = entry => entry.isFile;
+
+for await (const entry of hfs.walk("/path/to/directory", { entryFilter })) {
+	console.log(entry.path);	// path from /path/to/directory
+
+	if (entry.isFile) {
+		processFile(entry.name);
+	} else if (entry.isDirectory) {
+		processDirectory(entry.name)
+	}
+}
+```
+
+**Note:** Both `directoryFilter` and `entryFilter` may return a promise.
+
+Each entry in the async iterator implements the [`HfsWalkEntry` interface](../packages/types/src/@humanfs/types.ts).
 
 ## Retrieving Directory Modification Time
 
