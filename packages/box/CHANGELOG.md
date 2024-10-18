@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.2](https://github.com/humanwhocodes/humanfs/compare/box-v0.1.1...box-v0.1.2) (2024-10-18)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.19.0 to ^0.19.1
+  * devDependencies
+    * @humanfs/memory bumped from ^0.19.4 to ^0.19.5
+
 ## [0.1.1](https://github.com/humanwhocodes/humanfs/compare/box-v0.1.0...box-v0.1.1) (2024-09-09)
 
 

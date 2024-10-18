@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.19.5](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.4...memory-v0.19.5) (2024-10-18)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.19.0 to ^0.19.1
+
 ## [0.19.4](https://github.com/humanwhocodes/humanfs/compare/memory-v0.19.3...memory-v0.19.4) (2024-09-09)
 
 
