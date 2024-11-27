@@ -51,7 +51,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@humanwhocodes/retry": "^0.3.0",
+    "@humanwhocodes/retry": "^0.4.0",
     "@humanfs/core": "^0.19.1"
   }
 }
