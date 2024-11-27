@@ -23,7 +23,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/humanwhocodes/humanfs.git"
+    "url": "git+https://github.com/humanwhocodes/humanfs.git",
+    "directory": "packages/deno"
   },
   "publishConfig": {
     "access": "public"
@@ -48,6 +49,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@humanwhocodes/retry": "^0.3.0"
+    "@humanwhocodes/retry": "^0.4.0"
   }
 }
