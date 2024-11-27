@@ -23,7 +23,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/humanwhocodes/humanfs.git"
+    "url": "git+https://github.com/humanwhocodes/humanfs.git",
+    "directory": "packages/node"
   },
   "publishConfig": {
     "access": "public"
