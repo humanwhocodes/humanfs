@@ -6,6 +6,13 @@
   * dependencies
     * @humanfs/core bumped from ^0.14.0 to ^0.15.0
 
+## [0.16.7](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.6...node-v0.16.7) (2024-11-27)
+
+
+### Bug Fixes
+
+* Add directory to package.json ([f691b60](https://github.com/humanwhocodes/humanfs/commit/f691b60a0df2ce9a5894b6af51acc2461654cf6b))
+
 ## [0.16.6](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.5...node-v0.16.6) (2024-10-18)
 
 

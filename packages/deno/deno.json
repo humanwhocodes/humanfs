@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/deno",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "exports": "./src/index.js",
   "imports": {
     "@humanfs/core": "../core/src/hfs.js",
