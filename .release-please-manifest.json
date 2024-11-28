@@ -3,8 +3,8 @@
   "packages/types": "0.15.0",
   "packages/test": "0.15.0",
   "packages/core": "0.19.1",
-  "packages/node": "0.16.6",
-  "packages/deno": "0.17.0",
+  "packages/node": "0.16.7",
+  "packages/deno": "0.17.1",
   "packages/memory": "0.19.5",
   "packages/web": "0.14.1"
 }

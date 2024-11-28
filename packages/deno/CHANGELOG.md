@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.17.0...deno-v0.17.1) (2024-11-27)
+
+
+### Bug Fixes
+
+* Update @humanwhocodes/retry ([f3bb1bf](https://github.com/humanwhocodes/humanfs/commit/f3bb1bf624e25e2460f84265156278d91d6ef112))
+
 ## [0.17.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.16.2...deno-v0.17.0) (2024-07-24)
 
 
