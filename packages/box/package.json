@@ -49,7 +49,7 @@
     "@types/node": "^20.9.4",
     "mocha": "^10.2.0",
     "msw": "^2.3.0",
-    "sinon": "^17.0.1",
+    "sinon": "^19.0.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
