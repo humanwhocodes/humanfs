@@ -45,7 +45,6 @@
   "devDependencies": {
     "@humanfs/memory": "^0.19.5",
     "@humanfs/test": "^0.15.0",
-    "@humanfs/types": "^0.15.0",
     "@humanwhocodes/object-store": "^0.2.0",
     "@types/node": "^20.9.4",
     "mocha": "^10.2.0",
@@ -54,6 +53,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@humanfs/core": "^0.19.1"
+    "@humanfs/core": "^0.19.1",
+    "@humanfs/types": "^0.15.0"
   }
 }
