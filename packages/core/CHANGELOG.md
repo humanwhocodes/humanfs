@@ -6,6 +6,13 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.19.2](https://github.com/humanwhocodes/humanfs/compare/core-v0.19.1...core-v0.19.2) (2025-03-26)
+
+
+### Bug Fixes
+
+* Include type dependencies at runtime ([956ce7a](https://github.com/humanwhocodes/humanfs/commit/956ce7aac2a998d0af23b7cb08e7630b69693138)), closes [#145](https://github.com/humanwhocodes/humanfs/issues/145)
+
 ## [0.19.1](https://github.com/humanwhocodes/humanfs/compare/core-v0.19.0...core-v0.19.1) (2024-10-18)
 
 

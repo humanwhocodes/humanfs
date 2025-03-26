@@ -6,6 +6,20 @@
   * dependencies
     * @humanfs/core bumped from ^0.14.0 to ^0.15.0
 
+## [0.16.8](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.7...node-v0.16.8) (2025-03-26)
+
+
+### Bug Fixes
+
+* Include type dependencies at runtime ([956ce7a](https://github.com/humanwhocodes/humanfs/commit/956ce7aac2a998d0af23b7cb08e7630b69693138)), closes [#145](https://github.com/humanwhocodes/humanfs/issues/145)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.19.1 to ^0.19.2
+
 ## [0.16.7](https://github.com/humanwhocodes/humanfs/compare/node-v0.16.6...node-v0.16.7) (2024-11-27)
 
 

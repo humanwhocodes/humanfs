@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.3](https://github.com/humanwhocodes/humanfs/compare/box-v0.1.2...box-v0.1.3) (2025-03-26)
+
+
+### Bug Fixes
+
+* Include type dependencies at runtime ([956ce7a](https://github.com/humanwhocodes/humanfs/commit/956ce7aac2a998d0af23b7cb08e7630b69693138)), closes [#145](https://github.com/humanwhocodes/humanfs/issues/145)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/core bumped from ^0.19.1 to ^0.19.2
+  * devDependencies
+    * @humanfs/memory bumped from ^0.19.5 to ^0.19.6
+
 ## [0.1.2](https://github.com/humanwhocodes/humanfs/compare/box-v0.1.1...box-v0.1.2) (2024-10-18)
 
 
