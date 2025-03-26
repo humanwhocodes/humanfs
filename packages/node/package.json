@@ -45,7 +45,7 @@
     "node": ">=18.18.0"
   },
   "devDependencies": {
-    "@types/node": "^20.9.4",
+    "@types/node": "^22.0.0",
     "@humanfs/test": "^0.15.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2"
