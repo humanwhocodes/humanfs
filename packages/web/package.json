@@ -48,7 +48,7 @@
   "devDependencies": {
     "@humanfs/test": "^0.15.0",
     "@wdio/browser-runner": "^8.40.5",
-    "@wdio/cli": "8",
+    "@wdio/cli": "9",
     "@wdio/mocha-framework": "^8.40.3",
     "@wdio/spec-reporter": "^8.40.3",
     "chai": "^5.0.0",
