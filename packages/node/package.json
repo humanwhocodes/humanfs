@@ -47,7 +47,7 @@
   "devDependencies": {
     "@types/node": "^20.9.4",
     "@humanfs/test": "^0.15.0",
-    "mocha": "^10.2.0",
+    "mocha": "^11.0.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {
