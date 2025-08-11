@@ -9,11 +9,17 @@
     'group:linters'
   ],
   packageRules: [
-    // only send upgrade for deps (from the npm registry) after they've been
-    // published for 30 days
-    {
-      matchDatasources: ['npm'],
-      minimumReleaseAge: '30 days'
-    }
+		// only send upgrade for deps (from the npm registry) after they've been
+		// published for 30 days
+		{
+			matchDatasources: ["npm"],
+			matchDepTypes: ["dependencies"],
+			minimumReleaseAge: "30 days",
+		},
+		{
+			matchDatasources: ["npm"],
+			matchDepTypes: ["devDependencies"],
+			enabled: false,
+		}
   ]
 }
