@@ -13,6 +13,7 @@ import { NodeHfsImpl } from "../src/node-hfs.js";
 import assert from "node:assert";
 import fsp from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import os from "node:os";
 import path from "node:path";
 import { HfsImplTester } from "@humanfs/test";
 
@@ -254,6 +255,89 @@ describe("NodeHfsImpl Customizations", () => {
 				() => impl.write(".hfs/foo", "Hello world!"),
 				/Boom!/,
 			);
+		});
+	});
+
+	describe("copy()", () => {
+		it("should recreate a symlink rather than copy the target file contents", async () => {
+			const tmpDir = await fsp.mkdtemp(
+				path.join(os.tmpdir(), "humanfs-copy-symlink-"),
+			);
+			try {
+				const secret = path.join(tmpDir, "secret.txt");
+				const link = path.join(tmpDir, "link.txt");
+				const dest = path.join(tmpDir, "dest.txt");
+
+				await fsp.writeFile(secret, "TOPSECRET");
+
+				try {
+					await fsp.symlink(secret, link);
+				} catch (err) {
+					if (err.code === "EPERM") {
+						return; // symlinks require elevated privileges on this OS; skip
+					}
+					throw err;
+				}
+
+				const impl = new NodeHfsImpl({ fsp });
+				await impl.copy(link, dest);
+
+				// destination must be a symlink, not a plain file with secret contents
+				const destStat = await fsp.lstat(dest);
+				assert.ok(
+					destStat.isSymbolicLink(),
+					"destination should be a symlink",
+				);
+
+				// the symlink target must point back to the original secret path
+				const linkTarget = await fsp.readlink(dest);
+				assert.strictEqual(linkTarget, secret);
+			} finally {
+				await fsp.rm(tmpDir, { recursive: true });
+			}
+		});
+	});
+
+	describe("copyAll()", () => {
+		it("should recreate symlinks rather than copy target file contents", async () => {
+			const tmpDir = await fsp.mkdtemp(
+				path.join(os.tmpdir(), "humanfs-copyall-symlink-"),
+			);
+			try {
+				const secret = path.join(tmpDir, "secret.txt");
+				const src = path.join(tmpDir, "src");
+				const dst = path.join(tmpDir, "dst");
+
+				await fsp.mkdir(src);
+				await fsp.writeFile(secret, "TOPSECRET");
+
+				try {
+					await fsp.symlink(secret, path.join(src, "link.txt"));
+				} catch (err) {
+					if (err.code === "EPERM") {
+						return; // symlinks require elevated privileges on this OS; skip
+					}
+					throw err;
+				}
+
+				const impl = new NodeHfsImpl({ fsp });
+				await impl.copyAll(src, dst);
+
+				const copiedLink = path.join(dst, "link.txt");
+				const copiedStat = await fsp.lstat(copiedLink);
+
+				// the copied entry must be a symlink, not a plain file
+				assert.ok(
+					copiedStat.isSymbolicLink(),
+					"copied entry should be a symlink",
+				);
+
+				// the symlink must point to the original target, not contain its data
+				const linkTarget = await fsp.readlink(copiedLink);
+				assert.strictEqual(linkTarget, secret);
+			} finally {
+				await fsp.rm(tmpDir, { recursive: true });
+			}
 		});
 	});
 });
