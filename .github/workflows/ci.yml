@@ -19,7 +19,7 @@ jobs:
                 deno-version: [1.x]
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
 
             - name: Set up Node.js ${{ matrix.node-version }}
               uses: actions/setup-node@v4
