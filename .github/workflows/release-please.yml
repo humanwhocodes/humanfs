@@ -48,8 +48,6 @@ jobs:
             - name: Publish @humanfs/core package to npm
               run: npm publish -w packages/core
               if: ${{ steps.release.outputs['packages/core--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             - name: Publish @humanfs/core package to JSR
               run: |
@@ -86,8 +84,6 @@ jobs:
             - name: Publish @humanfs/test package to npm
               run: npm publish -w packages/test
               if: ${{ steps.release.outputs['packages/test--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             #-----------------------------------------------------------------------------
             # @humanfs/types
@@ -96,8 +92,6 @@ jobs:
             - name: Publish @humanfs/types package to npm
               run: npm publish -w packages/types
               if: ${{ steps.release.outputs['packages/types--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
             #-----------------------------------------------------------------------------
             # @humanfs/node
@@ -105,10 +99,7 @@ jobs:
 
             - name: Publish @humanfs/node package to npm
               run: npm publish -w packages/node
-              if: ${{ steps.release.outputs['packages/node--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-                  
+              if: ${{ steps.release.outputs['packages/node--release_created'] }}                  
 
             # Generates the social media post
             - run: npx @humanwhocodes/social-changelog --org humanwhocodes --repo humanfs --name "humanfs/node" --tag ${{ steps.release.outputs['packages/node--tag_name'] }} > social-post.txt
@@ -138,9 +129,7 @@ jobs:
             - name: Publish @humanfs/memory package to npm
               run: npm publish -w packages/memory
               if: ${{ steps.release.outputs['packages/memory--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
+             
             - name: Publish @humanfs/memory package to JSR
               run: |
                 npm run build
@@ -177,9 +166,7 @@ jobs:
             - name: Publish @humanfs/web package to npm
               run: npm publish -w packages/web
               if: ${{ steps.release.outputs['packages/web--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
+             
             # Generates the social media post
             - run: npx @humanwhocodes/social-changelog --org humanwhocodes --repo humanfs --name "humanfs/web" --tag ${{ steps.release.outputs['packages/web--tag_name'] }} > social-post.txt
               if: ${{ steps.release.outputs.release_created }}
@@ -208,9 +195,7 @@ jobs:
             - name: Publish @humanfs/box package to npm
               run: npm publish -w packages/box
               if: ${{ steps.release.outputs['packages/box--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
+             
             - name: Publish @humanfs/box package to JSR
               run: |
                 npm run build
@@ -246,9 +231,7 @@ jobs:
             - name: Publish @humanfs/deno package to npm
               run: npm publish -w packages/deno
               if: ${{ steps.release.outputs['packages/deno--release_created'] }}
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
+             
             - name: Publish @humanfs/deno package to JSR
               run: |
                 npm run build
