@@ -11,6 +11,7 @@
 
 ### Bug Fixes
 
+* Ensure symlinks are copied as symlinks in `copy()` and `copyAll()` ([22bbaa44](https://github.com/humanwhocodes/humanfs/commit/22bbaa4487a3e6c1197ca619840de4615d0c3404))
 * Include type dependencies at runtime ([956ce7a](https://github.com/humanwhocodes/humanfs/commit/956ce7aac2a998d0af23b7cb08e7630b69693138)), closes [#145](https://github.com/humanwhocodes/humanfs/issues/145)
 
 
