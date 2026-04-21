@@ -34,7 +34,7 @@ jobs:
                   node-version: lts/*
                   registry-url: "https://registry.npmjs.org"
 
-            - uses: denoland/setup-deno@v1
+            - uses: denoland/setup-deno@v2.0.4
               with:
                   deno-version: 1.x
 
