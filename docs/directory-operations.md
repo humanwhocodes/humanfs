@@ -140,6 +140,16 @@ for await (const entry of hfs.walk("/path/to/directory", { entryFilter })) {
 
 **Note:** Both `directoryFilter` and `entryFilter` may return a promise.
 
+By default, `hfs.walk()` does not traverse symbolic links that point to directories. To follow them, set the `followSymlinks` option to `true`:
+
+```js
+for await (const entry of hfs.walk("/path/to/directory", { followSymlinks: true })) {
+	console.log(entry.path);
+}
+```
+
+**Note:** `followSymlinks` does not guard against symbolic links that form a cycle, so avoid enabling it on directory trees that may contain circular links.
+
 Each entry in the async iterator implements the [`HfsWalkEntry` interface](../packages/types/src/@humanfs/types.ts).
 
 ## Retrieving Directory Modification Time

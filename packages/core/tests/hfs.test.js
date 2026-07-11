@@ -1626,7 +1626,11 @@ describe("Hfs", () => {
 						methodName: "walk",
 						args: [
 							"/path/to/dir",
-							{ directoryFilter, entryFilter },
+							{
+								directoryFilter,
+								entryFilter,
+								followSymlinks: false,
+							},
 						],
 					},
 				},
@@ -1718,6 +1722,88 @@ describe("Hfs", () => {
 			}
 
 			assert.deepStrictEqual(entries, traversed);
+		});
+
+		describe("followSymlinks", () => {
+			let linkHfs;
+
+			beforeEach(() => {
+				const linkData = {
+					"/root": [
+						{
+							name: "link",
+							isFile: false,
+							isDirectory: false,
+							isSymlink: true,
+						},
+						{
+							name: "file.txt",
+							isFile: true,
+							isDirectory: false,
+							isSymlink: false,
+						},
+					],
+					"/root/link": [
+						{
+							name: "inside.txt",
+							isFile: true,
+							isDirectory: false,
+							isSymlink: false,
+						},
+					],
+				};
+
+				linkHfs = new Hfs({
+					impl: {
+						list(dirPath) {
+							if (dirPath instanceof URL) {
+								dirPath = dirPath.pathname;
+							}
+
+							if (dirPath.endsWith("/")) {
+								dirPath = dirPath.slice(0, -1);
+							}
+
+							return linkData[dirPath] ?? [];
+						},
+
+						// resolves the symlink target the way a real fs would
+						isDirectory(dirPath) {
+							if (dirPath instanceof URL) {
+								dirPath = dirPath.pathname;
+							}
+
+							return dirPath.replace(/\/$/u, "") === "/root/link";
+						},
+					},
+				});
+			});
+
+			it("should not walk symlinked directories by default", async () => {
+				const entries = [];
+
+				for await (const entry of linkHfs.walk("/root")) {
+					entries.push(entry.path);
+				}
+
+				assert.deepStrictEqual(entries, ["link", "file.txt"]);
+			});
+
+			it("should walk symlinked directories when followSymlinks is true", async () => {
+				const entries = [];
+
+				for await (const entry of linkHfs.walk("/root", {
+					followSymlinks: true,
+				})) {
+					entries.push(entry.path);
+				}
+
+				assert.deepStrictEqual(entries, [
+					"link",
+					"link/inside.txt",
+					"file.txt",
+				]);
+			});
 		});
 
 		it("should return the list of files and directories when passed a URL without a trailing slash", async () => {

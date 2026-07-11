@@ -9,7 +9,7 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { NodeHfsImpl } from "../src/node-hfs.js";
+import { NodeHfsImpl, NodeHfs } from "../src/node-hfs.js";
 import assert from "node:assert";
 import fsp from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -335,6 +335,92 @@ describe("NodeHfsImpl Customizations", () => {
 				// the symlink must point to the original target, not contain its data
 				const linkTarget = await fsp.readlink(copiedLink);
 				assert.strictEqual(linkTarget, secret);
+			} finally {
+				await fsp.rm(tmpDir, { recursive: true });
+			}
+		});
+	});
+
+	describe("walk()", () => {
+		async function collectPaths(hfs, dirPath, options) {
+			const paths = [];
+
+			for await (const entry of hfs.walk(dirPath, options)) {
+				paths.push(entry.path);
+			}
+
+			return paths;
+		}
+
+		it("should not walk into symlinked directories by default", async () => {
+			const tmpDir = await fsp.mkdtemp(
+				path.join(os.tmpdir(), "humanfs-walk-symlink-"),
+			);
+			try {
+				await fsp.mkdir(path.join(tmpDir, "target"));
+				await fsp.writeFile(
+					path.join(tmpDir, "target/inside.txt"),
+					"hello",
+				);
+
+				try {
+					await fsp.symlink(
+						path.join(tmpDir, "target"),
+						path.join(tmpDir, "link"),
+					);
+				} catch (err) {
+					if (err.code === "EPERM") {
+						return; // symlinks require elevated privileges on this OS; skip
+					}
+					throw err;
+				}
+
+				const paths = await collectPaths(new NodeHfs(), tmpDir);
+
+				assert.ok(
+					paths.includes("target/inside.txt"),
+					"real directory should be walked",
+				);
+				assert.ok(
+					!paths.includes("link/inside.txt"),
+					"symlinked directory should not be walked by default",
+				);
+			} finally {
+				await fsp.rm(tmpDir, { recursive: true });
+			}
+		});
+
+		it("should walk into symlinked directories when followSymlinks is true", async () => {
+			const tmpDir = await fsp.mkdtemp(
+				path.join(os.tmpdir(), "humanfs-walk-symlink-"),
+			);
+			try {
+				await fsp.mkdir(path.join(tmpDir, "target"));
+				await fsp.writeFile(
+					path.join(tmpDir, "target/inside.txt"),
+					"hello",
+				);
+
+				try {
+					await fsp.symlink(
+						path.join(tmpDir, "target"),
+						path.join(tmpDir, "link"),
+					);
+				} catch (err) {
+					if (err.code === "EPERM") {
+						return; // symlinks require elevated privileges on this OS; skip
+					}
+					throw err;
+				}
+
+				const paths = await collectPaths(new NodeHfs(), tmpDir, {
+					followSymlinks: true,
+				});
+
+				assert.ok(
+					paths.includes("link/inside.txt"),
+					"symlinked directory should be walked when followSymlinks is true",
+				);
 			} finally {
 				await fsp.rm(tmpDir, { recursive: true });
 			}
