@@ -202,7 +202,9 @@ export class WebHfsImpl {
 		}
 
 		const writable = await handle.createWritable();
-		await writable.write(contents);
+		await writable.write(
+			/** @type {FileSystemWriteChunkType} */ (/** @type {unknown} */ (contents)),
+		);
 		await writable.close();
 	}
 
