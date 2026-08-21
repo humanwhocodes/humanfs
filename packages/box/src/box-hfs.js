@@ -2,7 +2,6 @@
  * @fileoverview The main file for the box package.
  * @author Nicholas C. Zakas
  */
-/* global TextEncoder, TextDecoder, URL */
 
 //-----------------------------------------------------------------------------
 // Types

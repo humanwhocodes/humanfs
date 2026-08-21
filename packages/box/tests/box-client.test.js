@@ -2,6 +2,7 @@
  * @fileoverview BoxClient test suite
  * @author Nicholas C. Zakas
  */
+/* global describe, it, before, after, afterEach, URL */
 
 //-----------------------------------------------------------------------------
 // Imports
@@ -342,7 +343,7 @@ describe("BoxClient", () => {
 			server.use(
 				http.delete(
 					createApiUrl(API_ENDPOINTS.updateFile),
-					async ({ params, request }) => {
+					async () => {
 						return new HttpResponse(204);
 					},
 				),
@@ -412,7 +413,7 @@ describe("BoxClient", () => {
 			server.use(
 				http.delete(
 					createApiUrl(API_ENDPOINTS.updateFolder),
-					async ({ params, request }) => {
+					async () => {
 						return new HttpResponse(204);
 					},
 				),
@@ -473,12 +474,9 @@ describe("BoxClient", () => {
 
 		it("should return the file content", async () => {
 			server.use(
-				http.get(
-					createApiUrl(API_ENDPOINTS.file),
-					async ({ params, request }) => {
-						return HttpResponse.text(fileContent);
-					},
-				),
+				http.get(createApiUrl(API_ENDPOINTS.file), async () => {
+					return HttpResponse.text(fileContent);
+				}),
 			);
 
 			const response = await client.download(fileId);
@@ -650,12 +648,9 @@ describe("BoxClient", () => {
 			};
 
 			server.use(
-				http.get(
-					createApiUrl(API_ENDPOINTS.folderItems),
-					async ({ params }) => {
-						return HttpResponse.json({ entries: [expectedObject] });
-					},
-				),
+				http.get(createApiUrl(API_ENDPOINTS.folderItems), async () => {
+					return HttpResponse.json({ entries: [expectedObject] });
+				}),
 			);
 
 			const object = await client.findObject(fileOrDirPath);
@@ -713,12 +708,9 @@ describe("BoxClient", () => {
 			const fileOrDirPath = Path.from("/folder1/file1.txt");
 
 			server.use(
-				http.get(
-					createApiUrl(API_ENDPOINTS.folderItems),
-					async ({ params }) => {
-						return HttpResponse.json({ entries: [] });
-					},
-				),
+				http.get(createApiUrl(API_ENDPOINTS.folderItems), async () => {
+					return HttpResponse.json({ entries: [] });
+				}),
 			);
 
 			const object = await client.findObject(fileOrDirPath);
