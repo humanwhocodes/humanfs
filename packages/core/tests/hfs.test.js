@@ -1877,7 +1877,177 @@ describe("Hfs", () => {
 			assert.deepStrictEqual(deepEntries, expected);
 		});
 
-		it("should silently skip directories when list() throws ENONENT", async () => {
+		describe("when list() is an async generator", () => {
+			function normalizePath(dirPath) {
+				if (dirPath instanceof URL) {
+					dirPath = dirPath.pathname;
+				}
+
+				if (dirPath.endsWith("/")) {
+					dirPath = dirPath.slice(0, -1);
+				}
+
+				return dirPath;
+			}
+
+			it("should silently skip directories when list() throws ENOENT on iteration", async () => {
+				const hfs = new Hfs({
+					impl: {
+						// like NodeHfsImpl#list(), the read happens on first next()
+						async *list(dirPath) {
+							dirPath = normalizePath(dirPath);
+
+							if (dirPath === "/path/to/dir/subdir1") {
+								throw new NotFoundError(dirPath);
+							}
+
+							yield* data[dirPath] ?? [];
+						},
+					},
+				});
+
+				const entries = [];
+				for await (const entry of hfs.walk("/path/to/dir")) {
+					entries.push(entry);
+				}
+
+				const expected = traversed.filter(
+					entry => !entry.path.includes("subdir1/"),
+				);
+				assert.deepStrictEqual(entries, expected);
+			});
+
+			it("should return no entries when list() throws ENOENT for the walked directory", async () => {
+				const hfs = new Hfs({
+					impl: {
+						// eslint-disable-next-line require-yield -- intentionally throws
+						async *list(dirPath) {
+							throw new NotFoundError(dirPath);
+						},
+					},
+				});
+
+				const entries = [];
+				for await (const entry of hfs.walk("/path/to/missing")) {
+					entries.push(entry);
+				}
+
+				assert.deepStrictEqual(entries, []);
+			});
+
+			it("should silently skip directories when list() throws ENOENT partway through iteration", async () => {
+				const hfs = new Hfs({
+					impl: {
+						async *list(dirPath) {
+							dirPath = normalizePath(dirPath);
+							const entries = data[dirPath] ?? [];
+
+							if (dirPath === "/path/to/dir/subdir1") {
+								yield entries[0];
+								throw new NotFoundError(dirPath);
+							}
+
+							yield* entries;
+						},
+					},
+				});
+
+				const entries = [];
+				for await (const entry of hfs.walk("/path/to/dir")) {
+					entries.push(entry);
+				}
+
+				// only the first entry of subdir1 (and its subtree) is emitted
+				const expected = traversed.filter(
+					entry =>
+						!entry.path.includes("subdir1/") ||
+						entry.path.startsWith("subdir1/subdir3"),
+				);
+				assert.deepStrictEqual(entries, expected);
+			});
+
+			it("should rethrow errors other than ENOENT thrown on iteration", () => {
+				const error = new Error("Boom!");
+				const hfs = new Hfs({
+					impl: {
+						async *list(dirPath) {
+							dirPath = normalizePath(dirPath);
+
+							if (dirPath === "/path/to/dir/subdir1") {
+								throw error;
+							}
+
+							yield* data[dirPath] ?? [];
+						},
+					},
+				});
+
+				return assert.rejects(async () => {
+					// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+					for await (const entry of hfs.walk("/path/to/dir"));
+				}, error);
+			});
+
+			it("should close the list() iterators when the walk is exited early", async () => {
+				const closed = [];
+				const hfs = new Hfs({
+					impl: {
+						async *list(dirPath) {
+							dirPath = normalizePath(dirPath);
+
+							try {
+								yield* data[dirPath] ?? [];
+							} finally {
+								closed.push(dirPath);
+							}
+						},
+					},
+				});
+
+				for await (const entry of hfs.walk("/path/to/dir")) {
+					if (entry.path === "subdir1/subdir3") {
+						break;
+					}
+				}
+
+				// both the root and subdir1 iterators were mid-iteration
+				assert.deepStrictEqual(closed, [
+					"/path/to/dir/subdir1",
+					"/path/to/dir",
+				]);
+			});
+
+			it("should close the list() iterator when entryFilter throws", async () => {
+				const closed = [];
+				const error = new Error("Error in entryFilter");
+				const hfs = new Hfs({
+					impl: {
+						async *list(dirPath) {
+							dirPath = normalizePath(dirPath);
+
+							try {
+								yield* data[dirPath] ?? [];
+							} finally {
+								closed.push(dirPath);
+							}
+						},
+					},
+				});
+
+				await assert.rejects(async () => {
+					// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+					for await (const entry of hfs.walk("/path/to/dir", {
+						entryFilter() {
+							throw error;
+						},
+					}));
+				}, error);
+
+				assert.deepStrictEqual(closed, ["/path/to/dir"]);
+			});
+		});
+
+		it("should silently skip directories when list() throws ENOENT", async () => {
 			const hfs = new Hfs({
 				impl: {
 					list(dirPath) {

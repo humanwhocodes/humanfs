@@ -555,56 +555,95 @@ export class Hfs {
 				throw error;
 			}
 
-			for await (const listEntry of dirEntries) {
-				const walkEntry = {
-					path: listEntry.name,
-					depth,
-					...listEntry,
-				};
+			/*
+			 * list() is usually an async generator, which means the directory
+			 * isn't actually read until the iterator is first advanced. That
+			 * means an ENOENT error (e.g., the directory was deleted after the
+			 * parent was listed) is thrown by next() rather than by the call
+			 * to list() itself, so it must be caught here as well.
+			 */
+			const iterator =
+				dirEntries[Symbol.asyncIterator]?.() ??
+				dirEntries[Symbol.iterator]();
+			let done = false;
 
-				if (parentPath) {
-					walkEntry.path = `${parentPath}/${walkEntry.path}`;
-				}
+			try {
+				while (!done) {
+					let result;
 
-				// first emit the entry but only if the entry filter returns true
-				let shouldEmitEntry = entryFilter(walkEntry);
-				if (shouldEmitEntry.then) {
-					shouldEmitEntry = await shouldEmitEntry;
-				}
+					try {
+						result = await iterator.next();
+					} catch (error) {
+						// if the directory does not exist then stop walking it
+						if (error.code === "ENOENT") {
+							return;
+						}
 
-				if (shouldEmitEntry) {
-					yield walkEntry;
-				}
-
-				// if it's a directory then yield the entry and walk the directory
-				if (listEntry.isDirectory) {
-					// if the directory filter returns false, skip the directory
-					let shouldWalkDirectory = directoryFilter(walkEntry);
-					if (shouldWalkDirectory.then) {
-						shouldWalkDirectory = await shouldWalkDirectory;
+						// otherwise, rethrow the error
+						throw error;
 					}
 
-					if (!shouldWalkDirectory) {
-						continue;
+					if (result.done) {
+						done = true;
+						break;
 					}
 
-					// make sure there's a trailing slash on the directory path before appending
-					const directoryPath =
-						dirPath instanceof URL
-							? new URL(
-									listEntry.name,
-									dirPath.href.endsWith("/")
-										? dirPath.href
-										: `${dirPath.href}/`,
-								)
-							: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${listEntry.name}`;
+					const listEntry = result.value;
+					const walkEntry = {
+						path: listEntry.name,
+						depth,
+						...listEntry,
+					};
 
-					yield* walk(directoryPath, {
-						directoryFilter,
-						entryFilter,
-						parentPath: walkEntry.path,
-						depth: depth + 1,
-					});
+					if (parentPath) {
+						walkEntry.path = `${parentPath}/${walkEntry.path}`;
+					}
+
+					// first emit the entry but only if the entry filter returns true
+					let shouldEmitEntry = entryFilter(walkEntry);
+					if (shouldEmitEntry.then) {
+						shouldEmitEntry = await shouldEmitEntry;
+					}
+
+					if (shouldEmitEntry) {
+						yield walkEntry;
+					}
+
+					// if it's a directory then yield the entry and walk the directory
+					if (listEntry.isDirectory) {
+						// if the directory filter returns false, skip the directory
+						let shouldWalkDirectory = directoryFilter(walkEntry);
+						if (shouldWalkDirectory.then) {
+							shouldWalkDirectory = await shouldWalkDirectory;
+						}
+
+						if (!shouldWalkDirectory) {
+							continue;
+						}
+
+						// make sure there's a trailing slash on the directory path before appending
+						const directoryPath =
+							dirPath instanceof URL
+								? new URL(
+										listEntry.name,
+										dirPath.href.endsWith("/")
+											? dirPath.href
+											: `${dirPath.href}/`,
+									)
+								: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${listEntry.name}`;
+
+						yield* walk(directoryPath, {
+							directoryFilter,
+							entryFilter,
+							parentPath: walkEntry.path,
+							depth: depth + 1,
+						});
+					}
+				}
+			} finally {
+				// close the iterator if the loop exited early (error or break)
+				if (!done) {
+					await iterator.return?.();
 				}
 			}
 		}.bind(this);
