@@ -2,7 +2,6 @@
  * @fileoverview Tests for the Hfs class.
  * @author Nicholas C. Zakas
  */
-/* global it, describe, beforeEach, URL, TextEncoder */
 
 //------------------------------------------------------------------------------
 // Imports

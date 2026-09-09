@@ -19,7 +19,7 @@
     "build": "tsc",
     "prepare": "npm run build",
     "pretest": "npm run build",
-    "test": "deno test --allow-read --allow-write"
+    "test": "deno test --allow-read --allow-write --allow-env=DEBUG"
   },
   "repository": {
     "type": "git",
@@ -42,10 +42,10 @@
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=24.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.9.4",
+    "@types/node": "^24.0.0",
     "typescript": "^5.2.2"
   },
   "dependencies": {

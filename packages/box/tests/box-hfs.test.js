@@ -3,8 +3,6 @@
  * @author Nicholas C. Zakas
  */
 
-/*global describe, before, after */
-
 //------------------------------------------------------------------------------
 // Imports
 //------------------------------------------------------------------------------
@@ -13,9 +11,13 @@ import { BoxHfsImpl } from "../src/box-hfs.js";
 import { HfsImplTester } from "@humanfs/test";
 import { server } from "./util/server.js";
 import assert from "node:assert";
-import dotenv from "dotenv";
 
-dotenv.config();
+// optional: lets a real Box token be supplied when exercising the live API
+try {
+	process.loadEnvFile();
+} catch {
+	// no .env file, which is fine because the tests mock the Box API
+}
 
 //------------------------------------------------------------------------------
 // Helpers

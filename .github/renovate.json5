@@ -1,15 +1,16 @@
 {
-  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
-  // see https://docs.renovatebot.com/presets-config/
-  extends: [
-    'config:base',
-    // automatically rebase onto main branch
-    ':rebaseStalePrs',
-    // groups all ESLint-related dependency upgrades into a single PR
-    'group:linters'
-  ],
-  packageRules: [
-		// only send upgrade for deps (from the npm registry) after they've been
+	$schema: "https://docs.renovatebot.com/renovate-schema.json",
+	// see https://docs.renovatebot.com/presets-config/
+	extends: [
+		// 'config:base' is deprecated in favor of 'config:recommended'
+		"config:recommended",
+		// automatically rebase onto main branch
+		":rebaseStalePrs",
+		// groups all ESLint-related dependency upgrades into a single PR
+		"group:linters",
+	],
+	packageRules: [
+		// only send upgrades for deps (from the npm registry) after they've been
 		// published for 30 days
 		{
 			matchDatasources: ["npm"],
@@ -20,6 +21,16 @@
 			matchDatasources: ["npm"],
 			matchDepTypes: ["devDependencies"],
 			enabled: false,
-		}
-  ]
+		},
+		// exception to the rule above: the browser test stack pins its own browser
+		// binaries, so leaving it unattended means testing against stale browsers
+		{
+			matchDatasources: ["npm"],
+			matchDepTypes: ["devDependencies"],
+			matchPackageNames: ["playwright", "vitest", "@vitest/**"],
+			groupName: "browser testing",
+			minimumReleaseAge: "7 days",
+			enabled: true,
+		},
+	],
 }

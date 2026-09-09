@@ -9,7 +9,6 @@
  * JSR publish.
  * @author Nicholas C. Zakas
  */
-/* global console */
 
 //------------------------------------------------------------------------------
 // Imports

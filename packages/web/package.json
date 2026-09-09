@@ -19,7 +19,7 @@
     "build": "tsc",
     "prepare": "npm run build",
     "pretest": "npm run build",
-    "test": "wdio run ./wdio.conf.js"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -43,17 +43,14 @@
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=24.0.0"
   },
   "devDependencies": {
     "@humanfs/test": "^0.15.0",
-    "@wdio/browser-runner": "^8.40.5",
-    "@wdio/cli": "8",
-    "@wdio/mocha-framework": "^8.40.3",
-    "@wdio/spec-reporter": "^8.40.3",
-    "chai": "^5.0.0",
-    "mocha": "^10.2.0",
-    "typescript": "^5.2.2"
+    "@vitest/browser-playwright": "^5.0.0",
+    "playwright": "^1.63.0",
+    "typescript": "^5.2.2",
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "@humanfs/core": "^0.19.2",

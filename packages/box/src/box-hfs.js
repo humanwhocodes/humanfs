@@ -2,7 +2,6 @@
  * @fileoverview The main file for the box package.
  * @author Nicholas C. Zakas
  */
-/* global TextEncoder, TextDecoder, URL */
 
 //-----------------------------------------------------------------------------
 // Types
@@ -15,7 +14,13 @@
 // Imports
 //-----------------------------------------------------------------------------
 
-import { Hfs, Path, NotEmptyError, NotFoundError, DirectoryError } from "@humanfs/core";
+import {
+	Hfs,
+	Path,
+	NotEmptyError,
+	NotFoundError,
+	DirectoryError,
+} from "@humanfs/core";
 import { BoxClient } from "./box-client.js";
 
 //-----------------------------------------------------------------------------
@@ -27,7 +32,6 @@ import { BoxClient } from "./box-client.js";
  * @implements {HfsImpl}
  */
 export class BoxHfsImpl {
-
 	/**
 	 * The Box API client to use.
 	 * @type {BoxClient}
@@ -79,7 +83,8 @@ export class BoxHfsImpl {
 			return undefined;
 		}
 
-		return this.#client.download(entry.id)
+		return this.#client
+			.download(entry.id)
 			.then(response => response.arrayBuffer())
 			.then(buffer => new Uint8Array(buffer));
 	}
@@ -95,7 +100,6 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-
 		let value;
 
 		if (typeof contents === "string") {
@@ -119,7 +123,6 @@ export class BoxHfsImpl {
 
 		// then upload the file
 		await this.#client.uploadFile(name, folder.id, value);
-
 	}
 
 	/**
@@ -129,7 +132,8 @@ export class BoxHfsImpl {
 	 *    file exists or false if it does not.
 	 */
 	isFile(filePath) {
-		return this.#client.findObject(Path.from(filePath))
+		return this.#client
+			.findObject(Path.from(filePath))
 			.then(entry => entry?.type === "file")
 			.catch(() => false);
 	}
@@ -141,7 +145,8 @@ export class BoxHfsImpl {
 	 *    directory exists or false if it does not.
 	 */
 	isDirectory(dirPath) {
-		return this.#client.findObject(Path.from(dirPath))
+		return this.#client
+			.findObject(Path.from(dirPath))
 			.then(entry => entry?.type === "folder")
 			.catch(() => false);
 	}
@@ -164,7 +169,6 @@ export class BoxHfsImpl {
 	 *  file in bytes or undefined if the file doesn't exist.
 	 */
 	async size(filePath) {
-
 		const entry = await this.#client.findObject(Path.from(filePath));
 
 		if (!entry) {
@@ -182,16 +186,14 @@ export class BoxHfsImpl {
 	 * date of the file or directory, or undefined if the file doesn't exist.
 	 */
 	async lastModified(fileOrDirPath) {
-
 		const entry = await this.#client.findObject(Path.from(fileOrDirPath));
-		
+
 		if (!entry) {
 			return undefined;
 		}
 
 		return new Date(entry.modified_at);
 	}
-
 
 	/**
 	 * Returns a list of directory entries for the given path.
@@ -200,20 +202,22 @@ export class BoxHfsImpl {
 	 *   directory entries.
 	 */
 	async *list(dirPath) {
-
 		/*
 		 * The root directory is a special case that always has the folder ID
 		 * "0". This is because the Box API doesn't have a way to fetch the root
 		 * folder by name.
 		 */
-		const folderId = dirPath === "."
-			? this.#rootFolderId
-			: (await this.#client.findObject(Path.from(dirPath))).id;
+		const folderId =
+			dirPath === "."
+				? this.#rootFolderId
+				: (await this.#client.findObject(Path.from(dirPath))).id;
 
 		let marker = null;
-		
+
 		do {
-			const data = await this.#client.fetchFolderItems(folderId, { marker });
+			const data = await this.#client.fetchFolderItems(folderId, {
+				marker,
+			});
 
 			for (const item of data.entries) {
 				yield {
@@ -226,7 +230,6 @@ export class BoxHfsImpl {
 
 			marker = data.next_marker;
 		} while (marker);
-
 	}
 
 	/**
@@ -240,11 +243,10 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
 	async delete(fileOrDirPath) {
-
 		const path = Path.from(fileOrDirPath);
 
 		const entry = await this.#client.findObject(path);
-		
+
 		if (!entry) {
 			return false;
 		}
@@ -256,7 +258,9 @@ export class BoxHfsImpl {
 		}
 
 		// if it's a directory, check if it's empty
-		const data = await this.#client.fetchFolderItems(entry.id, { limit: 1 });
+		const data = await this.#client.fetchFolderItems(entry.id, {
+			limit: 1,
+		});
 		if (data.entries.length > 0) {
 			throw new NotEmptyError(path.toString());
 		}
@@ -277,7 +281,6 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the file or directory cannot be deleted.
 	 */
 	async deleteAll(fileOrDirPath) {
-	
 		const path = Path.from(fileOrDirPath);
 		let entry;
 
@@ -314,7 +317,6 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the destination file is a directory.
 	 */
 	async copy(source, destination) {
-
 		const sourcePath = Path.from(source);
 		const destPath = Path.from(destination);
 
@@ -337,18 +339,23 @@ export class BoxHfsImpl {
 		}
 
 		if (destFolder.type !== "folder") {
-			throw new TypeError(`Destination is not a directory. copy ${sourcePath} -> ${destPath}`);
+			throw new TypeError(
+				`Destination is not a directory. copy ${sourcePath} -> ${destPath}`,
+			);
 		}
 
 		// check that the new name isn't already a directory
-		const target = (await this.#client.fetchFolderItems(destFolder.id))
-			.entries.find(item => item.name === newName);
+		const target = (
+			await this.#client.fetchFolderItems(destFolder.id)
+		).entries.find(item => item.name === newName);
 
 		if (target?.type === "folder") {
 			throw new DirectoryError(`copy ${sourcePath} -> ${destPath}`);
 		}
 
-		await this.#client.copyFile(sourceFile.id, destFolder.id, { name: newName });
+		await this.#client.copyFile(sourceFile.id, destFolder.id, {
+			name: newName,
+		});
 	}
 
 	/**
@@ -361,7 +368,6 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the destination file or directory is a directory.
 	 */
 	async copyAll(source, destination) {
-
 		const sourcePath = Path.from(source);
 		const destPath = Path.from(destination);
 		const sourceEntry = await this.#client.findObject(sourcePath);
@@ -379,10 +385,14 @@ export class BoxHfsImpl {
 		const destFolder = await this.#client.findObject(destPath);
 
 		if (destFolder.type !== "folder") {
-			throw new TypeError(`Destination is not a directory. copy ${sourcePath} -> ${destPath}`);
+			throw new TypeError(
+				`Destination is not a directory. copy ${sourcePath} -> ${destPath}`,
+			);
 		}
 
-		await this.#client.copyFolder(sourceEntry.id, destFolder.id, { name: newName });
+		await this.#client.copyFolder(sourceEntry.id, destFolder.id, {
+			name: newName,
+		});
 	}
 
 	/**
@@ -394,7 +404,6 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the file cannot be moved.
 	 */
 	async move(source, destination) {
-
 		const sourcePath = Path.from(source);
 		const destPath = Path.from(destination);
 
@@ -413,10 +422,14 @@ export class BoxHfsImpl {
 		const destFolder = await this.#client.findObject(destPath);
 
 		if (destFolder.type !== "folder") {
-			throw new TypeError(`Destination is not a directory. move ${sourcePath} -> ${destPath}`);
+			throw new TypeError(
+				`Destination is not a directory. move ${sourcePath} -> ${destPath}`,
+			);
 		}
 
-		await this.#client.moveFile(sourceFile.id, destFolder.id, { name: newName });
+		await this.#client.moveFile(sourceFile.id, destFolder.id, {
+			name: newName,
+		});
 	}
 
 	/**
@@ -428,7 +441,6 @@ export class BoxHfsImpl {
 	 * @throws {Error} If the file or directory cannot be moved.
 	 */
 	async moveAll(source, destination) {
-
 		const sourcePath = Path.from(source);
 		const destPath = Path.from(destination);
 		const sourceEntry = await this.#client.findObject(sourcePath);
@@ -446,10 +458,14 @@ export class BoxHfsImpl {
 		const destFolder = await this.#client.findObject(destPath);
 
 		if (destFolder.type !== "folder") {
-			throw new TypeError(`Destination is not a directory. move ${sourcePath} -> ${destPath}`);
+			throw new TypeError(
+				`Destination is not a directory. move ${sourcePath} -> ${destPath}`,
+			);
 		}
 
-		await this.#client.moveFolder(sourceEntry.id, destFolder.id, { name: newName });
+		await this.#client.moveFolder(sourceEntry.id, destFolder.id, {
+			name: newName,
+		});
 	}
 }
 

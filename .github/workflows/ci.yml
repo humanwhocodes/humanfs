@@ -15,8 +15,8 @@ jobs:
         strategy:
             matrix:
                 os: [windows-latest, macOS-latest, ubuntu-latest]
-                node-version: [20.x]
-                deno-version: [1.x]
+                node-version: [24.x]
+                deno-version: [2.x]
 
         steps:
             - uses: actions/checkout@v6
@@ -27,13 +27,22 @@ jobs:
                   node-version: ${{ matrix.node-version }}
 
             - name: Set up Deno ${{ matrix.deno-version }}
-              uses: denoland/setup-deno@v1
+              uses: denoland/setup-deno@v2
               with:
                   deno-version: ${{ matrix.deno-version }}
 
-            - name: npm install, build, and test
-              run: |
-                  npm install
-                  npm test
+            - name: npm install
+              run: npm install
+
+            - name: Install Playwright browsers (Linux)
+              if: runner.os == 'Linux'
+              run: npm exec --workspace @humanfs/web -- playwright install --with-deps chromium firefox
+
+            - name: Install Playwright browsers
+              if: runner.os != 'Linux'
+              run: npm exec --workspace @humanfs/web -- playwright install chromium firefox
+
+            - name: Test
+              run: npm test
               env:
                   CI: true
