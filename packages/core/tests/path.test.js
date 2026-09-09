@@ -2,7 +2,6 @@
  * @fileoverview Tests for the Path class.
  * @author Nicholas C. Zakas
  */
-/* global it, describe, URL */
 
 //------------------------------------------------------------------------------
 // Imports

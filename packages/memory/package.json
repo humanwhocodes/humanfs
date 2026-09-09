@@ -41,10 +41,10 @@
   },
   "homepage": "https://github.com/humanwhocodes/humanfs#readme",
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=24.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.9.4",
+    "@types/node": "^24.0.0",
     "mocha": "^10.2.0",
     "typescript": "^5.2.2",
     "@humanfs/test": "^0.15.0"

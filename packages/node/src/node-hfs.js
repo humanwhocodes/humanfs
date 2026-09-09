@@ -2,7 +2,6 @@
  * @fileoverview The main file for the hfs package.
  * @author Nicholas C. Zakas
  */
-/* global Buffer:readonly, URL */
 
 //-----------------------------------------------------------------------------
 // Types

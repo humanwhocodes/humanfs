@@ -2,7 +2,6 @@
  * @fileoverview The main file for the deno-hfs package.
  * @author Nicholas C. Zakas
  */
-/* global Deno:readonly, URL */
 
 //-----------------------------------------------------------------------------
 // Types

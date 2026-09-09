@@ -397,30 +397,6 @@ export class MemoryHfsVolume {
 	//-----------------------------------------------------------------------------
 
 	/**
-	 * Retrieves an object by its ID.
-	 * @param {string} id The ID of the object to retrieve.
-	 * @returns {MemoryHfsFile|MemoryHfsDirectory|undefined} The object or undefined if not found.
-	 * @throws {TypeError} If the ID is not a string.
-	 */
-	#getObject(id) {
-		if (typeof id !== "string") {
-			throw new TypeError("ID must be a string.");
-		}
-
-		return this.#objects.get(id);
-	}
-
-	/**
-	 * Retrieves an object by its path.
-	 * @param {string|URL} path The path to the object to retrieve.
-	 * @returns {MemoryHfsFile|MemoryHfsDirectory|undefined} The object or undefined if not found.
-	 * @throws {TypeError} If the path is not a string or URL.
-	 */
-	#getObjectFromPath(path) {
-		return findPath(this.#root, Path.from(path));
-	}
-
-	/**
 	 * Retrieves the ID of an object by its path.
 	 * @param {string|URL} path The path to the object to retrieve.
 	 * @returns {string|undefined} The ID of the object or undefined if not found.
