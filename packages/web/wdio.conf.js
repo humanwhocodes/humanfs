@@ -1,10 +1,44 @@
+const chromeErrorWorkaroundPlugin = {
+	name: "chrome-error-workaround",
+	configureServer(server) {
+		server.middlewares.use((req, res, next) => {
+			if (req.url === "/node_modules/mocha/mocha.css") {
+				res.setHeader("Content-Type", "text/css");
+				res.end("");
+				return;
+			}
+
+			if (req.url === "/favicon.ico") {
+				res.statusCode = 204;
+				res.end();
+				return;
+			}
+
+			next();
+		});
+	},
+	transformIndexHtml(html) {
+		return html.replace(
+			'<link rel="icon" type="image/x-icon" href="https://webdriver.io/img/favicon.png">',
+			"",
+		);
+	},
+};
+
 export const config = {
 	//
 	// ====================
 	// Runner Configuration
 	// ====================
 	// WebdriverIO supports running e2e tests as well as unit and component tests.
-	runner: "browser",
+	runner: [
+		"browser",
+		{
+			viteConfig: {
+				plugins: [chromeErrorWorkaroundPlugin],
+			},
+		},
+	],
 	//
 	// ==================
 	// Specify Test Files

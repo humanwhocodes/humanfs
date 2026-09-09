@@ -24,6 +24,19 @@ import {
 import { MemoryHfsVolume } from "./memory-hfs-volume.js";
 
 //-----------------------------------------------------------------------------
+// Helpers
+//-----------------------------------------------------------------------------
+
+/**
+ * Copies a Uint8Array into an ArrayBuffer.
+ * @param {Uint8Array} contents The contents to copy.
+ * @returns {ArrayBuffer} The copied contents.
+ */
+function toArrayBuffer(contents) {
+	return /** @type {ArrayBuffer} */ (new Uint8Array(contents).buffer);
+}
+
+//-----------------------------------------------------------------------------
 // Exports
 //-----------------------------------------------------------------------------
 
@@ -67,12 +80,7 @@ export class MemoryHfsImpl {
 	 * @throws {Error} If the file cannot be written.
 	 */
 	async write(filePath, contents) {
-		const value = contents.buffer.slice(
-			contents.byteOffset,
-			contents.byteOffset + contents.byteLength,
-		);
-
-		this.#volume.writeFile(filePath, value);
+		this.#volume.writeFile(filePath, toArrayBuffer(contents));
 	}
 
 	/**
@@ -88,12 +96,7 @@ export class MemoryHfsImpl {
 	async append(filePath, contents) {
 		const existing = this.#volume.readFile(filePath);
 		if (!existing) {
-			const value = contents.buffer.slice(
-				contents.byteOffset,
-				contents.byteOffset + contents.byteLength,
-			);
-
-			return this.#volume.writeFile(filePath, value);
+			return this.#volume.writeFile(filePath, toArrayBuffer(contents));
 		}
 
 		const newValue = new Uint8Array([
