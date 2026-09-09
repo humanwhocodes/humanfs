@@ -65,3 +65,6 @@ dist
 
 # temporary files
 tmp-*
+
+# root Deno lockfile (packages/deno/deno.lock is tracked deliberately)
+/deno.lock
