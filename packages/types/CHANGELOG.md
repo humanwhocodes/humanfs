@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.16.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.15.0...types-v0.16.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Require Node.js v24+ and replace WebdriverIO with Vitest ([#168](https://github.com/humanwhocodes/humanfs/issues/168))
+
+### Features
+
+* Require Node.js v24+ and replace WebdriverIO with Vitest ([#168](https://github.com/humanwhocodes/humanfs/issues/168)) ([9d41384](https://github.com/humanwhocodes/humanfs/commit/9d41384c8908b3e416c216061ba4608f907d2d03))
+
 ## [0.15.0](https://github.com/humanwhocodes/humanfs/compare/types-v0.14.0...types-v0.15.0) (2024-09-09)
 
 

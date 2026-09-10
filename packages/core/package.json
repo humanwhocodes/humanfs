@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/core",
-  "version": "0.19.2",
+  "version": "0.20.0",
   "description": "The core of the humanfs library.",
   "type": "module",
   "main": "dist/index.js",
@@ -49,6 +49,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@humanfs/types": "^0.15.0"
+    "@humanfs/types": "^0.16.0"
   }
 }

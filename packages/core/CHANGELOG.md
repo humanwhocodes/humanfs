@@ -6,6 +6,30 @@
   * devDependencies
     * fsx-types bumped from ^0.0.2 to ^0.0.3
 
+## [0.20.0](https://github.com/humanwhocodes/humanfs/compare/core-v0.19.2...core-v0.20.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Require Node.js v24+ and replace WebdriverIO with Vitest ([#168](https://github.com/humanwhocodes/humanfs/issues/168))
+
+### Features
+
+* Add followSymlinks option to walk() ([#165](https://github.com/humanwhocodes/humanfs/issues/165)) ([6e0134c](https://github.com/humanwhocodes/humanfs/commit/6e0134ced583d423c0d87ace8fb87c378f9736b1))
+* Require Node.js v24+ and replace WebdriverIO with Vitest ([#168](https://github.com/humanwhocodes/humanfs/issues/168)) ([9d41384](https://github.com/humanwhocodes/humanfs/commit/9d41384c8908b3e416c216061ba4608f907d2d03))
+
+
+### Bug Fixes
+
+* Ensure walk() skips directories deleted before they are listed ([#166](https://github.com/humanwhocodes/humanfs/issues/166)) ([8125278](https://github.com/humanwhocodes/humanfs/commit/812527856a99f0a6777c5db0ab081b4f75b8a644))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @humanfs/types bumped from ^0.15.0 to ^0.16.0
+
 ## [0.19.2](https://github.com/humanwhocodes/humanfs/compare/core-v0.19.1...core-v0.19.2) (2026-04-17)
 
 
