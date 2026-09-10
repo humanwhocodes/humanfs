@@ -521,6 +521,9 @@ export class Hfs {
 	 * 	if a directory's entries should be included in the walk.
 	 * @param {(entry:HfsWalkEntry) => Promise<boolean>|boolean} [options.entryFilter] A filter function to determine if
 	 * 	an entry should be included in the walk.
+	 * @param {boolean} [options.followSymlinks] When `true`, symbolic links that
+	 * 	point to directories are walked as if they were directories. Defaults
+	 * 	to `false`. No protection against circular symbolic links is provided.
 	 * @returns {AsyncIterable<HfsWalkEntry>} A promise that resolves with the
 	 * 	directory entries.
 	 * @throws {TypeError} If the directory path is not a string or URL.
@@ -528,15 +531,29 @@ export class Hfs {
 	 */
 	async *walk(
 		dirPath,
-		{ directoryFilter = () => true, entryFilter = () => true } = {},
+		{
+			directoryFilter = () => true,
+			entryFilter = () => true,
+			followSymlinks = false,
+		} = {},
 	) {
 		assertValidFileOrDirPath(dirPath);
-		this.#log("walk", dirPath, { directoryFilter, entryFilter });
+		this.#log("walk", dirPath, {
+			directoryFilter,
+			entryFilter,
+			followSymlinks,
+		});
 
 		// inner function for recursion without additional logging
 		const walk = async function* (
 			dirPath,
-			{ directoryFilter, entryFilter, parentPath = "", depth = 1 },
+			{
+				directoryFilter,
+				entryFilter,
+				followSymlinks,
+				parentPath = "",
+				depth = 1,
+			},
 		) {
 			let dirEntries;
 
@@ -609,10 +626,38 @@ export class Hfs {
 						yield walkEntry;
 					}
 
-					// if it's a directory then yield the entry and walk the directory
-					if (listEntry.isDirectory) {
+					// make sure there's a trailing slash on the directory path before appending
+					const entryPath =
+						dirPath instanceof URL
+							? new URL(
+									listEntry.name,
+									dirPath.href.endsWith("/")
+										? dirPath.href
+										: `${dirPath.href}/`,
+								)
+							: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${listEntry.name}`;
+
+					// directories are always walked; symlinks to directories are
+					// only walked when followSymlinks is true (a symlink reports
+					// isDirectory as false, so the target must be checked)
+					let shouldWalkDirectory = listEntry.isDirectory;
+
+					if (
+						!shouldWalkDirectory &&
+						followSymlinks &&
+						listEntry.isSymlink
+					) {
+						shouldWalkDirectory =
+							await this.#callImplMethodWithoutLog(
+								"isDirectory",
+								entryPath,
+							);
+					}
+
+					// if it's a directory then walk the directory
+					if (shouldWalkDirectory) {
 						// if the directory filter returns false, skip the directory
-						let shouldWalkDirectory = directoryFilter(walkEntry);
+						shouldWalkDirectory = directoryFilter(walkEntry);
 						if (shouldWalkDirectory.then) {
 							shouldWalkDirectory = await shouldWalkDirectory;
 						}
@@ -621,20 +666,10 @@ export class Hfs {
 							continue;
 						}
 
-						// make sure there's a trailing slash on the directory path before appending
-						const directoryPath =
-							dirPath instanceof URL
-								? new URL(
-										listEntry.name,
-										dirPath.href.endsWith("/")
-											? dirPath.href
-											: `${dirPath.href}/`,
-									)
-								: `${dirPath.endsWith("/") ? dirPath : `${dirPath}/`}${listEntry.name}`;
-
-						yield* walk(directoryPath, {
+						yield* walk(entryPath, {
 							directoryFilter,
 							entryFilter,
+							followSymlinks,
 							parentPath: walkEntry.path,
 							depth: depth + 1,
 						});
@@ -648,7 +683,7 @@ export class Hfs {
 			}
 		}.bind(this);
 
-		yield* walk(dirPath, { directoryFilter, entryFilter });
+		yield* walk(dirPath, { directoryFilter, entryFilter, followSymlinks });
 	}
 
 	/**

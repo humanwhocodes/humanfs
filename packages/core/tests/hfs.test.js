@@ -1625,7 +1625,11 @@ describe("Hfs", () => {
 						methodName: "walk",
 						args: [
 							"/path/to/dir",
-							{ directoryFilter, entryFilter },
+							{
+								directoryFilter,
+								entryFilter,
+								followSymlinks: false,
+							},
 						],
 					},
 				},
@@ -1717,6 +1721,236 @@ describe("Hfs", () => {
 			}
 
 			assert.deepStrictEqual(entries, traversed);
+		});
+
+		describe("followSymlinks", () => {
+			const symlinkData = {
+				"/root": [
+					{
+						name: "dir-link",
+						isFile: false,
+						isDirectory: false,
+						isSymlink: true,
+					},
+					{
+						name: "file-link",
+						isFile: false,
+						isDirectory: false,
+						isSymlink: true,
+					},
+					{
+						name: "broken-link",
+						isFile: false,
+						isDirectory: false,
+						isSymlink: true,
+					},
+					{
+						name: "file.txt",
+						isFile: true,
+						isDirectory: false,
+						isSymlink: false,
+					},
+				],
+				"/root/dir-link": [
+					{
+						name: "inside.txt",
+						isFile: true,
+						isDirectory: false,
+						isSymlink: false,
+					},
+				],
+			};
+
+			// the paths that resolve to directories through a symlink
+			const symlinkedDirectories = new Set(["/root/dir-link"]);
+
+			function normalizePath(dirPath) {
+				if (dirPath instanceof URL) {
+					dirPath = dirPath.pathname;
+				}
+
+				if (dirPath.endsWith("/")) {
+					dirPath = dirPath.slice(0, -1);
+				}
+
+				return dirPath;
+			}
+
+			let symlinkHfs;
+			let isDirectoryCalls;
+
+			beforeEach(() => {
+				isDirectoryCalls = [];
+				symlinkHfs = new Hfs({
+					impl: {
+						list(dirPath) {
+							return symlinkData[normalizePath(dirPath)] ?? [];
+						},
+
+						// mimics a stat() that follows the symlink
+						isDirectory(dirPath) {
+							isDirectoryCalls.push(dirPath);
+							return symlinkedDirectories.has(
+								normalizePath(dirPath),
+							);
+						},
+					},
+				});
+			});
+
+			it("should not walk symlinked directories by default", async () => {
+				const paths = [];
+
+				for await (const entry of symlinkHfs.walk("/root")) {
+					paths.push(entry.path);
+				}
+
+				assert.deepStrictEqual(paths, [
+					"dir-link",
+					"file-link",
+					"broken-link",
+					"file.txt",
+				]);
+				assert.deepStrictEqual(isDirectoryCalls, []);
+			});
+
+			it("should not walk symlinked directories when followSymlinks is false", async () => {
+				const paths = [];
+
+				for await (const entry of symlinkHfs.walk("/root", {
+					followSymlinks: false,
+				})) {
+					paths.push(entry.path);
+				}
+
+				assert.deepStrictEqual(paths, [
+					"dir-link",
+					"file-link",
+					"broken-link",
+					"file.txt",
+				]);
+				assert.deepStrictEqual(isDirectoryCalls, []);
+			});
+
+			it("should walk symlinked directories when followSymlinks is true", async () => {
+				const entries = [];
+
+				for await (const entry of symlinkHfs.walk("/root", {
+					followSymlinks: true,
+				})) {
+					entries.push(entry);
+				}
+
+				assert.deepStrictEqual(
+					entries.map(entry => entry.path),
+					[
+						"dir-link",
+						"dir-link/inside.txt",
+						"file-link",
+						"broken-link",
+						"file.txt",
+					],
+				);
+
+				// the symlink entry itself is still reported as a symlink
+				assert.deepStrictEqual(entries[0], {
+					name: "dir-link",
+					path: "dir-link",
+					depth: 1,
+					isFile: false,
+					isDirectory: false,
+					isSymlink: true,
+				});
+
+				assert.deepStrictEqual(entries[1], {
+					name: "inside.txt",
+					path: "dir-link/inside.txt",
+					depth: 2,
+					isFile: true,
+					isDirectory: false,
+					isSymlink: false,
+				});
+			});
+
+			it("should only check symlink entries when followSymlinks is true", async () => {
+				// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+				for await (const entry of symlinkHfs.walk("/root", {
+					followSymlinks: true,
+				}));
+
+				assert.deepStrictEqual(isDirectoryCalls, [
+					"/root/dir-link",
+					"/root/file-link",
+					"/root/broken-link",
+				]);
+			});
+
+			it("should walk symlinked directories when passed a URL", async () => {
+				const paths = [];
+
+				for await (const entry of symlinkHfs.walk(
+					new URL("file:///root"),
+					{ followSymlinks: true },
+				)) {
+					paths.push(entry.path);
+				}
+
+				assert.deepStrictEqual(paths, [
+					"dir-link",
+					"dir-link/inside.txt",
+					"file-link",
+					"broken-link",
+					"file.txt",
+				]);
+				assert.ok(
+					isDirectoryCalls.every(dirPath => dirPath instanceof URL),
+					"isDirectory() should receive URLs.",
+				);
+				assert.strictEqual(
+					isDirectoryCalls[0].href,
+					"file:///root/dir-link",
+				);
+			});
+
+			it("should pass symlinked directories through directoryFilter", async () => {
+				const paths = [];
+				const filtered = [];
+
+				for await (const entry of symlinkHfs.walk("/root", {
+					followSymlinks: true,
+					directoryFilter(entry) {
+						filtered.push(entry.path);
+						return false;
+					},
+				})) {
+					paths.push(entry.path);
+				}
+
+				assert.deepStrictEqual(filtered, ["dir-link"]);
+				assert.deepStrictEqual(paths, [
+					"dir-link",
+					"file-link",
+					"broken-link",
+					"file.txt",
+				]);
+			});
+
+			it("should reject a promise when followSymlinks is true and the impl has no isDirectory() method", () => {
+				const noIsDirectoryHfs = new Hfs({
+					impl: {
+						list(dirPath) {
+							return symlinkData[normalizePath(dirPath)] ?? [];
+						},
+					},
+				});
+
+				return assert.rejects(async () => {
+					// eslint-disable-next-line no-unused-vars -- Needed for async iteration
+					for await (const entry of noIsDirectoryHfs.walk("/root", {
+						followSymlinks: true,
+					}));
+				}, /isDirectory/u);
+			});
 		});
 
 		it("should return the list of files and directories when passed a URL without a trailing slash", async () => {

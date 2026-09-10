@@ -314,5 +314,133 @@ describe("DenoHfsImpl Customizations", () => {
 				await Deno.remove(tmpDir, { recursive: true });
 			}
 		});
+
+		/**
+		 * Creates a temp directory with this layout:
+		 *
+		 * 	target/inside.txt
+		 * 	dir-link -> target
+		 * 	file-link -> target/inside.txt
+		 * 	broken-link -> missing
+		 *
+		 * @returns {Promise<string|undefined>} The temp directory path, or
+		 * 	undefined if symlinks can't be created on this system.
+		 */
+		async function createSymlinkFixture() {
+			const tmpDir = await Deno.makeTempDir({
+				prefix: "humanfs-walk-symlink-",
+			});
+			const target = path.join(tmpDir, "target");
+
+			await Deno.mkdir(target);
+			await Deno.writeTextFile(path.join(target, "inside.txt"), "hello");
+
+			try {
+				await Deno.symlink(target, path.join(tmpDir, "dir-link"), {
+					type: "dir",
+				});
+				await Deno.symlink(
+					path.join(target, "inside.txt"),
+					path.join(tmpDir, "file-link"),
+					{ type: "file" },
+				);
+				await Deno.symlink(
+					path.join(tmpDir, "missing"),
+					path.join(tmpDir, "broken-link"),
+					{ type: "file" },
+				);
+			} catch (err) {
+				if (
+					err instanceof Deno.errors.PermissionDenied ||
+					err.code === "EPERM"
+				) {
+					await Deno.remove(tmpDir, { recursive: true });
+					return undefined; // symlinks require elevated privileges on this OS; skip
+				}
+				throw err;
+			}
+
+			return tmpDir;
+		}
+
+		async function collectPaths(dirPath, options) {
+			const hfs = new DenoHfs();
+			const paths = [];
+
+			for await (const entry of hfs.walk(dirPath, options)) {
+				paths.push(entry.path);
+			}
+
+			return paths.sort();
+		}
+
+		it("should not walk into symlinked directories by default", async () => {
+			const tmpDir = await createSymlinkFixture();
+			if (!tmpDir) {
+				return;
+			}
+
+			try {
+				const paths = await collectPaths(tmpDir);
+
+				assertEquals(paths, [
+					"broken-link",
+					"dir-link",
+					"file-link",
+					"target",
+					"target/inside.txt",
+				]);
+			} finally {
+				await Deno.remove(tmpDir, { recursive: true });
+			}
+		});
+
+		it("should walk into symlinked directories when followSymlinks is true", async () => {
+			const tmpDir = await createSymlinkFixture();
+			if (!tmpDir) {
+				return;
+			}
+
+			try {
+				const paths = await collectPaths(tmpDir, {
+					followSymlinks: true,
+				});
+
+				assertEquals(paths, [
+					"broken-link",
+					"dir-link",
+					"dir-link/inside.txt",
+					"file-link",
+					"target",
+					"target/inside.txt",
+				]);
+			} finally {
+				await Deno.remove(tmpDir, { recursive: true });
+			}
+		});
+
+		it("should walk into symlinked directories when followSymlinks is true and passed a URL", async () => {
+			const tmpDir = await createSymlinkFixture();
+			if (!tmpDir) {
+				return;
+			}
+
+			try {
+				const paths = await collectPaths(path.toFileUrl(tmpDir), {
+					followSymlinks: true,
+				});
+
+				assertEquals(paths, [
+					"broken-link",
+					"dir-link",
+					"dir-link/inside.txt",
+					"file-link",
+					"target",
+					"target/inside.txt",
+				]);
+			} finally {
+				await Deno.remove(tmpDir, { recursive: true });
+			}
+		});
 	});
 });
