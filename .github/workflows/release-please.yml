@@ -28,7 +28,7 @@ jobs:
               if: ${{ steps.release.outputs.releases_created }}
 
             # Node.js release
-            - uses: actions/setup-node@v6
+            - uses: actions/setup-node@v7
               if: ${{ steps.release.outputs.releases_created }}
               with:
                   node-version: lts/*
