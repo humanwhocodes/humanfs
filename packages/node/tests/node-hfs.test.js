@@ -7,7 +7,7 @@
 // Imports
 //------------------------------------------------------------------------------
 
-import { NodeHfsImpl } from "../src/node-hfs.js";
+import { NodeHfsImpl, NodeHfs } from "../src/node-hfs.js";
 import assert from "node:assert";
 import fsp from "node:fs/promises";
 import { fileURLToPath } from "node:url";
@@ -335,6 +335,41 @@ describe("NodeHfsImpl Customizations", () => {
 				assert.strictEqual(linkTarget, secret);
 			} finally {
 				await fsp.rm(tmpDir, { recursive: true });
+			}
+		});
+	});
+
+	describe("walk()", () => {
+		it("should not throw when a directory is deleted before it is listed", async () => {
+			const tmpDir = await fsp.mkdtemp(
+				path.join(os.tmpdir(), "humanfs-walk-enoent-"),
+			);
+
+			try {
+				const subdir = path.join(tmpDir, "subdir");
+				await fsp.mkdir(subdir);
+				await fsp.writeFile(path.join(subdir, "inside.txt"), "hello");
+				await fsp.writeFile(path.join(tmpDir, "file.txt"), "hello");
+
+				const hfs = new NodeHfs({ fsp });
+				const paths = [];
+
+				for await (const entry of hfs.walk(tmpDir, {
+					// simulate another process deleting the directory after
+					// it was found but before walk() lists its contents
+					async directoryFilter(entry) {
+						if (entry.name === "subdir") {
+							await fsp.rm(subdir, { recursive: true });
+						}
+						return true;
+					},
+				})) {
+					paths.push(entry.path);
+				}
+
+				assert.deepStrictEqual(paths.sort(), ["file.txt", "subdir"]);
+			} finally {
+				await fsp.rm(tmpDir, { recursive: true, force: true });
 			}
 		});
 	});

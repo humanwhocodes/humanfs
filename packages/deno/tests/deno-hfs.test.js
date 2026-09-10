@@ -13,7 +13,7 @@ import {
 	beforeEach,
 	afterEach,
 } from "https://deno.land/std/testing/bdd.ts";
-import { DenoHfsImpl } from "../src/deno-hfs.js";
+import { DenoHfsImpl, DenoHfs } from "../src/deno-hfs.js";
 import { HfsImplTester } from "../../test/src/index.js";
 import {
 	assert,
@@ -272,6 +272,47 @@ describe("DenoHfsImpl Customizations", () => {
 				() => impl.write(".hfs/foo", HELLO_WORLD_BYTES),
 				/Boom!/,
 			);
+		});
+	});
+
+	describe("walk()", () => {
+		it("should not throw when a directory is deleted before it is listed", async () => {
+			const tmpDir = await Deno.makeTempDir({
+				prefix: "humanfs-walk-enoent-",
+			});
+
+			try {
+				const subdir = path.join(tmpDir, "subdir");
+				await Deno.mkdir(subdir);
+				await Deno.writeTextFile(
+					path.join(subdir, "inside.txt"),
+					"hello",
+				);
+				await Deno.writeTextFile(
+					path.join(tmpDir, "file.txt"),
+					"hello",
+				);
+
+				const hfs = new DenoHfs();
+				const paths = [];
+
+				for await (const entry of hfs.walk(tmpDir, {
+					// simulate another process deleting the directory after
+					// it was found but before walk() lists its contents
+					async directoryFilter(entry) {
+						if (entry.name === "subdir") {
+							await Deno.remove(subdir, { recursive: true });
+						}
+						return true;
+					},
+				})) {
+					paths.push(entry.path);
+				}
+
+				assertEquals(paths.sort(), ["file.txt", "subdir"]);
+			} finally {
+				await Deno.remove(tmpDir, { recursive: true });
+			}
 		});
 	});
 });
