@@ -1,6 +1,6 @@
 {
   "name": "@humanfs/memory",
-  "version": "0.19.6",
+  "version": "0.20.0",
   "exports": "./src/memory-hfs.js",
   "publish": {
     "exclude": [

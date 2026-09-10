@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.18.0](https://github.com/humanwhocodes/humanfs/compare/deno-v0.17.1...deno-v0.18.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Require Node.js v24+ and replace WebdriverIO with Vitest ([#168](https://github.com/humanwhocodes/humanfs/issues/168))
+
+### Features
+
+* Add followSymlinks option to walk() ([#165](https://github.com/humanwhocodes/humanfs/issues/165)) ([6e0134c](https://github.com/humanwhocodes/humanfs/commit/6e0134ced583d423c0d87ace8fb87c378f9736b1))
+* Require Node.js v24+ and replace WebdriverIO with Vitest ([#168](https://github.com/humanwhocodes/humanfs/issues/168)) ([9d41384](https://github.com/humanwhocodes/humanfs/commit/9d41384c8908b3e416c216061ba4608f907d2d03))
+
+
+### Bug Fixes
+
+* Ensure walk() skips directories deleted before they are listed ([#166](https://github.com/humanwhocodes/humanfs/issues/166)) ([8125278](https://github.com/humanwhocodes/humanfs/commit/812527856a99f0a6777c5db0ab081b4f75b8a644))
+
 ## [0.17.1](https://github.com/humanwhocodes/humanfs/compare/deno-v0.17.0...deno-v0.17.1) (2024-11-27)
 
 
