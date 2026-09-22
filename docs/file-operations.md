@@ -32,7 +32,7 @@ When you attempt to read a file that doesn't exist, each of these methods return
 ```js
 const text = await hfs.text("/path/to/file.txt");
 
-if (!text) {
+if (text === undefined) {
 	// handle when the file doesn't exist
 }
 ```
