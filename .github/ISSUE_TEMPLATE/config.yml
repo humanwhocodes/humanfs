@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+    - name: 🔒 Report a Security Vulnerability
+      url: https://github.com/humanwhocodes/humanfs/security/advisories/new
+      about: Report a vulnerability privately. Please do not open a public issue. See SECURITY.md.
     - name: 🗣 Ask a Question, Discuss
       url: https://github.com/humanwhocodes/humanfs/discussions
       about: Get help using humanfs
